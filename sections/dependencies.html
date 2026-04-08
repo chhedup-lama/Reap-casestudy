@@ -4,6 +4,16 @@
   <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>3.5 Dependencies &amp; Integration Points — Reap KYB PRD</title>
   <link rel="stylesheet" href="../css/styles.css" />
+<style>
+  .risk-hi  { display:inline-block; padding:1px 7px; border-radius:4px; font-size:10px; font-weight:700; background:#FEF2F2; color:#B91C1C; }
+  .risk-med { display:inline-block; padding:1px 7px; border-radius:4px; font-size:10px; font-weight:700; background:#FFFBEB; color:#B45309; }
+  .risk-low { display:inline-block; padding:1px 7px; border-radius:4px; font-size:10px; font-weight:700; background:#F0FDF4; color:#166534; }
+  .callout-warn { background:var(--navy); border-left:4px solid #F59E0B; border-radius:9px; padding:.9rem 1.1rem; font-size:13px; color:rgba(255,255,255,.78); line-height:1.6; margin-bottom:1.75rem; }
+  .callout-warn strong { color:#fff; }
+  .dep-pts { list-style:none; padding:0; margin:0 0 1.75rem; display:flex; flex-direction:column; gap:.35rem; }
+  .dep-pts li { font-size:12.5px; color:var(--text-mid); padding-left:12px; position:relative; line-height:1.5; }
+  .dep-pts li::before { content:'·'; position:absolute; left:0; color:var(--text-dim); }
+</style>
 </head>
 <body>
 <header class="site-header">
@@ -31,36 +41,102 @@
     <div class="section-header">
       <div class="section-block-tag" style="background:var(--b3)">Block 3 — Product Scope</div>
       <h1>Dependencies &amp; Integration Points</h1>
-      <p class="section-intro">Upstream and downstream system dependencies, external API contracts, and organisational dependencies that could block or delay delivery.</p>
+      <p class="section-intro">Upstream systems, external services, and cross-functional approvals that directly affect Phase 1 readiness. Delivery risk made explicit early — especially where the KYB experience relies on systems or decisions outside the product team's control.</p>
     </div>
-    <div class="stub-banner">&#9998; Content coming soon — this section is a structured stub awaiting full copy.</div>
+
+    <h2>Dependency Principles</h2>
+    <ul class="dep-pts">
+      <li>Prioritise dependencies that can block Phase 1 launch</li>
+      <li>Distinguish launch-critical from enhancement dependencies</li>
+      <li>Define clear owners for every dependency</li>
+      <li>Validate API and data contracts early — not during UAT</li>
+      <li>Design fallback paths where third-party or upstream systems are unreliable</li>
+      <li>Treat organisational approvals as real delivery dependencies, not side notes</li>
+    </ul>
 
     <h2>Technical Dependencies</h2>
     <div class="table-wrap"><table>
-      <thead><tr><th>System / Service</th><th>Type</th><th>What We Need</th><th>Owner</th><th>Risk Level</th></tr></thead>
+      <thead><tr><th>System / Service</th><th>Type</th><th>What We Need</th><th>Owner</th><th>Risk</th></tr></thead>
       <tbody>
-        <tr><td>Document Storage</td><td>Upstream</td><td>[ ]</td><td>[ ]</td><td>Low</td></tr>
-        <tr><td>Identity / KYC API</td><td>Upstream</td><td>[ ]</td><td>[ ]</td><td>Medium</td></tr>
-        <tr><td>Sanctions Screening API</td><td>External</td><td>[ ]</td><td>[ ]</td><td>Medium</td></tr>
-        <tr><td>Core Banking / Ledger</td><td>Downstream</td><td>[ ]</td><td>[ ]</td><td>Low</td></tr>
-        <tr><td>LLM Provider API</td><td>External</td><td>[ ]</td><td>[ ]</td><td>Medium</td></tr>
+        <tr><td><strong>Document Storage</strong></td><td>Upstream</td><td>Secure upload, retrieval, versioned document access, metadata linkage to case</td><td>Platform / Infra</td><td><span class="risk-low">Low</span></td></tr>
+        <tr><td><strong>Workflow / Case System</strong></td><td>Upstream</td><td>Case creation, state updates, task assignment, status sync</td><td>Platform / Core Product</td><td><span class="risk-hi">High</span></td></tr>
+        <tr><td><strong>Identity / KYC API</strong></td><td>Upstream</td><td>Business and user identity context, applicant/merchant identifiers, entity metadata</td><td>Core Platform</td><td><span class="risk-med">Medium</span></td></tr>
+        <tr><td><strong>Customer / Merchant Onboarding</strong></td><td>Upstream</td><td>Intake trigger, applicant context, handoff into KYB workflow</td><td>Onboarding Team</td><td><span class="risk-hi">High</span></td></tr>
+        <tr><td><strong>Sanctions Screening API</strong></td><td>External</td><td>Screening result access, response contract, latency and error handling</td><td>Compliance / Integrations</td><td><span class="risk-med">Medium</span></td></tr>
+        <tr><td><strong>LLM Provider API</strong></td><td>External</td><td>Stable model access, throughput, latency, data-handling controls, fallback strategy</td><td>AI Platform</td><td><span class="risk-med">Medium</span></td></tr>
+        <tr><td><strong>OCR / Extraction Engine</strong></td><td>Internal / External</td><td>Reliable document text extraction, field extraction, confidence metadata</td><td>AI / Document Intelligence</td><td><span class="risk-hi">High</span></td></tr>
+        <tr><td><strong>Policy Repository</strong></td><td>Upstream</td><td>Approved policy content, versioning, applicability metadata</td><td>Compliance</td><td><span class="risk-hi">High</span></td></tr>
+        <tr><td><strong>Authentication / SSO</strong></td><td>Upstream</td><td>User authentication, role resolution, secure session handling</td><td>Security / Platform</td><td><span class="risk-med">Medium</span></td></tr>
+        <tr><td><strong>Vector Store</strong></td><td>Internal</td><td>Retrieval-ready indexing, metadata filtering, evidence snippet lookup</td><td>AI Platform</td><td><span class="risk-med">Medium</span></td></tr>
+        <tr><td><strong>Message Queue / Async Job Infra</strong></td><td>Internal</td><td>Reliable processing orchestration, retry handling, dead-letter support</td><td>Platform / Infra</td><td><span class="risk-med">Medium</span></td></tr>
+        <tr><td><strong>Notification / Email Service</strong></td><td>External / Internal</td><td>Outbound follow-up delivery, internal alerts, delivery logging</td><td>Platform / Comms</td><td><span class="risk-med">Medium</span></td></tr>
+        <tr><td><strong>Core Banking / Ledger</strong></td><td>Downstream</td><td>Final status handoff where KYB outcome affects account/onboarding progression</td><td>Banking Platform</td><td><span class="risk-low">Low</span></td></tr>
+        <tr><td><strong>Audit / Logging Infrastructure</strong></td><td>Internal</td><td>Event logging, traceability, retention, investigation support</td><td>Platform / Security</td><td><span class="risk-hi">High</span></td></tr>
+        <tr><td><strong>Analytics / BI Layer</strong></td><td>Downstream</td><td>KPI capture for rollout and operational performance monitoring</td><td>Data / Analytics</td><td><span class="risk-low">Low</span></td></tr>
       </tbody>
     </table></div>
 
+    <h2>Integration Expectations</h2>
+    <p style="font-size:13px;color:var(--text-mid);margin-bottom:.75rem;">For all launch-relevant integrations, validate before build completes:</p>
+    <ul class="dep-pts">
+      <li>Request and response schema</li>
+      <li>Authentication method</li>
+      <li>Rate limits and throughput constraints</li>
+      <li>Latency expectations</li>
+      <li>Retry and timeout behavior</li>
+      <li>Versioning and backward compatibility</li>
+      <li>Error codes and fallback handling</li>
+      <li>Audit/logging requirements</li>
+      <li>Test environment availability</li>
+      <li>Owner and escalation path</li>
+    </ul>
+
     <h2>Organisational Dependencies</h2>
-    <p>[ Legal sign-off on AI policy, Compliance approval for HITL thresholds, Security review for data handling. ]</p>
+    <p style="font-size:13px;color:var(--text-mid);margin-bottom:.75rem;">Cross-functional alignment and approvals that can delay launch if not resolved early:</p>
+    <ul class="dep-pts">
+      <li>Compliance approval on policy grounding and reviewer-control boundaries</li>
+      <li>Legal sign-off on acceptable AI usage and generated content boundaries</li>
+      <li>Security review for document handling, tenant isolation, and model/provider data flow</li>
+      <li>Risk approval for confidence thresholds, fallback rules, and escalation handling</li>
+      <li>Operations alignment on workflow ownership, queue design, and SLA expectations</li>
+      <li>Analyst manager buy-in for pilot design, shadow mode, and training participation</li>
+      <li>Data / AI governance review for model usage, prompt controls, and output retention</li>
+      <li>Engineering capacity alignment across platform, integrations, and product squads</li>
+    </ul>
 
     <h2>Critical Path Items</h2>
-    <p>[ Which dependencies, if late, will delay Phase 1 launch. Mitigation for each. ]</p>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Critical Path Item</th><th>Why It Blocks Launch</th><th>Mitigation</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Case / Workflow system integration</strong></td><td>Without case creation and state progression, the workspace cannot operate in production flow</td><td>Freeze minimal workflow contract early; use temporary adapter layer if needed</td></tr>
+        <tr><td><strong>Policy repository readiness</strong></td><td>AI outputs cannot be safely grounded without approved policy content and version control</td><td>Start with a curated MVP policy pack owned by Compliance</td></tr>
+        <tr><td><strong>OCR / extraction reliability</strong></td><td>Poor extraction quality undermines review utility and increases manual rework</td><td>Scope supported document types tightly for Phase 1; add manual fallback</td></tr>
+        <tr><td><strong>Security and access approval</strong></td><td>Sensitive KYB data cannot go live without approved access and handling controls</td><td>Run security review in parallel with build; do not defer tenant/access design</td></tr>
+        <tr><td><strong>LLM provider approval and guardrails</strong></td><td>Model dependency affects core reasoning and drafting capabilities</td><td>Approve primary + fallback provider early; isolate provider-specific logic</td></tr>
+        <tr><td><strong>Analyst pilot readiness</strong></td><td>Alpha/Beta cannot run without trained analysts and agreed shadow-mode process</td><td>Identify pilot cohort early and lock training schedule before release</td></tr>
+        <tr><td><strong>Audit logging foundation</strong></td><td>Regulated review flow should not launch without decision traceability</td><td>Implement minimum audit schema in Phase 1, deepen later</td></tr>
+      </tbody>
+    </table></div>
+
+    <h2>Risks to Watch</h2>
+    <ul class="dep-pts">
+      <li>Upstream systems expose incomplete or unstable data contracts</li>
+      <li>External providers have latency or reliability spikes during live review hours</li>
+      <li>Compliance policy content is not structured enough for retrieval and grounding</li>
+      <li>Multiple teams assume different ownership of workflow transitions</li>
+      <li>Sandbox/test environments do not reflect production behavior</li>
+      <li>Legal/security review arrives late and forces architectural rework</li>
+    </ul>
+
+    <div class="callout-warn"><strong>Phase 1 delivery risk is not model quality alone.</strong> It is dependency readiness across workflow, policy, extraction, security, and cross-functional approvals. These should be managed as first-class launch gates.</div>
 
     <nav class="section-nav">
       <a href="phased-delivery.html" class="nav-btn"><span class="nav-btn-dir">← Previous</span><span class="nav-btn-title">Phased Delivery Plan</span></a>
-      <span class="nav-center">15 of 39</span>
-      <a href="solution-architecture.html" class="nav-btn next"><span class="nav-btn-dir">Next →</span><span class="nav-btn-title">E2E Solution Architecture</span></a>
+      <span class="nav-center"></span>
+      <a href="assumptions.html" class="nav-btn next"><span class="nav-btn-dir">Next →</span><span class="nav-btn-title">Working Assumptions</span></a>
     </nav>
   </main>
 </div>
 <footer class="site-footer">Reap AI Platform — KYB Review Copilot &nbsp;·&nbsp; Technical PRD</footer>
-<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
 <script src="../js/main.js"></script>
 </body></html>
