@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>8.5 Open Questions &amp; Decisions Required — Reap KYB PRD</title>
+  <link rel="stylesheet" href="../css/styles.css" />
+<style>
+  .crit-high    { display:inline-block; padding:1px 7px; border-radius:4px; font-size:10px; font-weight:700; background:#FEF2F2; color:#B91C1C; }
+  .crit-med     { display:inline-block; padding:1px 7px; border-radius:4px; font-size:10px; font-weight:700; background:#FFFBEB; color:#B45309; }
+  .imp-high     { display:inline-block; padding:1px 7px; border-radius:4px; font-size:10px; font-weight:700; background:#EFF6FF; color:#1D4ED8; }
+  .imp-med      { display:inline-block; padding:1px 7px; border-radius:4px; font-size:10px; font-weight:700; background:#F0FDF4; color:#166534; }
+  .oq-table     { width:100%; font-size:12px; }
+  .oq-table th  { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.06em; padding:8px 12px; border-bottom:2px solid var(--border); text-align:left; background:var(--bg); color:var(--text-dim); }
+  .oq-table td  { padding:10px 12px; border-bottom:1px solid var(--border); vertical-align:top; line-height:1.5; color:var(--text-mid); }
+  .oq-table td:first-child { color:var(--text-dim); font-weight:600; font-size:11px; white-space:nowrap; }
+  .oq-table td strong { color:var(--text); font-weight:700; display:block; margin-bottom:3px; }
+  .oq-table tr:last-child td { border-bottom:none; }
+  .oq-table tr:hover td { background:var(--bg); }
+  .theme-label  { font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:.08em; color:var(--text-dim); margin:2rem 0 .6rem; }
+  .top8-list    { list-style:none; padding:0; margin:0; counter-reset:top8; }
+  .top8-list li { counter-increment:top8; display:flex; gap:10px; padding:10px 14px; border-bottom:1px solid var(--border); font-size:13px; line-height:1.5; }
+  .top8-list li:last-child { border-bottom:none; }
+  .top8-num     { width:22px; height:22px; border-radius:50%; background:#FEF2F2; color:#B91C1C; font-size:11px; font-weight:800; display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:1px; }
+  .top8-q       { font-weight:700; color:var(--text); }
+  .top8-sub     { font-size:11.5px; color:var(--text-dim); margin-top:2px; }
+  .top8-wrap    { border:1px solid var(--border); border-radius:10px; overflow:hidden; margin-bottom:2rem; }
+  .section-wrap { border:1px solid var(--border); border-radius:10px; overflow:hidden; margin-bottom:1.5rem; }
+</style>
+</head>
+<body>
+<header class="site-header">
+  <div class="header-inner">
+    <a href="../index.html" class="site-logo"><div class="logo-mark">R</div><span>Reap AI Platform</span></a>
+    <div class="header-divider"></div><span class="header-subtitle">KYB Review Copilot</span>
+    <nav class="header-nav"><a href="../index.html">Overview</a><a href="solution-architecture.html">Architecture</a><a href="reviewer-workflow.html">Workflow</a></nav>
+  </div>
+</header>
+<div class="page-layout">
+  <aside class="sidebar">
+    <a href="../index.html" class="sidebar-back"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M9 11L5 7l4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg> All Sections</a>
+    <div class="sidebar-section-title">Block 8 — Delivery Strategy</div>
+    <ul class="sidebar-nav">
+      <li><a href="platform-reuse.html">8.1 Platform Reuse Map</a></li>
+      <li><a href="go-to-market.html">8.2 Go-to-Market &amp; Rollout</a></li>
+      <li><a href="team-resourcing.html">8.3 Team &amp; Resourcing</a></li>
+      <li><a href="dependency-map.html">8.4 Dependency &amp; Risk Map</a></li>
+      <li><a href="open-questions.html" class="active">8.5 Open Questions</a></li>
+    </ul>
+  </aside>
+  <main class="content">
+    <nav class="breadcrumb"><a href="../index.html">Home</a><span class="breadcrumb-sep">›</span><span>Block 8 — Delivery Strategy</span><span class="breadcrumb-sep">›</span><span class="breadcrumb-current">8.5 Open Questions &amp; Decisions Required</span></nav>
+    <div class="section-header">
+      <div class="section-block-tag" style="background:var(--b8)">Block 8 — Delivery Strategy</div>
+      <h1>Open Questions &amp; Decisions Required</h1>
+      <p class="section-intro">Key questions this PRD does not yet fully resolve. Each requires alignment across Product, Engineering, Ops, Compliance, Security, and Leadership. Grouped by capability so decisions happen in the right forums.</p>
+    </div>
+
+    <!-- Top 8 leadership view first -->
+    <h2>Top 8 Questions for Leadership</h2>
+    <p style="font-size:13px;color:var(--text-mid);margin-bottom:1rem;">The most critical unresolved decisions before Phase 1 can proceed:</p>
+    <div class="top8-wrap">
+      <ul class="top8-list">
+        <li><div class="top8-num">1</div><div><div class="top8-q">What exactly is Phase 1 scope?</div><div class="top8-sub">Pure reviewer copilot, or broader workflow and product transformation?</div></div></li>
+        <li><div class="top8-num">2</div><div><div class="top8-q">What is the policy source of truth?</div><div class="top8-sub">And who owns policy codification and updates?</div></div></li>
+        <li><div class="top8-num">3</div><div><div class="top8-q">What are the safe automation boundaries?</div><div class="top8-sub">AI prepares only, or can it recommend, pre-decide, or auto-close in some cases?</div></div></li>
+        <li><div class="top8-num">4</div><div><div class="top8-q">What workflow system owns the case lifecycle?</div><div class="top8-sub">Existing platform versus this new product.</div></div></li>
+        <li><div class="top8-num">5</div><div><div class="top8-q">What audit depth is mandatory?</div><div class="top8-sub">Especially for model trace, evidence lineage, and override capture.</div></div></li>
+        <li><div class="top8-num">6</div><div><div class="top8-q">What is the build vs buy strategy for OCR, extraction, and LLM stack?</div><div class="top8-sub">Core cost, quality, and time trade-off.</div></div></li>
+        <li><div class="top8-num">7</div><div><div class="top8-q">How much platform reuse should be designed now versus later?</div><div class="top8-sub">Speed-to-deliver vs platform abstraction depth.</div></div></li>
+        <li><div class="top8-num">8</div><div><div class="top8-q">What outcome defines success?</div><div class="top8-sub">Productivity, quality, scalability, compliance, or a weighted mix.</div></div></li>
+      </ul>
+    </div>
+
+    <!-- 1. Scope -->
+    <div class="theme-label">1 — Scope, Product Boundaries &amp; Phase Ownership</div>
+    <div class="section-wrap">
+      <table class="oq-table">
+        <thead><tr><th>Area</th><th>Open Question</th><th>Why it matters</th><th>Impact</th><th>Criticality</th></tr></thead>
+        <tbody>
+          <tr><td>Product scope</td><td><strong>Is Phase 1 strictly a reviewer copilot or does it also include upstream intake, workflow routing, and follow-up generation?</strong>Prevents Phase 1 from becoming too broad and underdelivering.</td><td>Scope clarity</td><td><span class="imp-high">High</span></td><td><span class="crit-high">Critical</span></td></tr>
+          <tr><td>Phase scope</td><td><strong>Which capabilities are must-have for Phase 1 vs acceptable later?</strong>e.g. external verification, analytics, learning loop, admin console, configurable rules.</td><td>Protect MVP delivery</td><td><span class="imp-high">High</span></td><td><span class="crit-high">Critical</span></td></tr>
+          <tr><td>User scope</td><td><strong>Which personas are in-scope for first release?</strong>KYB Analyst only, or also QA, Team Lead, Compliance Manager, Admin?</td><td>Determines UX complexity, permissions, workflows, metrics</td><td><span class="imp-high">High</span></td><td><span class="imp-high">High</span></td></tr>
+          <tr><td>Use-case scope</td><td><strong>Business KYB only, or designed from day one for KYC individual, onboarding, and transaction monitoring reuse?</strong></td><td>Changes platform abstraction depth and engineering investment</td><td><span class="imp-high">High</span></td><td><span class="crit-high">Critical</span></td></tr>
+          <tr><td>Decision authority</td><td><strong>Who has final decision rights on trade-offs between compliance fidelity, reviewer speed, and engineering complexity?</strong></td><td>Avoids project stall when trade-offs emerge</td><td><span class="imp-high">High</span></td><td><span class="imp-high">High</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- 2. Workflow -->
+    <div class="theme-label">2 — Workflow, Operating Model &amp; Human Review</div>
+    <div class="section-wrap">
+      <table class="oq-table">
+        <thead><tr><th>Area</th><th>Open Question</th><th>Why it matters</th><th>Impact</th><th>Criticality</th></tr></thead>
+        <tbody>
+          <tr><td>Workflow ownership</td><td><strong>Does Reap already have a system of record for KYB case workflow, or must this product also own workflow state transitions end to end?</strong></td><td>Affects architecture, integration scope, delivery plan</td><td><span class="imp-high">High</span></td><td><span class="crit-high">Critical</span></td></tr>
+          <tr><td>Review model</td><td><strong>AI prepares every case, or only selected cases based on volume, complexity, or risk?</strong></td><td>Determines load, ROI, and reviewer experience</td><td><span class="imp-high">High</span></td><td><span class="crit-high">Critical</span></td></tr>
+          <tr><td>Queue routing</td><td><strong>How should cases be assigned — manual pull, rules-based routing, manager assignment, or workload balancing?</strong></td><td>Impacts reviewer throughput and fairness</td><td><span class="imp-med">Medium</span></td><td><span class="imp-high">High</span></td></tr>
+          <tr><td>SLA model</td><td><strong>What are the turnaround SLAs for different case types and risk tiers, and should the product enforce or surface them?</strong></td><td>Required for workflow prioritization and success metrics</td><td><span class="imp-high">High</span></td><td><span class="imp-high">High</span></td></tr>
+          <tr><td>Escalation rules</td><td><strong>What types of cases must escalate to senior reviewers or compliance, and what triggers escalation?</strong></td><td>Needed for safe operating boundaries</td><td><span class="imp-high">High</span></td><td><span class="crit-high">Critical</span></td></tr>
+          <tr><td>Re-review logic</td><td><strong>What re-enters the queue after customer response — the whole case, changed sections only, or unresolved issues only?</strong></td><td>Directly affects reviewer efficiency</td><td><span class="imp-med">Medium</span></td><td><span class="imp-high">High</span></td></tr>
+          <tr><td>Manual fallback</td><td><strong>What is the required operating path if extraction, retrieval, or reasoning fails?</strong></td><td>Essential for resilience and adoption</td><td><span class="imp-high">High</span></td><td><span class="crit-high">Critical</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- 3. Policy -->
+    <div class="theme-label">3 — Policy Engine, Compliance Grounding &amp; Decision Logic</div>
+    <div class="section-wrap">
+      <table class="oq-table">
+        <thead><tr><th>Area</th><th>Open Question</th><th>Why it matters</th><th>Impact</th><th>Criticality</th></tr></thead>
+        <tbody>
+          <tr><td>Policy source</td><td><strong>What is the canonical source for KYB policy — legal docs, SOPs, internal playbooks, risk memos, or a curated repository?</strong></td><td>Without this, grounding becomes unreliable</td><td><span class="imp-high">High</span></td><td><span class="crit-high">Critical</span></td></tr>
+          <tr><td>Policy ownership</td><td><strong>Who owns policy digitisation, structuring, updates, and approval for use by the AI system?</strong></td><td>Prevents stale or disputed policy logic</td><td><span class="imp-high">High</span></td><td><span class="crit-high">Critical</span></td></tr>
+          <tr><td>Policy granularity</td><td><strong>Policy encoded as retrievable text only, or also as structured rules and decision trees for deterministic checks?</strong></td><td>Changes system design and explainability model</td><td><span class="imp-high">High</span></td><td><span class="crit-high">Critical</span></td></tr>
+          <tr><td>Jurisdiction handling</td><td><strong>Must the system support market-specific or entity-type-specific policy variants from day one?</strong></td><td>Drives metadata model and retrieval filters</td><td><span class="imp-high">High</span></td><td><span class="imp-high">High</span></td></tr>
+          <tr><td>Conflict handling</td><td><strong>What should happen when two policy sources conflict or policy is ambiguous?</strong></td><td>Needed for abstention and reviewer trust</td><td><span class="imp-high">High</span></td><td><span class="crit-high">Critical</span></td></tr>
+          <tr><td>Exception handling</td><td><strong>Can reviewers approve cases that appear policy-noncompliant if business context warrants it? What override logging is mandatory?</strong></td><td>Critical for governance and auditability</td><td><span class="imp-high">High</span></td><td><span class="crit-high">Critical</span></td></tr>
+          <tr><td>Policy freshness</td><td><strong>What is the acceptable SLA for policy changes to be reflected in production?</strong></td><td>Important for regulatory risk control</td><td><span class="imp-high">High</span></td><td><span class="imp-high">High</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- 4. Document Intelligence -->
+    <div class="theme-label">4 — Document Intelligence, Ingestion &amp; Data Quality</div>
+    <div class="section-wrap">
+      <table class="oq-table">
+        <thead><tr><th>Area</th><th>Open Question</th><th>Why it matters</th><th>Impact</th><th>Criticality</th></tr></thead>
+        <tbody>
+          <tr><td>Intake channels</td><td><strong>From where will documents enter the system — upload UI, email, CRM, ops tool, API, third-party onboarding platform?</strong></td><td>Determines ingestion architecture and integrations</td><td><span class="imp-high">High</span></td><td><span class="crit-high">Critical</span></td></tr>
+          <tr><td>Supported documents</td><td><strong>Which document types are in scope for Phase 1, and what are the minimum quality thresholds?</strong></td><td>Needed to bound extraction complexity</td><td><span class="imp-high">High</span></td><td><span class="imp-high">High</span></td></tr>
+          <tr><td>Source of truth artifact</td><td><strong>Which artifact is legally authoritative — original file, OCR text, extracted fields, or reviewer-edited output?</strong></td><td>Important for audit design and reviewer UX</td><td><span class="imp-high">High</span></td><td><span class="crit-high">Critical</span></td></tr>
+          <tr><td>Quality gates</td><td><strong>What document quality failures should hard-block processing versus simply warn reviewers?</strong></td><td>Prevents silent bad automation</td><td><span class="imp-high">High</span></td><td><span class="crit-high">Critical</span></td></tr>
+          <tr><td>Extraction target</td><td><strong>Full document understanding, or high-value field extraction plus evidence localization only?</strong></td><td>Major impact on model design and effort</td><td><span class="imp-high">High</span></td><td><span class="imp-high">High</span></td></tr>
+          <tr><td>Versioning</td><td><strong>How should re-uploaded or replaced documents be handled — overwrite, new version, or branch case history?</strong></td><td>Needed for case lineage and re-review</td><td><span class="imp-med">Medium</span></td><td><span class="imp-high">High</span></td></tr>
+          <tr><td>Non-standard docs</td><td><strong>Expected handling for handwritten, multilingual, partially obscured, or low-resolution documents?</strong></td><td>Important for real-world operating assumptions</td><td><span class="imp-med">Medium</span></td><td><span class="imp-high">High</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- 5. Retrieval & Reasoning -->
+    <div class="theme-label">5 — Retrieval, Reasoning &amp; Copilot Behavior</div>
+    <div class="section-wrap">
+      <table class="oq-table">
+        <thead><tr><th>Area</th><th>Open Question</th><th>Why it matters</th><th>Impact</th><th>Criticality</th></tr></thead>
+        <tbody>
+          <tr><td>Reasoning role</td><td><strong>Should the AI only summarise evidence and suggest issues, or also generate approval/reject recommendations?</strong></td><td>Core product boundary question</td><td><span class="imp-high">High</span></td><td><span class="crit-high">Critical</span></td></tr>
+          <tr><td>Evidence standards</td><td><strong>What minimum evidence threshold must exist before the AI can make a recommendation?</strong></td><td>Needed for trust and safe automation</td><td><span class="imp-high">High</span></td><td><span class="crit-high">Critical</span></td></tr>
+          <tr><td>Confidence model</td><td><strong>How should confidence be defined — model confidence, evidence completeness, policy match quality, or composite?</strong></td><td>Affects UI behavior and reviewer trust</td><td><span class="imp-high">High</span></td><td><span class="imp-high">High</span></td></tr>
+          <tr><td>Abstention behavior</td><td><strong>When must the copilot abstain instead of answering?</strong></td><td>Core safety requirement</td><td><span class="imp-high">High</span></td><td><span class="crit-high">Critical</span></td></tr>
+          <tr><td>Citation behavior</td><td><strong>What citation standard is expected — sentence-level, issue-level, or recommendation-level evidence linkage?</strong></td><td>Important for explainability and audit</td><td><span class="imp-high">High</span></td><td><span class="imp-high">High</span></td></tr>
+          <tr><td>Output editability</td><td><strong>Which AI-generated outputs are fully editable by reviewers, and which must remain immutable?</strong></td><td>Needed for control boundary design</td><td><span class="imp-med">Medium</span></td><td><span class="imp-high">High</span></td></tr>
+          <tr><td>Prompt ownership</td><td><strong>Who owns prompts, evaluation criteria, and tuning over time — Product, ML, Platform, or Ops?</strong></td><td>Prevents operating confusion post-launch</td><td><span class="imp-med">Medium</span></td><td><span class="imp-high">High</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- 6. Automation & HITL -->
+    <div class="theme-label">6 — Automation Boundaries &amp; Human-in-the-Loop Controls</div>
+    <div class="section-wrap">
+      <table class="oq-table">
+        <thead><tr><th>Area</th><th>Open Question</th><th>Why it matters</th><th>Impact</th><th>Criticality</th></tr></thead>
+        <tbody>
+          <tr><td>Safe automation boundary</td><td><strong>Which actions, if any, can be automated without human approval — issue drafting, classification, checklist prefill, low-risk approvals, follow-up emails?</strong></td><td>One of the most important governance decisions</td><td><span class="imp-high">High</span></td><td><span class="crit-high">Critical</span></td></tr>
+          <tr><td>Approval authority</td><td><strong>Can the system ever auto-close or auto-approve a case, or is every final decision human-owned?</strong></td><td>Direct compliance and risk implication</td><td><span class="imp-high">High</span></td><td><span class="crit-high">Critical</span></td></tr>
+          <tr><td>Override policy</td><td><strong>What reviewer overrides are allowed, and which require justification or secondary approval?</strong></td><td>Key for governance and control</td><td><span class="imp-high">High</span></td><td><span class="crit-high">Critical</span></td></tr>
+          <tr><td>Low-confidence routing</td><td><strong>When confidence is low — manual review, senior escalation, additional data request, or retry?</strong></td><td>Important for operating workflow</td><td><span class="imp-high">High</span></td><td><span class="crit-high">Critical</span></td></tr>
+          <tr><td>Dual control</td><td><strong>Are there case categories that require maker-checker / 4-eyes review regardless of AI support?</strong></td><td>May fundamentally alter workflow design</td><td><span class="imp-high">High</span></td><td><span class="imp-high">High</span></td></tr>
+          <tr><td>Audit threshold</td><td><strong>For which automated recommendations must the system preserve full trace, prompt context, and evidence chain?</strong></td><td>Needed for control and defensibility</td><td><span class="imp-high">High</span></td><td><span class="imp-high">High</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- 7. Auditability & Security -->
+    <div class="theme-label">7 — Auditability, Risk, Security &amp; Controls</div>
+    <div class="section-wrap">
+      <table class="oq-table">
+        <thead><tr><th>Area</th><th>Open Question</th><th>Why it matters</th><th>Impact</th><th>Criticality</th></tr></thead>
+        <tbody>
+          <tr><td>Audit depth</td><td><strong>What level of traceability is mandatory — prompt, retrieved chunks, model output, reviewer edits, policy version, final decision, timestamps?</strong></td><td>Defines audit architecture and storage needs</td><td><span class="imp-high">High</span></td><td><span class="crit-high">Critical</span></td></tr>
+          <tr><td>Data retention</td><td><strong>How long must documents, intermediate artifacts, and reasoning traces be retained?</strong></td><td>Security, legal, and infrastructure implication</td><td><span class="imp-high">High</span></td><td><span class="crit-high">Critical</span></td></tr>
+          <tr><td>Sensitive data handling</td><td><strong>Can documents and extracted data be sent to third-party LLM/API vendors, or must they remain in-region, self-hosted, or redacted?</strong></td><td>Major vendor and architecture constraint</td><td><span class="imp-high">High</span></td><td><span class="crit-high">Critical</span></td></tr>
+          <tr><td>Tenant isolation</td><td><strong>What are the hard requirements for tenant-scoped storage, retrieval, and logs?</strong></td><td>Essential platform and security requirement</td><td><span class="imp-high">High</span></td><td><span class="crit-high">Critical</span></td></tr>
+          <tr><td>Access model</td><td><strong>Which roles can see raw docs, extracted data, AI traces, and policy sources?</strong></td><td>Needed for RBAC and privacy design</td><td><span class="imp-high">High</span></td><td><span class="imp-high">High</span></td></tr>
+          <tr><td>Regulatory reviewability</td><td><strong>What evidence will Compliance and Audit expect if a regulator questions a specific decision six months later?</strong></td><td>Drives observability and lineage design</td><td><span class="imp-high">High</span></td><td><span class="crit-high">Critical</span></td></tr>
+          <tr><td>Redaction needs</td><td><strong>Must the platform support selective masking of personal or sensitive fields during review, analytics, or model processing?</strong></td><td>Important for privacy compliance</td><td><span class="imp-med">Medium</span></td><td><span class="imp-high">High</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- 8. Platform & Architecture -->
+    <div class="theme-label">8 — Platform Reuse, Architecture &amp; Shared Services</div>
+    <div class="section-wrap">
+      <table class="oq-table">
+        <thead><tr><th>Area</th><th>Open Question</th><th>Why it matters</th><th>Impact</th><th>Criticality</th></tr></thead>
+        <tbody>
+          <tr><td>Platform-first depth</td><td><strong>How much abstraction is justified in Phase 1 to support reuse, versus building KYB-specific components first?</strong></td><td>Classic speed vs platform trade-off</td><td><span class="imp-high">High</span></td><td><span class="crit-high">Critical</span></td></tr>
+          <tr><td>Shared service boundaries</td><td><strong>Which services are definitively shared platform assets — document intelligence, policy engine, reasoning, HITL, audit, connectors?</strong></td><td>Needed to avoid duplicated ownership</td><td><span class="imp-high">High</span></td><td><span class="imp-high">High</span></td></tr>
+          <tr><td>Consumer roadmap</td><td><strong>Which second use case is most likely after KYB — KYC individual, merchant onboarding, transaction monitoring, or internal compliance QA?</strong></td><td>Helps sequence reusable capability design</td><td><span class="imp-med">Medium</span></td><td><span class="imp-high">High</span></td></tr>
+          <tr><td>API-first requirement</td><td><strong>Do other products need these services via APIs from day one, or can integration come later?</strong></td><td>Affects architecture and effort</td><td><span class="imp-med">Medium</span></td><td><span class="imp-high">High</span></td></tr>
+          <tr><td>Build vs embed</td><td><strong>Reviewer workspace as a standalone product surface or embedded into an existing operations platform?</strong></td><td>Large impact on UX, access control, and rollout</td><td><span class="imp-high">High</span></td><td><span class="crit-high">Critical</span></td></tr>
+          <tr><td>Workflow orchestration</td><td><strong>Should orchestration live in the platform, the product layer, or an existing enterprise workflow system?</strong></td><td>Major architecture decision</td><td><span class="imp-high">High</span></td><td><span class="imp-high">High</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- 9. Vendor & Tooling -->
+    <div class="theme-label">9 — Vendor, Tooling &amp; Model Strategy</div>
+    <div class="section-wrap">
+      <table class="oq-table">
+        <thead><tr><th>Area</th><th>Open Question</th><th>Why it matters</th><th>Impact</th><th>Criticality</th></tr></thead>
+        <tbody>
+          <tr><td>OCR / extraction vendor</td><td><strong>Build in-house, use cloud-native services, or adopt a specialist document AI vendor?</strong></td><td>Core cost, quality, and time trade-off</td><td><span class="imp-high">High</span></td><td><span class="crit-high">Critical</span></td></tr>
+          <tr><td>LLM strategy</td><td><strong>Multi-model orchestration, or standardise on one approved model and vendor initially?</strong></td><td>Affects reliability, cost, and governance</td><td><span class="imp-high">High</span></td><td><span class="imp-high">High</span></td></tr>
+          <tr><td>Hosting choice</td><td><strong>Are there constraints on cloud region, model hosting, VPC deployment, or vendor contractability?</strong></td><td>Important for enterprise readiness</td><td><span class="imp-high">High</span></td><td><span class="crit-high">Critical</span></td></tr>
+          <tr><td>Evaluation tooling</td><td><strong>What tooling will test prompt quality, regression, hallucination, and policy-grounded performance?</strong></td><td>Required before production confidence</td><td><span class="imp-med">Medium</span></td><td><span class="imp-high">High</span></td></tr>
+          <tr><td>Retrieval stack</td><td><strong>What retrieval infrastructure is preferred and already approved internally?</strong></td><td>Needed to avoid late-stage rework</td><td><span class="imp-med">Medium</span></td><td><span class="imp-high">High</span></td></tr>
+          <tr><td>Buy vs build boundary</td><td><strong>Which layers are strategic to own versus acceptable to outsource?</strong></td><td>Helps leadership make investment decisions</td><td><span class="imp-high">High</span></td><td><span class="crit-high">Critical</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- 10. Metrics -->
+    <div class="theme-label">10 — Metrics, Success Criteria &amp; Evaluation</div>
+    <div class="section-wrap">
+      <table class="oq-table">
+        <thead><tr><th>Area</th><th>Open Question</th><th>Why it matters</th><th>Impact</th><th>Criticality</th></tr></thead>
+        <tbody>
+          <tr><td>North-star outcome</td><td><strong>Primary success metric — analyst productivity, cycle time reduction, quality uplift, compliance consistency, or scalability?</strong></td><td>Needed to align investment logic</td><td><span class="imp-high">High</span></td><td><span class="crit-high">Critical</span></td></tr>
+          <tr><td>Baseline measurement</td><td><strong>What is today's baseline for case handling time, error rate, rework rate, escalation rate, and reviewer throughput?</strong></td><td>Required to prove ROI</td><td><span class="imp-high">High</span></td><td><span class="crit-high">Critical</span></td></tr>
+          <tr><td>Quality metric</td><td><strong>How will "better" decisioning be measured — fewer misses, fewer false positives, higher policy adherence, or audit pass rate?</strong></td><td>Important to avoid productivity-only thinking</td><td><span class="imp-high">High</span></td><td><span class="crit-high">Critical</span></td></tr>
+          <tr><td>AI performance metrics</td><td><strong>Acceptable thresholds for extraction accuracy, evidence relevance, recommendation usefulness, abstention rate, and citation quality?</strong></td><td>Required for release gating</td><td><span class="imp-high">High</span></td><td><span class="imp-high">High</span></td></tr>
+          <tr><td>Online monitoring</td><td><strong>What production metrics will trigger rollback, escalation, or model and prompt review?</strong></td><td>Needed for operational safety</td><td><span class="imp-high">High</span></td><td><span class="imp-high">High</span></td></tr>
+          <tr><td>Human adoption</td><td><strong>How will reviewer trust and usage be measured beyond raw usage logs?</strong></td><td>Critical for real adoption</td><td><span class="imp-med">Medium</span></td><td><span class="imp-med">Medium</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- 11. Rollout & Org -->
+    <div class="theme-label">11 — Rollout, Change Management &amp; Org Readiness</div>
+    <div class="section-wrap">
+      <table class="oq-table">
+        <thead><tr><th>Area</th><th>Open Question</th><th>Why it matters</th><th>Impact</th><th>Criticality</th></tr></thead>
+        <tbody>
+          <tr><td>Rollout model</td><td><strong>Start with a pilot team, one geography, one document subset, or one risk tier?</strong></td><td>Helps de-risk adoption</td><td><span class="imp-high">High</span></td><td><span class="crit-high">Critical</span></td></tr>
+          <tr><td>Parallel run</td><td><strong>Is a shadow mode / AI-assist-only phase required before production decision use?</strong></td><td>Important for trust and validation</td><td><span class="imp-high">High</span></td><td><span class="crit-high">Critical</span></td></tr>
+          <tr><td>Training model</td><td><strong>What enablement is required for analysts, team leads, compliance, and admins?</strong></td><td>Needed for adoption success</td><td><span class="imp-med">Medium</span></td><td><span class="imp-high">High</span></td></tr>
+          <tr><td>Change resistance</td><td><strong>What are the likely objections from reviewers or compliance teams, and who owns stakeholder management?</strong></td><td>Prevents organisational drag</td><td><span class="imp-med">Medium</span></td><td><span class="imp-high">High</span></td></tr>
+          <tr><td>Operating ownership</td><td><strong>After launch, who owns policy updates, prompt tuning, incident response, and model drift review?</strong></td><td>Essential for sustainability</td><td><span class="imp-high">High</span></td><td><span class="crit-high">Critical</span></td></tr>
+          <tr><td>Support model</td><td><strong>What is the expected L1/L2/L3 support model when the system misbehaves or reviewers dispute outputs?</strong></td><td>Important for live operations</td><td><span class="imp-med">Medium</span></td><td><span class="imp-high">High</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <nav class="section-nav">
+      <a href="dependency-map.html" class="nav-btn"><span class="nav-btn-dir">← Previous</span><span class="nav-btn-title">Dependency &amp; Risk Map</span></a>
+      <span class="nav-center">36 of 36</span>
+      <a href="../index.html" class="nav-btn next"><span class="nav-btn-dir">Home →</span><span class="nav-btn-title">All Sections</span></a>
+    </nav>
+  </main>
+</div>
+<footer class="site-footer">Reap AI Platform — KYB Review Copilot &nbsp;·&nbsp; Technical PRD</footer>
+<script src="../js/main.js"></script>
+</body></html>
