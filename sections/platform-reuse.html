@@ -4,6 +4,61 @@
   <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>8.1 Platform Reuse Map — Reap KYB PRD</title>
   <link rel="stylesheet" href="../css/styles.css" />
+<style>
+  .intent-bar { background:var(--navy); border-radius:9px; padding:1rem 1.25rem; margin-bottom:1.75rem; font-size:13px; color:rgba(255,255,255,.75); line-height:1.6; border-left:4px solid #818CF8; }
+  .intent-bar strong { color:#fff; }
+
+  /* service cards */
+  .svc-list { display:flex; flex-direction:column; gap:.75rem; margin-bottom:1.75rem; }
+  .svc-card { border:1px solid var(--border); border-radius:9px; overflow:hidden; }
+  .svc-hdr  { display:flex; align-items:center; gap:10px; padding:.65rem 1rem; background:var(--bg); border-bottom:1px solid var(--border); }
+  .svc-num  { width:22px; height:22px; border-radius:50%; background:#EDE9FE; color:#6D28D9; font-size:10px; font-weight:800; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .svc-name { font-size:13px; font-weight:700; color:var(--text); }
+  .svc-reuse-tag { margin-left:auto; font-size:10px; font-weight:600; padding:2px 8px; border-radius:4px; background:#EDE9FE; color:#6D28D9; white-space:nowrap; }
+  .svc-body { padding:.75rem 1rem; display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
+  @media(max-width:600px){ .svc-body { grid-template-columns:1fr; } }
+  .svc-col-label { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.07em; color:var(--text-dim); margin-bottom:.4rem; }
+  .svc-pts { list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:.3rem; }
+  .svc-pts li { font-size:12px; color:var(--text-mid); line-height:1.4; padding-left:10px; position:relative; }
+  .svc-pts li::before { content:'·'; position:absolute; left:0; color:var(--text-dim); }
+
+  /* reuse roadmap table */
+  .rt-wrap { border:1px solid var(--border); border-radius:9px; overflow:hidden; margin-bottom:1.75rem; }
+  .rt-table { width:100%; font-size:12px; border-collapse:collapse; }
+  .rt-table th { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.06em; padding:8px 12px; background:var(--bg); border-bottom:2px solid var(--border); color:var(--text-dim); text-align:left; }
+  .rt-table td { padding:9px 12px; border-bottom:1px solid var(--border); vertical-align:middle; color:var(--text-mid); }
+  .rt-table tr:last-child td { border-bottom:none; }
+  .rt-table td:first-child { font-weight:600; color:var(--text); }
+  .ph1 { background:#EFF6FF; color:#1D4ED8; padding:2px 7px; border-radius:4px; font-size:10px; font-weight:700; white-space:nowrap; }
+  .ph2 { background:#F5F3FF; color:#6D28D9; padding:2px 7px; border-radius:4px; font-size:10px; font-weight:700; white-space:nowrap; }
+  .ph3 { background:#FFFBEB; color:#B45309; padding:2px 7px; border-radius:4px; font-size:10px; font-weight:700; white-space:nowrap; }
+  .ph13 { background:#F0FDF4; color:#166534; padding:2px 7px; border-radius:4px; font-size:10px; font-weight:700; white-space:nowrap; }
+
+  /* two-col split lists */
+  .split-2col { display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-bottom:1.75rem; }
+  @media(max-width:600px){ .split-2col { grid-template-columns:1fr; } }
+  .split-panel { border:1px solid var(--border); border-radius:9px; padding:.85rem 1rem; }
+  .sp-label { font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:.07em; margin-bottom:.6rem; }
+  .sp-shared .sp-label { color:#6D28D9; }
+  .sp-kyb    .sp-label { color:#0E7490; }
+  .sp-pts { list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:.3rem; }
+  .sp-pts li { font-size:12px; color:var(--text-mid); padding-left:10px; position:relative; line-height:1.4; }
+  .sp-pts li::before { content:'·'; position:absolute; left:0; color:var(--text-dim); }
+
+  /* readiness criteria */
+  .crit-list { list-style:none; padding:0; margin:0 0 1.75rem; display:flex; flex-direction:column; gap:.4rem; }
+  .crit-list li { display:flex; align-items:flex-start; gap:8px; font-size:12.5px; color:var(--text-mid); line-height:1.4; }
+  .crit-dot { width:6px; height:6px; border-radius:50%; background:#6D28D9; flex-shrink:0; margin-top:5px; }
+
+  /* callout */
+  .final-callout { background:var(--navy); border-left:4px solid #818CF8; border-radius:9px; padding:1rem 1.25rem; font-size:13px; color:rgba(255,255,255,.8); line-height:1.6; margin-bottom:1.75rem; }
+  .final-callout strong { color:#fff; }
+
+  /* risk list */
+  .risk-list { list-style:none; padding:0; margin:0 0 1.75rem; display:flex; flex-direction:column; gap:.35rem; }
+  .risk-list li { display:flex; align-items:flex-start; gap:8px; font-size:12px; color:var(--text-mid); }
+  .risk-x { color:#DC2626; font-weight:800; flex-shrink:0; }
+</style>
 </head>
 <body>
 <header class="site-header">
@@ -30,14 +85,16 @@
     <div class="section-header">
       <div class="section-block-tag" style="background:var(--b8)">Block 8 — Delivery Strategy</div>
       <h1>Platform Reuse Map</h1>
-      <p class="section-intro">How KYB-specific services are abstracted into reusable platform capabilities — enabling other Reap products (KYC, transaction monitoring, onboarding) to leverage the same AI and compliance infrastructure.</p>
+      <p class="section-intro">KYB is the first consumer, not the only one. Capabilities built for KYB should be abstracted into reusable services that later support KYC, merchant onboarding, and transaction monitoring — reducing duplicate build effort and compounding platform value.</p>
     </div>
 
+    <div class="intent-bar">
+      <strong>Design Intent.</strong> Build core capabilities as shared, versioned platform services. Keep workflow-specific rules, UI logic, and operational configuration in the product layer. Multiple products reuse the same AI, policy, audit, and review infrastructure without coupling to KYB-specific logic.
+    </div>
+
+    <!-- Existing Mermaid diagram preserved -->
     <div class="diagram-section">
-      <div class="diagram-label">
-        <h3>Platform Layer Reuse — Service Map</h3>
-        
-      </div>
+      <div class="diagram-label"><h3>Platform Layer Reuse — Service Map</h3></div>
       <div class="diagram-wrap">
         <div class="mermaid">
 flowchart TB
@@ -81,30 +138,174 @@ flowchart TB
       </div>
     </div>
 
-    <h2>Platform-First Design Principle</h2>
-    <div class="callout callout-info">
-      <div class="callout-icon">&#128161;</div>
-      <div class="callout-body"><strong>Principle:</strong> Build every KYB capability as a versioned API service, not a hard-wired feature. KYB is the first consumer, not the only one.</div>
+    <!-- Platform Services -->
+    <h2>Platform Services — What Each Does</h2>
+    <p style="font-size:13px;color:var(--text-mid);margin-bottom:1rem;">Eight shared services form the platform layer. Each exposes a versioned API and is consumed by product teams, not owned by them.</p>
+
+    <div class="svc-list">
+
+      <div class="svc-card">
+        <div class="svc-hdr"><div class="svc-num">1</div><span class="svc-name">Document Intelligence Service</span><span class="svc-reuse-tag">KYB · KYC · Onboarding · Risk</span></div>
+        <div class="svc-body">
+          <div><div class="svc-col-label">Responsibilities</div><ul class="svc-pts"><li>File intake and preprocessing</li><li>OCR and text extraction</li><li>Structured field extraction</li><li>Document classification</li><li>Chunking and provenance preservation</li><li>Document quality signals</li></ul></div>
+          <div><div class="svc-col-label">Platform value</div><ul class="svc-pts"><li>Eliminates duplicate extraction builds per product</li><li>Consistent quality signals across workflows</li><li>Single improvement surface for OCR and parsing</li></ul></div>
+        </div>
+      </div>
+
+      <div class="svc-card">
+        <div class="svc-hdr"><div class="svc-num">2</div><span class="svc-name">Policy Engine / RAG + Policy Store API</span><span class="svc-reuse-tag">KYB · KYC · TM · Onboarding</span></div>
+        <div class="svc-body">
+          <div><div class="svc-col-label">Responsibilities</div><ul class="svc-pts"><li>Policy storage and versioning</li><li>Metadata tagging by jurisdiction, use case, risk type</li><li>Retrieval and policy selection</li><li>Grounded context packaging</li><li>Policy citation support</li></ul></div>
+          <div><div class="svc-col-label">Platform value</div><ul class="svc-pts"><li>Single policy source of truth for all workflows</li><li>Policy changes propagate once, not per product</li><li>Consistent grounding and citation across reviews</li></ul></div>
+        </div>
+      </div>
+
+      <div class="svc-card">
+        <div class="svc-hdr"><div class="svc-num">3</div><span class="svc-name">AI Reasoning Service</span><span class="svc-reuse-tag">All AI-assisted review workflows</span></div>
+        <div class="svc-body">
+          <div><div class="svc-col-label">Responsibilities</div><ul class="svc-pts"><li>LLM access and routing</li><li>Grounded prompt assembly</li><li>Evidence-linked recommendation generation</li><li>Summary and follow-up drafting</li><li>Structured response contracts</li><li>Abstention support</li></ul></div>
+          <div><div class="svc-col-label">Platform value</div><ul class="svc-pts"><li>Model versioning managed centrally</li><li>Prompt and eval improvements benefit all consumers</li><li>Consistent abstention and confidence behavior</li></ul></div>
+        </div>
+      </div>
+
+      <div class="svc-card">
+        <div class="svc-hdr"><div class="svc-num">4</div><span class="svc-name">Confidence Scoring Service</span><span class="svc-reuse-tag">Any workflow with selective AI trust</span></div>
+        <div class="svc-body">
+          <div><div class="svc-col-label">Responsibilities</div><ul class="svc-pts"><li>Confidence scoring by output type</li><li>Threshold logic and fallback triggers</li><li>Reviewer-facing confidence banding</li><li>Risk-tier-based thresholding support</li></ul></div>
+          <div><div class="svc-col-label">Platform value</div><ul class="svc-pts"><li>Standardised trust model across products</li><li>Threshold changes without re-engineering products</li></ul></div>
+        </div>
+      </div>
+
+      <div class="svc-card">
+        <div class="svc-hdr"><div class="svc-num">5</div><span class="svc-name">HITL Framework / Review Workspace SDK</span><span class="svc-reuse-tag">KYB · KYC · TM · Exception handling</span></div>
+        <div class="svc-body">
+          <div><div class="svc-col-label">Responsibilities</div><ul class="svc-pts"><li>Review task model</li><li>Editable AI output rendering</li><li>Evidence and citation display</li><li>Override capture and escalation support</li><li>Reviewer action logging</li></ul></div>
+          <div><div class="svc-col-label">Platform value</div><ul class="svc-pts"><li>Consistent reviewer UX patterns across workflows</li><li>Override and audit controls standardised</li></ul></div>
+        </div>
+      </div>
+
+      <div class="svc-card">
+        <div class="svc-hdr"><div class="svc-num">6</div><span class="svc-name">Audit &amp; Lineage Service</span><span class="svc-reuse-tag">All regulated or review-heavy workflows</span></div>
+        <div class="svc-body">
+          <div><div class="svc-col-label">Responsibilities</div><ul class="svc-pts"><li>Event logging</li><li>Source-to-output lineage</li><li>Policy and model version association</li><li>Action reconstruction</li><li>Exportable audit history</li></ul></div>
+          <div><div class="svc-col-label">Platform value</div><ul class="svc-pts"><li>Uniform audit depth across all products</li><li>Single compliance evidence trail for regulators</li></ul></div>
+        </div>
+      </div>
+
+      <div class="svc-card">
+        <div class="svc-hdr"><div class="svc-num">7</div><span class="svc-name">Workflow / Decisioning Framework</span><span class="svc-reuse-tag">Onboarding · KYC lifecycle · Exception queues</span></div>
+        <div class="svc-body">
+          <div><div class="svc-col-label">Responsibilities</div><ul class="svc-pts"><li>Case and task state transitions</li><li>Queue routing and escalation logic</li><li>Retry and reprocessing support</li><li>SLA-aware workflow progression</li></ul></div>
+          <div><div class="svc-col-label">Platform value</div><ul class="svc-pts"><li>Workflow primitives reused without rebuilding</li><li>Consistent queue and escalation behavior</li></ul></div>
+        </div>
+      </div>
+
+      <div class="svc-card">
+        <div class="svc-hdr"><div class="svc-num">8</div><span class="svc-name">Notification &amp; Communication Service</span><span class="svc-reuse-tag">Document follow-ups · Investigation workflows</span></div>
+        <div class="svc-body">
+          <div><div class="svc-col-label">Responsibilities</div><ul class="svc-pts"><li>Templated outbound communication</li><li>Reminder triggers and internal notifications</li><li>Communication event history</li><li>Case-linked interaction capture</li></ul></div>
+          <div><div class="svc-col-label">Platform value</div><ul class="svc-pts"><li>Comms history searchable across cases</li><li>Template library shared across workflows</li></ul></div>
+        </div>
+      </div>
+
     </div>
 
+    <!-- API Contracts -->
     <h2>Service API Contracts</h2>
-    <p>[ Each platform service exposes a stable, versioned REST API. KYB-specific logic lives in the product layer, not the platform service. ]</p>
+    <p style="font-size:13px;color:var(--text-mid);margin-bottom:.75rem;">Each platform service exposes a stable, versioned API. Consumer products integrate against the contract, not the implementation.</p>
+    <ul style="font-size:13px;color:var(--text-mid);line-height:1.7;padding-left:1.25rem;margin-bottom:1rem;">
+      <li>Versioned REST APIs as default; async patterns for long-running jobs</li>
+      <li>Structured request/response schemas with explicit error and fallback states</li>
+      <li>Idempotent retry behavior where relevant</li>
+      <li>Tenant-safe and auth-checked by design</li>
+      <li>Trace IDs for cross-service debugging</li>
+      <li>Backward compatibility for active consumers</li>
+    </ul>
+    <p style="font-size:12.5px;color:var(--text-dim);margin-bottom:1.75rem;"><strong style="color:var(--text);">Contract rule:</strong> KYB-specific business logic belongs in the product layer, not the service. Example — the Document Intelligence Service extracts and normalises; the KYB product decides which fields are mandatory for its verification flow.</p>
 
+    <!-- Reusable vs KYB-Specific -->
+    <h2>Reusable vs KYB-Specific</h2>
+    <div class="split-2col">
+      <div class="split-panel sp-shared">
+        <div class="sp-label">Shared Platform Capabilities</div>
+        <ul class="sp-pts">
+          <li>Document ingestion and OCR</li>
+          <li>Extraction and normalization</li>
+          <li>Policy retrieval and grounding</li>
+          <li>Evidence packaging and citation</li>
+          <li>Model orchestration</li>
+          <li>Confidence scoring</li>
+          <li>Audit and lineage</li>
+          <li>Workflow primitives</li>
+          <li>Review and override framework</li>
+          <li>Notifications</li>
+          <li>Connectors framework</li>
+          <li>Eval instrumentation foundations</li>
+        </ul>
+      </div>
+      <div class="split-panel sp-kyb">
+        <div class="sp-label">KYB-Specific (Product Layer)</div>
+        <ul class="sp-pts">
+          <li>KYB case schema and required attributes</li>
+          <li>KYB policy packs and decision rules</li>
+          <li>KYB reviewer workspace flows</li>
+          <li>KYB risk indicators and escalation criteria</li>
+          <li>KYB follow-up templates and evidence requirements</li>
+          <li>KYB reporting views and operational thresholds</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Reuse Roadmap -->
     <h2>Reuse Roadmap</h2>
-    <div class="table-wrap"><table>
-      <thead><tr><th>Platform Service</th><th>KYB (Phase)</th><th>KYC Reuse (Phase)</th><th>Transaction Monitoring (Phase)</th></tr></thead>
-      <tbody>
-        <tr><td>Document Intelligence</td><td>Phase 1</td><td>Phase 2</td><td>Phase 3</td></tr>
-        <tr><td>Policy Engine</td><td>Phase 2</td><td>Phase 2</td><td>Phase 2</td></tr>
-        <tr><td>AI Reasoning</td><td>Phase 2</td><td>Phase 3</td><td>Phase 3</td></tr>
-        <tr><td>HITL Framework</td><td>Phase 2</td><td>Phase 3</td><td>—</td></tr>
-        <tr><td>Audit &amp; Lineage</td><td>Phase 1</td><td>Phase 2</td><td>Phase 2</td></tr>
-      </tbody>
-    </table></div>
+    <div class="rt-wrap">
+      <table class="rt-table">
+        <thead><tr><th>Platform Service</th><th>KYB</th><th>KYC Reuse</th><th>Transaction Monitoring</th></tr></thead>
+        <tbody>
+          <tr><td>Document Intelligence Service</td><td><span class="ph1">Phase 1</span></td><td><span class="ph2">Phase 2</span></td><td><span class="ph3">Phase 3</span></td></tr>
+          <tr><td>Policy Engine / RAG + Policy Store</td><td><span class="ph1">Phase 1</span></td><td><span class="ph2">Phase 2</span></td><td><span class="ph3">Phase 3</span></td></tr>
+          <tr><td>AI Reasoning Service</td><td><span class="ph1">Phase 1</span></td><td><span class="ph2">Phase 2</span></td><td><span class="ph3">Phase 3</span></td></tr>
+          <tr><td>HITL Framework / Review Workspace SDK</td><td><span class="ph1">Phase 1</span></td><td><span class="ph2">Phase 2</span></td><td><span class="ph3">Phase 3</span></td></tr>
+          <tr><td>Audit &amp; Lineage Service</td><td><span class="ph13">P1 foundation / P3 depth</span></td><td><span class="ph2">Phase 2</span></td><td><span class="ph3">Phase 3</span></td></tr>
+          <tr><td>Workflow / Decisioning Framework</td><td><span class="ph1">Phase 1</span></td><td><span class="ph2">Phase 2</span></td><td><span class="ph3">Phase 3</span></td></tr>
+          <tr><td>Notification &amp; Communication Service</td><td><span class="ph2">Phase 2</span></td><td><span class="ph2">Phase 2</span></td><td><span class="ph3">Phase 3</span></td></tr>
+          <tr><td>Confidence Scoring Service</td><td><span class="ph3">Phase 3</span></td><td><span class="ph3">Phase 3</span></td><td><span class="ph3">Phase 3</span></td></tr>
+          <tr><td>Evaluation / Evals Framework</td><td><span class="ph3">Phase 3</span></td><td><span class="ph3">Phase 3</span></td><td><span class="ph3">Phase 3</span></td></tr>
+          <tr><td>External Connector Framework</td><td><span class="ph3">Phase 3</span></td><td><span class="ph2">Phase 2</span></td><td><span class="ph3">Phase 3</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Reuse Readiness Criteria -->
+    <h2>Reuse Readiness Criteria</h2>
+    <p style="font-size:13px;color:var(--text-mid);margin-bottom:.75rem;">A KYB-built capability should only be considered platform-ready if it meets all of the following:</p>
+    <ul class="crit-list">
+      <li><span class="crit-dot"></span>Generic interface — not KYB-coupled naming or structure</li>
+      <li><span class="crit-dot"></span>Tenant-safe and role-safe by design</li>
+      <li><span class="crit-dot"></span>Versioned contract with backward compatibility</li>
+      <li><span class="crit-dot"></span>Configurable rather than hardcoded rules</li>
+      <li><span class="crit-dot"></span>Observable and traceable independently</li>
+      <li><span class="crit-dot"></span>Testable without coupling to one product's test suite</li>
+      <li><span class="crit-dot"></span>Supports at least one plausible second consumer with limited rework</li>
+    </ul>
+
+    <!-- Risks if not designed early -->
+    <h2>Risks if Reuse Is Not Designed Early</h2>
+    <ul class="risk-list">
+      <li><span class="risk-x">✕</span>KYB becomes a tightly coupled vertical — hard to abstract later</li>
+      <li><span class="risk-x">✕</span>Duplicate AI and compliance logic appears across teams</li>
+      <li><span class="risk-x">✕</span>Inconsistent audit and control behavior emerges by product</li>
+      <li><span class="risk-x">✕</span>KYC or transaction monitoring launches become slower and costlier</li>
+      <li><span class="risk-x">✕</span>Model and policy improvements cannot be propagated cleanly across products</li>
+    </ul>
+
+    <div class="final-callout">
+      <strong>Build shared intelligence once, apply it many times.</strong> KYB should prove the platform, not trap it.
+    </div>
 
     <nav class="section-nav">
-      <a href="workflow-state.html" class="nav-btn"><span class="nav-btn-dir">← Previous</span><span class="nav-btn-title">Workflow State Transitions</span></a>
-      <span class="nav-center">32 of 39</span>
+      <a href="workflow-state.html" class="nav-btn"><span class="nav-btn-dir">← Previous</span><span class="nav-btn-title">Workflow State Model</span></a>
+      <span class="nav-center">32 of 36</span>
       <a href="go-to-market.html" class="nav-btn next"><span class="nav-btn-dir">Next →</span><span class="nav-btn-title">Go-to-Market &amp; Rollout</span></a>
     </nav>
   </main>
