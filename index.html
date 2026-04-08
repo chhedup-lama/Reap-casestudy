@@ -39,7 +39,7 @@
       where AI prepares the evidence and humans make the decisions.
     </p>
     <div class="hero-meta">
-      <div class="hero-meta-item"><strong>8</strong>&nbsp;Blocks</div>
+      <div class="hero-meta-item"><strong>9</strong>&nbsp;Blocks</div>
       <div class="hero-meta-item" style="color:rgba(255,255,255,.2)">&#x2022;</div>
       <div class="hero-meta-item"><strong>39</strong>&nbsp;Sections</div>
       <div class="hero-meta-item" style="color:rgba(255,255,255,.2)">&#x2022;</div>
@@ -172,44 +172,156 @@
     </div>
   </div>
 
-  <!-- BLOCK 4 ─ Solution Architecture -->
+  <!-- BLOCK 4 ─ End to End Platform Components enabling KYB -->
   <div class="block-group b4">
     <div class="block-label">
       <div class="block-num">4</div>
+      <h3>End to End Platform Components enabling KYB</h3>
+      <span class="block-count">&nbsp;— 7 sections</span>
+    </div>
+    <div class="cards-grid">
+      <a href="sections/rag-overview.html" class="section-card">
+        <div class="card-num">4.1</div>
+        <div class="card-title">RAG Architecture Overview</div>
+        <div class="card-desc">Retrieval-Augmented Generation design: retriever, ranker, and generator layers.</div>
+        <div class="card-tags"><span class="card-tag tag-arch">AI Core</span></div>
+      </a>
+      <a href="sections/ingestion-pipeline.html" class="section-card">
+        <div class="card-num">4.2</div>
+        <div class="card-title">Input &amp; Intake Layer — Ingestion &amp; Storage</div>
+        <div class="card-desc">Document intake sources, two-corpus design, ingestion pipeline, and storage contract.</div>
+      </a>
+      <a href="sections/retrieval-policy.html" class="section-card">
+        <div class="card-num">4.3</div>
+        <div class="card-title">Document Intelligence</div>
+        <div class="card-desc">OCR, classification, field extraction, chunking strategy, and quality validation.</div>
+        <div class="card-tags"><span class="card-tag tag-diagram">Diagram</span></div>
+      </a>
+      <a href="sections/llm-reasoning.html" class="section-card">
+        <div class="card-num">4.4</div>
+        <div class="card-title">Knowledge, Retrieval &amp; Policy Grounding</div>
+        <div class="card-desc">Evidence retrieval, policy grounding, citation design, and grounded context assembly.</div>
+        <div class="card-tags"><span class="card-tag tag-arch">AI Core</span></div>
+      </a>
+      <a href="sections/reviewer-assist.html" class="section-card">
+        <div class="card-num">4.5</div>
+        <div class="card-title">Reviewer Assist / Case Intelligence</div>
+        <div class="card-desc">AI-generated case summaries, criterion-level findings, and reviewer decision support.</div>
+        <div class="card-tags"><span class="card-tag tag-arch">AI Core</span></div>
+      </a>
+      <a href="sections/workflow-orchestration.html" class="section-card">
+        <div class="card-num">4.6</div>
+        <div class="card-title">Workflow Orchestration &amp; Human Review</div>
+        <div class="card-desc">Queue management, case routing, HITL controls, and reviewer action lifecycle.</div>
+      </a>
+      <a href="sections/confidence-scoring.html" class="section-card">
+        <div class="card-num">4.7</div>
+        <div class="card-title">Confidence Scoring &amp; Uncertainty</div>
+        <div class="card-desc">Score composition, routing bands, uncertainty signals, and calibration strategy.</div>
+      </a>
+    </div>
+  </div>
+
+  <!-- BLOCK 5 ─ Trust, Reliability, and Governance -->
+  <div class="block-group b5">
+    <div class="block-label">
+      <div class="block-num">5</div>
+      <h3>Trust, Reliability, and Governance</h3>
+      <span class="block-count">&nbsp;— 6 sections</span>
+    </div>
+    <div class="cards-grid">
+      <a href="sections/control-framework.html" class="section-card">
+        <div class="card-num">5.1</div>
+        <div class="card-title">Control, Quality &amp; Operating Framework</div>
+        <div class="card-desc">Governance structure, human decision rights, access control, and AI reliability across P1 and P3.</div>
+        <div class="card-tags"><span class="card-tag tag-core">Governance</span><span class="card-tag tag-arch">Access Control</span></div>
+      </a>
+      <a href="sections/hitl-fallback.html" class="section-card">
+        <div class="card-num">5.2</div>
+        <div class="card-title">HITL &amp; Fallback Control Model</div>
+        <div class="card-desc">Human-in-the-loop decision gates, escalation triggers, and override logic.</div>
+        <div class="card-tags"><span class="card-tag tag-diagram">Diagram</span><span class="card-tag tag-core">HITL</span></div>
+      </a>
+      <a href="sections/audit-logging.html" class="section-card">
+        <div class="card-num">5.3</div>
+        <div class="card-title">Audit &amp; Logging Architecture</div>
+        <div class="card-desc">Immutable audit trail, decision lineage, and explainability records.</div>
+        <div class="card-tags"><span class="card-tag tag-diagram">Diagram</span></div>
+      </a>
+      <a href="sections/compliance.html" class="section-card">
+        <div class="card-num">5.4</div>
+        <div class="card-title">Compliance &amp; Regulatory Alignment</div>
+        <div class="card-desc">AML, FATF, local jurisdiction mapping, and ongoing policy update process.</div>
+        <div class="card-tags"><span class="card-tag tag-strategy">Compliance</span></div>
+      </a>
+      <a href="sections/risk-framework.html" class="section-card">
+        <div class="card-num">5.5</div>
+        <div class="card-title">Risk Framework</div>
+        <div class="card-desc">Technical, operational, and regulatory risk register with mitigations.</div>
+      </a>
+      <a href="sections/data-privacy.html" class="section-card">
+        <div class="card-num">5.6</div>
+        <div class="card-title">Data Privacy &amp; Security</div>
+        <div class="card-desc">PII handling, data retention, PDPA/GDPR alignment, and access controls.</div>
+      </a>
+    </div>
+  </div>
+
+  <!-- BLOCK 6 ─ Platform and Integration Layer -->
+  <div class="block-group b6">
+    <div class="block-label">
+      <div class="block-num">6</div>
+      <h3>Platform and Integration Layer</h3>
+      <span class="block-count">&nbsp;— 1 section</span>
+    </div>
+    <div class="cards-grid">
+      <a href="sections/platform-integration.html" class="section-card">
+        <div class="card-num">6.1</div>
+        <div class="card-title">Platform &amp; Integration Layer</div>
+        <div class="card-desc">Case backbone, artifact storage, IAM, workflow orchestration, audit foundation, policy layer, observability, comms, and analytics — phased across P1/P2/P3.</div>
+        <div class="card-tags"><span class="card-tag tag-arch">Platform</span><span class="card-tag tag-core">9 Capabilities</span></div>
+      </a>
+    </div>
+  </div>
+
+  <!-- BLOCK 7 ─ Solution Architecture -->
+  <div class="block-group b7">
+    <div class="block-label">
+      <div class="block-num">7</div>
       <h3>Solution Architecture</h3>
       <span class="block-count">&nbsp;— 6 sections</span>
     </div>
     <div class="cards-grid">
       <a href="sections/solution-architecture.html" class="section-card">
-        <div class="card-num">4.1</div>
+        <div class="card-num">7.1</div>
         <div class="card-title">E2E Solution Architecture</div>
         <div class="card-desc">Full system diagram from document upload to decision output.</div>
         <div class="card-tags"><span class="card-tag tag-diagram">Diagram</span><span class="card-tag tag-arch">Core Arch</span></div>
       </a>
       <a href="sections/data-model.html" class="section-card">
-        <div class="card-num">4.2</div>
+        <div class="card-num">7.2</div>
         <div class="card-title">Data Model &amp; Object Relationships</div>
         <div class="card-desc">Entity-relationship model: Applications, Documents, Reviews, Decisions.</div>
         <div class="card-tags"><span class="card-tag tag-diagram">Diagram</span></div>
       </a>
       <a href="sections/api-design.html" class="section-card">
-        <div class="card-num">4.3</div>
+        <div class="card-num">7.3</div>
         <div class="card-title">API Design Principles</div>
         <div class="card-desc">REST/async contract design, versioning, authentication, and error handling.</div>
         <div class="card-tags"><span class="card-tag tag-arch">API</span></div>
       </a>
       <a href="sections/infrastructure.html" class="section-card">
-        <div class="card-num">4.4</div>
+        <div class="card-num">7.4</div>
         <div class="card-title">Infrastructure &amp; Deployment</div>
         <div class="card-desc">Cloud topology, containerisation, CI/CD pipeline, and environment strategy.</div>
       </a>
       <a href="sections/security-design.html" class="section-card">
-        <div class="card-num">4.5</div>
+        <div class="card-num">7.5</div>
         <div class="card-title">Security Architecture</div>
         <div class="card-desc">Encryption at rest/transit, IAM, secrets management, and threat model.</div>
       </a>
       <a href="sections/workflow-state.html" class="section-card">
-        <div class="card-num">4.6</div>
+        <div class="card-num">7.6</div>
         <div class="card-title">Workflow State Model</div>
         <div class="card-desc">KYB case lifecycle state machine — 12 states, all valid transitions, audit triggers, and handoff rules.</div>
         <div class="card-tags"><span class="card-tag tag-diagram">Diagram</span><span class="card-tag tag-arch">State Machine</span></div>
@@ -217,154 +329,65 @@
     </div>
   </div>
 
-  <!-- BLOCK 5 ─ End to End Platform Components enabling KYB -->
-  <div class="block-group b5">
+  <!-- BLOCK 8 ─ Delivery Strategy -->
+  <div class="block-group b8">
     <div class="block-label">
-      <div class="block-num">5</div>
-      <h3>End to End Platform Components enabling KYB</h3>
-      <span class="block-count">&nbsp;— 7 sections</span>
-    </div>
-    <div class="cards-grid">
-      <a href="sections/rag-overview.html" class="section-card">
-        <div class="card-num">5.1</div>
-        <div class="card-title">RAG Architecture Overview</div>
-        <div class="card-desc">Retrieval-Augmented Generation design: retriever, ranker, and generator layers.</div>
-        <div class="card-tags"><span class="card-tag tag-arch">AI Core</span></div>
-      </a>
-      <a href="sections/ingestion-pipeline.html" class="section-card">
-        <div class="card-num">5.2</div>
-        <div class="card-title">Input &amp; Intake Layer — Ingestion &amp; Storage</div>
-        <div class="card-desc">Document intake sources, two-corpus design, ingestion pipeline, and storage contract.</div>
-      </a>
-      <a href="sections/retrieval-policy.html" class="section-card">
-        <div class="card-num">5.3</div>
-        <div class="card-title">Document Intelligence</div>
-        <div class="card-desc">OCR, classification, field extraction, chunking strategy, and quality validation.</div>
-        <div class="card-tags"><span class="card-tag tag-diagram">Diagram</span></div>
-      </a>
-      <a href="sections/llm-reasoning.html" class="section-card">
-        <div class="card-num">5.4</div>
-        <div class="card-title">Knowledge, Retrieval &amp; Policy Grounding</div>
-        <div class="card-desc">Evidence retrieval, policy grounding, citation design, and grounded context assembly.</div>
-        <div class="card-tags"><span class="card-tag tag-arch">AI Core</span></div>
-      </a>
-      <a href="sections/reviewer-assist.html" class="section-card">
-        <div class="card-num">5.5</div>
-        <div class="card-title">Reviewer Assist / Case Intelligence</div>
-        <div class="card-desc">AI-generated case summaries, criterion-level findings, and reviewer decision support.</div>
-        <div class="card-tags"><span class="card-tag tag-arch">AI Core</span></div>
-      </a>
-      <a href="sections/workflow-orchestration.html" class="section-card">
-        <div class="card-num">5.6</div>
-        <div class="card-title">Workflow Orchestration &amp; Human Review</div>
-        <div class="card-desc">Queue management, case routing, HITL controls, and reviewer action lifecycle.</div>
-      </a>
-      <a href="sections/confidence-scoring.html" class="section-card">
-        <div class="card-num">5.7</div>
-        <div class="card-title">Confidence Scoring &amp; Uncertainty</div>
-        <div class="card-desc">Score composition, routing bands, uncertainty signals, and calibration strategy.</div>
-      </a>
-    </div>
-  </div>
-
-  <!-- BLOCK 6 ─ Governance -->
-  <div class="block-group b6">
-    <div class="block-label">
-      <div class="block-num">6</div>
-      <h3>Governance</h3>
-      <span class="block-count">&nbsp;— 5 sections</span>
-    </div>
-    <div class="cards-grid">
-      <a href="sections/hitl-fallback.html" class="section-card">
-        <div class="card-num">6.1</div>
-        <div class="card-title">HITL &amp; Fallback Control Model</div>
-        <div class="card-desc">Human-in-the-loop decision gates, escalation triggers, and override logic.</div>
-        <div class="card-tags"><span class="card-tag tag-diagram">Diagram</span><span class="card-tag tag-core">HITL</span></div>
-      </a>
-      <a href="sections/audit-logging.html" class="section-card">
-        <div class="card-num">6.2</div>
-        <div class="card-title">Audit &amp; Logging Architecture</div>
-        <div class="card-desc">Immutable audit trail, decision lineage, and explainability records.</div>
-        <div class="card-tags"><span class="card-tag tag-diagram">Diagram</span></div>
-      </a>
-      <a href="sections/compliance.html" class="section-card">
-        <div class="card-num">6.3</div>
-        <div class="card-title">Compliance &amp; Regulatory Alignment</div>
-        <div class="card-desc">AML, FATF, local jurisdiction mapping, and ongoing policy update process.</div>
-        <div class="card-tags"><span class="card-tag tag-strategy">Compliance</span></div>
-      </a>
-      <a href="sections/risk-framework.html" class="section-card">
-        <div class="card-num">6.4</div>
-        <div class="card-title">Risk Framework</div>
-        <div class="card-desc">Technical, operational, and regulatory risk register with mitigations.</div>
-      </a>
-      <a href="sections/data-privacy.html" class="section-card">
-        <div class="card-num">6.5</div>
-        <div class="card-title">Data Privacy &amp; Security</div>
-        <div class="card-desc">PII handling, data retention, PDPA/GDPR alignment, and access controls.</div>
-      </a>
-    </div>
-  </div>
-
-  <!-- BLOCK 7 ─ Delivery Strategy -->
-  <div class="block-group b7">
-    <div class="block-label">
-      <div class="block-num">7</div>
+      <div class="block-num">8</div>
       <h3>Delivery Strategy</h3>
       <span class="block-count">&nbsp;— 4 sections</span>
     </div>
     <div class="cards-grid">
       <a href="sections/platform-reuse.html" class="section-card">
-        <div class="card-num">7.1</div>
+        <div class="card-num">8.1</div>
         <div class="card-title">Platform Reuse Map</div>
         <div class="card-desc">How KYB services are abstracted for reuse across other Reap products.</div>
         <div class="card-tags"><span class="card-tag tag-diagram">Diagram</span><span class="card-tag tag-arch">Platform</span></div>
       </a>
       <a href="sections/go-to-market.html" class="section-card">
-        <div class="card-num">7.2</div>
+        <div class="card-num">8.2</div>
         <div class="card-title">Go-to-Market &amp; Rollout</div>
         <div class="card-desc">Pilot design, staged rollout, analyst training, and change management.</div>
         <div class="card-tags"><span class="card-tag tag-strategy">GTM</span></div>
       </a>
       <a href="sections/team-resourcing.html" class="section-card">
-        <div class="card-num">7.3</div>
+        <div class="card-num">8.3</div>
         <div class="card-title">Team &amp; Resourcing</div>
         <div class="card-desc">Squad composition, role responsibilities, and external vendor requirements.</div>
       </a>
       <a href="sections/dependency-map.html" class="section-card">
-        <div class="card-num">7.4</div>
+        <div class="card-num">8.4</div>
         <div class="card-title">Dependency &amp; Risk Map</div>
         <div class="card-desc">Critical path dependencies, blockers, and timeline sensitivities.</div>
       </a>
     </div>
   </div>
 
-  <!-- BLOCK 8 ─ Measurement & Recommendation -->
-  <div class="block-group b8">
+  <!-- BLOCK 9 ─ Measurement & Recommendation -->
+  <div class="block-group b9">
     <div class="block-label">
-      <div class="block-num">8</div>
+      <div class="block-num">9</div>
       <h3>Measurement &amp; Recommendation</h3>
       <span class="block-count">&nbsp;— 4 sections</span>
     </div>
     <div class="cards-grid">
       <a href="sections/metrics-framework.html" class="section-card">
-        <div class="card-num">8.1</div>
+        <div class="card-num">9.1</div>
         <div class="card-title">Metrics Framework</div>
         <div class="card-desc">Full metrics taxonomy: speed, accuracy, cost, analyst satisfaction, compliance.</div>
         <div class="card-tags"><span class="card-tag tag-core">Metrics</span></div>
       </a>
       <a href="sections/experimentation.html" class="section-card">
-        <div class="card-num">8.2</div>
+        <div class="card-num">9.2</div>
         <div class="card-title">Experimentation &amp; A/B Testing Plan</div>
         <div class="card-desc">How to run controlled tests on AI suggestions against baseline review.</div>
       </a>
       <a href="sections/monitoring.html" class="section-card">
-        <div class="card-num">8.3</div>
+        <div class="card-num">9.3</div>
         <div class="card-title">Monitoring &amp; Alerting</div>
         <div class="card-desc">Model drift detection, latency SLOs, queue depth alerts, and dashboards.</div>
       </a>
       <a href="sections/recommendation.html" class="section-card">
-        <div class="card-num">8.4</div>
+        <div class="card-num">9.4</div>
         <div class="card-title">Executive Recommendation &amp; Roadmap</div>
         <div class="card-desc">Final recommendation, investment ask, 12-month roadmap, and next actions.</div>
         <div class="card-tags"><span class="card-tag tag-strategy">Recommendation</span></div>

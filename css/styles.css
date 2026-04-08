@@ -36,6 +36,7 @@
   --b6: #DC2626; --b6-bg: #FEF2F2;
   --b7: #4F46E5; --b7-bg: #EEF2FF;
   --b8: #DB2777; --b8-bg: #FDF2F8;
+  --b9: #0D9488; --b9-bg: #F0FDFA;
 
   /* Spacing */
   --header-h: 60px;
@@ -422,6 +423,11 @@ a:hover { text-decoration: underline; }
 .b8 .section-card::before         { background: var(--b8); }
 .b8 .card-num                     { color: var(--b8); }
 .b8 .section-card:hover           { border-color: var(--b8); }
+
+.b9 .block-num                    { background: var(--b9); }
+.b9 .section-card::before         { background: var(--b9); }
+.b9 .card-num                     { color: var(--b9); }
+.b9 .section-card:hover           { border-color: var(--b9); }
 
 /* ============================================================
    SECTION PAGE LAYOUT

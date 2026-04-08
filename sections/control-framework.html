@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>5.1 Control, Quality &amp; Operating Framework — Reap KYB PRD</title>
+  <link rel="stylesheet" href="../css/styles.css" />
+<style>
+
+  /* ── Section badge ── */
+  .sec-num {
+    display:inline-flex; align-items:center; justify-content:center;
+    width:24px; height:24px; border-radius:50%; font-size:.68rem; font-weight:800;
+    background:#CFFAFE; color:#0E7490; flex-shrink:0; margin-right:.4rem;
+  }
+  h2.numbered { display:flex; align-items:center; margin-top:1.75rem; }
+
+  /* ── Phase intro strip ── */
+  .phase-intro { display:grid; grid-template-columns:1fr 1fr; gap:.65rem; margin-bottom:1.75rem; }
+  @media(max-width:600px){ .phase-intro { grid-template-columns:1fr; } }
+  .pi-card { border-radius:9px; padding:.85rem 1rem; border:1px solid; }
+  .pi-p1   { background:#EFF6FF; border-color:#BFDBFE; }
+  .pi-p3   { background:#FFFBEB; border-color:#FDE68A; }
+  .pi-tag  { font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:.07em; margin-bottom:4px; }
+  .pi-p1 .pi-tag { color:#1D4ED8; }
+  .pi-p3 .pi-tag { color:#B45309; }
+  .pi-title  { font-size:12px; font-weight:700; color:var(--text); margin-bottom:4px; }
+  .pi-modules { font-size:11px; color:var(--text-dim); line-height:1.5; }
+
+  /* ── Phase section header ── */
+  .phase-hdr {
+    display:flex; align-items:center; gap:10px; border-radius:9px;
+    padding:10px 16px; margin:1.5rem 0 1rem; border-left:4px solid;
+  }
+  .ph1 { background:#EFF6FF; border-color:#1D4ED8; }
+  .ph1b{ background:#EEF2FF; border-color:#4338CA; }
+  .ph3 { background:#FFFBEB; border-color:#B45309; }
+  .phase-hdr-tag { font-size:10px; font-weight:800; text-transform:uppercase;
+    letter-spacing:.08em; padding:2px 8px; border-radius:4px; white-space:nowrap; }
+  .ph1  .phase-hdr-tag { background:#DBEAFE; color:#1D4ED8; }
+  .ph1b .phase-hdr-tag { background:#E0E7FF; color:#4338CA; }
+  .ph3  .phase-hdr-tag { background:#FDE68A; color:#92400E; }
+  .phase-hdr-name { font-size:14px; font-weight:700; color:var(--text); }
+  .phase-hdr-meta { font-size:11px; color:var(--text-dim); margin-left:auto; }
+
+  /* ── Objective bar ── */
+  .obj-bar {
+    background:var(--navy); border-radius:10px; padding:1rem 1.25rem;
+    margin-bottom:1.5rem; display:flex; gap:14px; align-items:flex-start;
+  }
+  .obj-icon { width:32px; height:32px; border-radius:8px; background:rgba(99,91,255,.18);
+    border:1px solid rgba(99,91,255,.3); display:flex; align-items:center;
+    justify-content:center; color:#a5b4fc; flex-shrink:0; }
+  .obj-label { font-size:10px; font-weight:800; text-transform:uppercase;
+    letter-spacing:.08em; color:rgba(255,255,255,.4); margin-bottom:4px; }
+  .obj-text  { font-size:13px; color:rgba(255,255,255,.85); line-height:1.55; }
+
+  /* ── Scope item cards ── */
+  .scope-grid { display:flex; flex-direction:column; gap:.75rem; margin-bottom:1.5rem; }
+  .scope-item {
+    background:var(--surface); border:1px solid var(--border); border-radius:10px;
+    padding:1rem 1.1rem; display:grid; grid-template-columns:36px 1fr; gap:0 12px;
+  }
+  .scope-num {
+    width:32px; height:32px; border-radius:8px; font-size:13px; font-weight:800;
+    display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:1px;
+  }
+  .sn-blue  { background:#DBEAFE; color:#1D4ED8; }
+  .sn-indigo{ background:#E0E7FF; color:#4338CA; }
+  .scope-title { font-size:13px; font-weight:700; color:var(--text); margin-bottom:4px; }
+  .scope-desc  { font-size:11.5px; color:var(--text-mid); line-height:1.5; margin-bottom:8px; }
+  .scope-bullets { list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:3px; }
+  .scope-bullets li {
+    font-size:11px; color:var(--text-dim); display:flex;
+    align-items:flex-start; gap:5px; line-height:1.45;
+  }
+  .scope-bullets li::before {
+    content:''; width:5px; height:5px; border-radius:50%;
+    margin-top:5px; flex-shrink:0;
+  }
+  .bul-blue   li::before { background:#93C5FD; }
+  .bul-indigo li::before { background:#A5B4FC; }
+
+  /* ── Ownership 2-col ── */
+  .own-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:.6rem; margin-bottom:.5rem; }
+  @media(max-width:600px){ .own-grid { grid-template-columns:1fr; } }
+  .own-row {
+    display:flex; align-items:flex-start; gap:8px; background:var(--bg);
+    border:1px solid var(--border); border-radius:8px; padding:.6rem .75rem;
+  }
+  .own-role { font-size:11px; font-weight:700; color:var(--text); min-width:90px; }
+  .own-desc { font-size:11px; color:var(--text-dim); line-height:1.4; }
+
+  /* ── Outcome callout ── */
+  .outcome-bar {
+    background:var(--navy); border-radius:10px; padding:1rem 1.25rem;
+    margin:1.25rem 0 2rem; border-left:3px solid #22c55e;
+  }
+  .outcome-label { font-size:10px; font-weight:800; text-transform:uppercase;
+    letter-spacing:.08em; color:#86efac; margin-bottom:5px; }
+  .outcome-text  { font-size:13px; color:rgba(255,255,255,.85); line-height:1.55; }
+
+  /* ── Phase 3 compact grid ── */
+  .p3-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:.75rem; margin-bottom:1.75rem; }
+  @media(max-width:760px){ .p3-grid { grid-template-columns:repeat(2,1fr); } }
+  @media(max-width:480px){ .p3-grid { grid-template-columns:1fr; } }
+  .p3-card {
+    background:var(--surface); border:1px solid var(--border); border-radius:10px;
+    padding:.85rem 1rem; border-top:3px solid #B45309;
+  }
+  .p3-tag   { font-size:10px; font-weight:800; text-transform:uppercase;
+    letter-spacing:.06em; color:#B45309; margin-bottom:5px; }
+  .p3-title { font-size:12px; font-weight:700; color:var(--text); margin-bottom:5px; }
+  .p3-detail{ font-size:10px; font-weight:600; color:#B45309; background:#FFFBEB;
+    padding:1px 6px; border-radius:3px; display:inline-block; margin-bottom:7px; }
+  .p3-bullets { list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:3px; }
+  .p3-bullets li { font-size:11px; color:var(--text-dim); display:flex;
+    align-items:flex-start; gap:5px; line-height:1.4; }
+  .p3-bullets li::before { content:''; width:5px; height:5px; border-radius:50%;
+    background:#FDE68A; margin-top:4px; flex-shrink:0; }
+
+  /* ── Principles strip ── */
+  .prin-strip {
+    background:var(--navy); border-radius:10px; padding:.9rem 1.3rem;
+    display:flex; align-items:center; gap:.6rem; flex-wrap:wrap; margin-bottom:2rem;
+  }
+  .prin-label { color:rgba(255,255,255,.4); font-size:.72rem; font-weight:600;
+    text-transform:uppercase; letter-spacing:.07em; margin-right:.3rem; }
+  .prin-item  { color:#c7d2fe; font-weight:600; font-size:.82rem; }
+  .prin-dot   { color:rgba(255,255,255,.15); }
+
+  /* ── Example tag ── */
+  .example-tag {
+    display:inline-flex; align-items:center; gap:4px; font-size:10px; font-weight:600;
+    background:#F0FDF4; color:#15803D; border:1px solid #BBF7D0; border-radius:4px;
+    padding:1px 7px; margin-bottom:6px;
+  }
+
+</style>
+</head>
+<body>
+<header class="site-header">
+  <div class="header-inner">
+    <a href="../index.html" class="site-logo"><div class="logo-mark">R</div><span>Reap AI Platform</span></a>
+    <div class="header-divider"></div><span class="header-subtitle">KYB Review Copilot</span>
+    <nav class="header-nav"><a href="../index.html">Overview</a><a href="solution-architecture.html">Architecture</a><a href="reviewer-workflow.html">Workflow</a></nav>
+  </div>
+</header>
+<div class="page-layout">
+  <aside class="sidebar">
+    <a href="../index.html" class="sidebar-back"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M9 11L5 7l4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg> All Sections</a>
+    <div class="sidebar-section-title">Block 5 — Trust, Reliability, and Governance</div>
+    <ul class="sidebar-nav">
+      <li><a href="control-framework.html" class="active">5.1 Control &amp; Governance Framework</a></li>
+      <li><a href="hitl-fallback.html">5.2 HITL &amp; Fallback</a></li>
+      <li><a href="audit-logging.html">5.3 Audit &amp; Logging</a></li>
+      <li><a href="compliance.html">5.4 Compliance</a></li>
+      <li><a href="risk-framework.html">5.5 Risk Framework</a></li>
+      <li><a href="data-privacy.html">5.6 Data Privacy</a></li>
+    </ul>
+  </aside>
+  <main class="content">
+    <nav class="breadcrumb"><a href="../index.html">Home</a><span class="breadcrumb-sep">›</span><span>Block 5 — Trust, Reliability, and Governance</span><span class="breadcrumb-sep">›</span><span class="breadcrumb-current">5.1 Control, Quality &amp; Operating Framework</span></nav>
+    <div class="section-header">
+      <div class="section-block-tag" style="background:var(--b5)">Block 5 — Trust, Reliability, and Governance</div>
+      <h1>Control, Quality &amp; Operating Framework</h1>
+      <p class="section-intro">Defines who can act, what standards the system follows, what requires human review, and how policy-aligned decisions are enforced — making KYB not just functional, but controllable, explainable, and safe to operate.</p>
+    </div>
+
+    <!-- Phase intro -->
+    <div class="phase-intro">
+      <div class="pi-card pi-p1">
+        <div class="pi-tag">Phase 1</div>
+        <div class="pi-title">Core Governance &amp; Access Control</div>
+        <div class="pi-modules">Policy-aligned decision framework · Human decision rights · Review &amp; escalation rules · Change control foundations · Governance operating model · Role-based access · Tenant isolation · Action-level permissions · Access auditability</div>
+      </div>
+      <div class="pi-card pi-p3">
+        <div class="pi-tag">Phase 3</div>
+        <div class="pi-title">AI Reliability &amp; Quality</div>
+        <div class="pi-modules">Audit logs · Confidence &amp; fallback framework · Evaluation / Evals platform · Model &amp; prompt management · Observability &amp; tracing</div>
+      </div>
+    </div>
+
+    <!-- ══ PHASE 1 — GOVERNANCE ══════════════════════════════ -->
+    <div class="phase-hdr ph1">
+      <span class="phase-hdr-tag">Phase 1</span>
+      <span class="phase-hdr-name">Governance</span>
+      <span class="phase-hdr-meta">Detailed · 5 scope areas</span>
+    </div>
+
+    <div class="obj-bar">
+      <div class="obj-icon">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 1.5L2 4v4c0 3.5 2.5 6.5 6 7.5 3.5-1 6-4 6-7.5V4L8 1.5z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/><path d="M5 8l2 2 4-4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <div>
+        <div class="obj-label">Objective</div>
+        <div class="obj-text">Create the minimum governance structure required to operate AI-assisted KYB review in a compliant, auditable, and policy-aligned manner.</div>
+      </div>
+    </div>
+
+    <div class="scope-grid bul-blue">
+
+      <div class="scope-item">
+        <div class="scope-num sn-blue">1</div>
+        <div class="scope-body">
+          <div class="scope-title">Policy-Aligned Decision Framework</div>
+          <div class="scope-desc">Recommendations, follow-ups, and review outcomes must be grounded in approved policy — not free-form model behavior.</div>
+          <ul class="scope-bullets">
+            <li>Approved policy sources for grounding with clear linkage to recommendations</li>
+            <li>Rule-aware review guidance and jurisdiction/segment-specific policy application</li>
+            <li>Policy version preserved at time of every decision</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="scope-item">
+        <div class="scope-num sn-blue">2</div>
+        <div class="scope-body">
+          <div class="scope-title">Human Decision Rights</div>
+          <div class="scope-desc">Clear boundaries between what AI may assist with and what remains human-controlled — with no ambiguity around final authority.</div>
+          <div class="example-tag">
+            <svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M6 1v5M6 9v1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+            Examples
+          </div>
+          <ul class="scope-bullets">
+            <li>AI may suggest missing info, risks, or follow-up language</li>
+            <li>AI may not independently approve or reject a business</li>
+            <li>Final decision authority stays with authorised reviewers</li>
+            <li>Escalations remain visible and reviewable at all times</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="scope-item">
+        <div class="scope-num sn-blue">3</div>
+        <div class="scope-body">
+          <div class="scope-title">Review and Escalation Rules</div>
+          <div class="scope-desc">Defined conditions that pause normal progression and require manual review or escalation — predictable behavior under both normal and exception conditions.</div>
+          <ul class="scope-bullets">
+            <li>Low-confidence extraction or conflicting evidence across documents</li>
+            <li>Missing critical fields or policy ambiguity</li>
+            <li>Potential sanctions, risk flags, or repeated processing failures</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="scope-item">
+        <div class="scope-num sn-blue">4</div>
+        <div class="scope-body">
+          <div class="scope-title">Change Control Foundations</div>
+          <div class="scope-desc">Lightweight but explicit controls over changes to policies, prompts, workflow rules, and processing logic — even before full admin tooling arrives.</div>
+          <ul class="scope-bullets">
+            <li>Version tracking with approval ownership</li>
+            <li>Release visibility and rollback readiness for material changes</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="scope-item">
+        <div class="scope-num sn-blue">5</div>
+        <div class="scope-body">
+          <div class="scope-title">Governance Operating Model</div>
+          <div class="scope-desc">Clearly defined ownership across product, engineering, compliance, and operations — no ambiguity around who controls what.</div>
+          <div class="own-grid">
+            <div class="own-row"><span class="own-role">Compliance</span><span class="own-desc">Policy interpretation and regulatory alignment</span></div>
+            <div class="own-row"><span class="own-role">Product</span><span class="own-desc">Workflow design and reviewer experience</span></div>
+            <div class="own-row"><span class="own-role">Engineering</span><span class="own-desc">Platform reliability and release safety</span></div>
+            <div class="own-row"><span class="own-role">Operations</span><span class="own-desc">Execution health and exception handling</span></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="outcome-bar">
+      <div class="outcome-label">Phase 1 — Governance Outcome</div>
+      <div class="outcome-text">Clear decision boundaries, policy-grounded behavior, defined human control points, and enough operational governance to launch responsibly in a live KYB setting.</div>
+    </div>
+
+    <!-- ══ PHASE 1 — ACCESS CONTROL ═════════════════════════ -->
+    <div class="phase-hdr ph1b">
+      <span class="phase-hdr-tag">Phase 1</span>
+      <span class="phase-hdr-name">Access Control</span>
+      <span class="phase-hdr-meta">Detailed · 5 scope areas</span>
+    </div>
+
+    <div class="obj-bar">
+      <div class="obj-icon">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="3" y="7" width="10" height="8" rx="1.5" stroke="currentColor" stroke-width="1.4"/><path d="M5 7V5a3 3 0 0 1 6 0v2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><circle cx="8" cy="11" r="1" fill="currentColor"/></svg>
+      </div>
+      <div>
+        <div class="obj-label">Objective</div>
+        <div class="obj-text">Implement role-based, tenant-safe access controls that protect case data, reviewer actions, and administrative capabilities — embedded from the start, not added later.</div>
+      </div>
+    </div>
+
+    <div class="scope-grid bul-indigo">
+
+      <div class="scope-item">
+        <div class="scope-num sn-indigo">1</div>
+        <div class="scope-body">
+          <div class="scope-title">Role-Based Access Model</div>
+          <div class="scope-desc">Permissions aligned to operational responsibility across five typical roles.</div>
+          <ul class="scope-bullets">
+            <li>KYB Analyst · Senior Reviewer · Ops Manager · Compliance Lead · Platform Admin</li>
+            <li>Each role has defined permissions: case visibility, edit rights, review &amp; escalation actions, admin, policy/configuration access</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="scope-item">
+        <div class="scope-num sn-indigo">2</div>
+        <div class="scope-body">
+          <div class="scope-title">Tenant Isolation</div>
+          <div class="scope-desc">All data access is tenant-safe — users access only cases, documents, and views belonging to their authorised tenant context.</div>
+          <ul class="scope-bullets">
+            <li>Applies across: database patterns, search &amp; retrieval results, file access, workflow queues, logs, and exports</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="scope-item">
+        <div class="scope-num sn-indigo">3</div>
+        <div class="scope-body">
+          <div class="scope-title">Action-Level Permissions</div>
+          <div class="scope-desc">Screen-level access is not sufficient — the platform controls who can perform sensitive operations.</div>
+          <ul class="scope-bullets">
+            <li>Change case status, override recommendations, re-trigger processing</li>
+            <li>View sensitive evidence, close or reject a case</li>
+            <li>Modify operational rules or configurations</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="scope-item">
+        <div class="scope-num sn-indigo">4</div>
+        <div class="scope-body">
+          <div class="scope-title">Service-to-Service Security</div>
+          <div class="scope-desc">Background services, processing pipelines, and integrations operate with scoped service identities and least-privilege permissions — no over-permissioned service accounts.</div>
+        </div>
+      </div>
+
+      <div class="scope-item">
+        <div class="scope-num sn-indigo">5</div>
+        <div class="scope-body">
+          <div class="scope-title">Access Auditability</div>
+          <div class="scope-desc">Material access and permission-sensitive actions are traceable — especially for high-risk cases, sensitive evidence, and admin operations.</div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="outcome-bar">
+      <div class="outcome-label">Phase 1 — Access Control Outcome</div>
+      <div class="outcome-text">Role-based access, tenant isolation, and action-level controls enforced strongly enough to support production use in a regulated workflow.</div>
+    </div>
+
+    <!-- ══ PHASE 3 — AI RELIABILITY ═════════════════════════ -->
+    <div class="phase-hdr ph3">
+      <span class="phase-hdr-tag">Phase 3</span>
+      <span class="phase-hdr-name">AI Reliability &amp; Quality</span>
+      <span class="phase-hdr-meta">5 modules · lightly touched</span>
+    </div>
+
+    <div class="p3-grid">
+
+      <div class="p3-card">
+        <div class="p3-tag">Audit</div>
+        <div class="p3-title">Audit Logs</div>
+        <div class="p3-detail">Lightly touched</div>
+        <ul class="p3-bullets">
+          <li>End-to-end event history per case</li>
+          <li>User action logging: review, edit, escalation, decision</li>
+          <li>Model output and recommendation logging</li>
+          <li>Evidence, policy version, and reviewer action linkage</li>
+          <li>Exportable audit views for internal/external review</li>
+        </ul>
+      </div>
+
+      <div class="p3-card">
+        <div class="p3-tag">Confidence</div>
+        <div class="p3-title">Confidence &amp; Fallback Framework</div>
+        <div class="p3-detail">Lightly touched</div>
+        <ul class="p3-bullets">
+          <li>Confidence thresholds by extraction and recommendation class</li>
+          <li>Abstention behavior for low-confidence outputs</li>
+          <li>Fallback to manual review or escalation</li>
+          <li>Reviewer visibility into uncertainty signals</li>
+          <li>Policy-driven controls on when automation must stop</li>
+        </ul>
+      </div>
+
+      <div class="p3-card">
+        <div class="p3-tag">Evals</div>
+        <div class="p3-title">Evaluation / Evals Platform</div>
+        <div class="p3-detail">Lightly touched</div>
+        <ul class="p3-bullets">
+          <li>Golden datasets and scenario-based test suites</li>
+          <li>Offline evals: extraction, grounding, recommendation, follow-up</li>
+          <li>Regression testing across model or prompt changes</li>
+          <li>Scorecards by workflow step and error category</li>
+          <li>Release gating for material quality drops</li>
+        </ul>
+      </div>
+
+      <div class="p3-card">
+        <div class="p3-tag">Models</div>
+        <div class="p3-title">Model &amp; Prompt Management</div>
+        <div class="p3-detail">Lightly touched</div>
+        <ul class="p3-bullets">
+          <li>Versioned prompts and model registry</li>
+          <li>Environment-safe rollout controls with rollback support</li>
+          <li>Prompt and model comparison workflows</li>
+          <li>Traceability of which version generated which output</li>
+        </ul>
+      </div>
+
+      <div class="p3-card">
+        <div class="p3-tag">Observability</div>
+        <div class="p3-title">Observability &amp; Tracing</div>
+        <div class="p3-detail">Lightly touched</div>
+        <ul class="p3-bullets">
+          <li>Tracing across workflow, retrieval, model, and decision steps</li>
+          <li>Latency tracking by stage; failure categorisation</li>
+          <li>Queue health and retry visibility</li>
+          <li>Operational dashboards for support, engineering, and product</li>
+        </ul>
+      </div>
+
+    </div>
+
+    <!-- Principles strip -->
+    <div class="prin-strip">
+      <span class="prin-label">Core Principles</span>
+      <span class="prin-item">Human authority over decisions</span><span class="prin-dot">·</span>
+      <span class="prin-item">Policy-grounded outputs</span><span class="prin-dot">·</span>
+      <span class="prin-item">Audit-ready from day one</span><span class="prin-dot">·</span>
+      <span class="prin-item">Least-privilege access</span><span class="prin-dot">·</span>
+      <span class="prin-item">Safe failure over silent degradation</span>
+    </div>
+
+    <nav class="section-nav" style="margin-top:8px;">
+      <a href="platform-integration.html" class="nav-btn"><span class="nav-btn-dir">← Previous</span><span class="nav-btn-title">6.1 Platform &amp; Integration Layer</span></a>
+      <span class="nav-center">5.1 of Block 5</span>
+      <a href="hitl-fallback.html" class="nav-btn"><span class="nav-btn-dir">Next →</span><span class="nav-btn-title">5.2 HITL &amp; Fallback Control Model</span></a>
+    </nav>
+  </main>
+</div>
+<footer class="site-footer">
+  Reap AI Platform — KYB Review Copilot &nbsp;·&nbsp; Technical PRD &nbsp;·&nbsp;
+  Prepared for <a href="https://reap.global" target="_blank">Reap</a> &nbsp;·&nbsp;
+  <a href="https://github.com/chhedup-lama/Reap-casestudy" target="_blank">GitHub Repository</a>
+</footer>
+<script src="../js/main.js"></script>
+</body>
+</html>

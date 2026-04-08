@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>6.1 Platform &amp; Integration Layer — Reap KYB PRD</title>
+  <link rel="stylesheet" href="../css/styles.css" />
+<style>
+
+  /* ── Section number badge ── */
+  .sec-num {
+    display:inline-flex; align-items:center; justify-content:center;
+    width:24px; height:24px; border-radius:50%; font-size:.68rem; font-weight:800;
+    background:#fee2e2; color:#b91c1c; flex-shrink:0; margin-right:.4rem;
+  }
+  h2.numbered { display:flex; align-items:center; margin-top:1.75rem; }
+
+  /* ── Phase header bar ── */
+  .phase-hdr {
+    display:flex; align-items:center; gap:10px; border-radius:9px;
+    padding:10px 16px; margin:1.5rem 0 1rem; border-left:4px solid;
+  }
+  .ph1 { background:#EFF6FF; border-color:#1D4ED8; }
+  .ph2 { background:#F5F3FF; border-color:#6D28D9; }
+  .ph3 { background:#FFFBEB; border-color:#B45309; }
+  .phase-hdr-tag { font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:.08em; padding:2px 8px; border-radius:4px; white-space:nowrap; }
+  .ph1 .phase-hdr-tag { background:#DBEAFE; color:#1D4ED8; }
+  .ph2 .phase-hdr-tag { background:#EDE9FE; color:#6D28D9; }
+  .ph3 .phase-hdr-tag { background:#FDE68A; color:#92400E; }
+  .phase-hdr-name { font-size:14px; font-weight:700; color:var(--text); }
+  .phase-hdr-meta { font-size:11px; color:var(--text-dim); margin-left:auto; }
+
+  /* ── Objective bar ── */
+  .obj-bar {
+    background:var(--navy); border-radius:10px; padding:1rem 1.25rem;
+    margin-bottom:1.5rem; display:flex; gap:14px; align-items:flex-start;
+  }
+  .obj-icon { width:32px; height:32px; border-radius:8px; background:rgba(99,91,255,.18);
+    border:1px solid rgba(99,91,255,.3); display:flex; align-items:center;
+    justify-content:center; color:#a5b4fc; flex-shrink:0; }
+  .obj-label { font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:.08em; color:rgba(255,255,255,.4); margin-bottom:4px; }
+  .obj-text { font-size:13px; color:rgba(255,255,255,.85); line-height:1.55; }
+
+  /* ── Scope items grid (Phase 1) ── */
+  .scope-grid { display:flex; flex-direction:column; gap:.75rem; margin-bottom:1.75rem; }
+  .scope-item {
+    background:var(--surface); border:1px solid var(--border); border-radius:10px;
+    padding:1rem 1.1rem 1rem 1rem; display:grid;
+    grid-template-columns:36px 1fr; gap:0 12px;
+  }
+  .scope-num {
+    width:32px; height:32px; border-radius:8px; background:#DBEAFE; color:#1D4ED8;
+    font-size:13px; font-weight:800; display:flex; align-items:center;
+    justify-content:center; flex-shrink:0; margin-top:1px;
+  }
+  .scope-body {}
+  .scope-title { font-size:13px; font-weight:700; color:var(--text); margin-bottom:4px; }
+  .scope-desc { font-size:11.5px; color:var(--text-mid); line-height:1.5; margin-bottom:8px; }
+  .scope-bullets { list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:3px; }
+  .scope-bullets li { font-size:11px; color:var(--text-dim); display:flex; align-items:flex-start; gap:5px; line-height:1.45; }
+  .scope-bullets li::before { content:''; width:5px; height:5px; border-radius:50%; background:#93C5FD; margin-top:5px; flex-shrink:0; }
+
+  /* ── Outcome callout ── */
+  .outcome-bar {
+    background:var(--navy); border-radius:10px; padding:1rem 1.25rem;
+    margin:1.5rem 0 2rem; border-left:3px solid #22c55e;
+  }
+  .outcome-label { font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:.08em; color:#86efac; margin-bottom:5px; }
+  .outcome-text { font-size:13px; color:rgba(255,255,255,.85); line-height:1.55; }
+
+  /* ── Phase 2 cards ── */
+  .p2-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:1rem; margin-bottom:1.75rem; }
+  @media(max-width:700px){ .p2-grid { grid-template-columns:1fr; } }
+  .p2-card {
+    background:var(--surface); border:1px solid var(--border); border-radius:11px;
+    overflow:hidden;
+  }
+  .p2-card-hdr {
+    padding:.75rem 1rem; background:#F5F3FF; border-bottom:1px solid #DDD6FE;
+    display:flex; align-items:center; gap:8px;
+  }
+  .p2-card-icon { width:28px; height:28px; border-radius:7px; background:#EDE9FE;
+    display:flex; align-items:center; justify-content:center; color:#7C3AED; flex-shrink:0; }
+  .p2-card-title { font-size:12px; font-weight:700; color:var(--text); }
+  .p2-card-phase { font-size:10px; font-weight:700; background:#EDE9FE; color:#6D28D9;
+    padding:1px 7px; border-radius:4px; margin-left:auto; white-space:nowrap; }
+  .p2-card-body { padding:.85rem 1rem; }
+  .p2-section-label { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.06em;
+    color:var(--text-dim); margin:10px 0 5px; }
+  .p2-section-label:first-child { margin-top:0; }
+  .p2-bullets { list-style:none; padding:0; margin:0 0 6px; display:flex; flex-direction:column; gap:3px; }
+  .p2-bullets li { font-size:11px; color:var(--text-mid); display:flex; align-items:flex-start; gap:5px; line-height:1.45; }
+  .p2-bullets li::before { content:''; width:5px; height:5px; border-radius:50%; background:#C4B5FD; margin-top:5px; flex-shrink:0; }
+  .p2-outcome { font-size:11px; color:var(--text-dim); background:var(--bg); border-radius:6px;
+    padding:.5rem .7rem; margin-top:8px; border:1px solid var(--border); line-height:1.45; }
+  .p2-outcome strong { color:#6D28D9; }
+
+  /* ── Phase 3 compact grid ── */
+  .p3-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:.75rem; margin-bottom:1.75rem; }
+  @media(max-width:800px){ .p3-grid { grid-template-columns:repeat(2,1fr); } }
+  @media(max-width:500px){ .p3-grid { grid-template-columns:1fr; } }
+  .p3-card {
+    background:var(--surface); border:1px solid var(--border); border-radius:10px;
+    padding:.85rem 1rem; border-top:3px solid #B45309;
+  }
+  .p3-card-tag { font-size:10px; font-weight:800; text-transform:uppercase;
+    letter-spacing:.06em; color:#B45309; margin-bottom:5px; }
+  .p3-card-title { font-size:12px; font-weight:700; color:var(--text); margin-bottom:4px; }
+  .p3-card-detail { font-size:10px; font-weight:600; color:#B45309; background:#FFFBEB;
+    padding:1px 6px; border-radius:3px; display:inline-block; margin-bottom:7px; }
+  .p3-bullets { list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:3px; }
+  .p3-bullets li { font-size:11px; color:var(--text-dim); display:flex; align-items:flex-start; gap:5px; line-height:1.4; }
+  .p3-bullets li::before { content:''; width:5px; height:5px; border-radius:50%; background:#FDE68A; margin-top:4px; flex-shrink:0; }
+
+  /* ── Design principles strip ── */
+  .prin-strip {
+    background:var(--navy); border-radius:10px; padding:.9rem 1.3rem;
+    display:flex; align-items:center; gap:.6rem; flex-wrap:wrap;
+    margin-bottom:2rem; font-size:.82rem;
+  }
+  .prin-label { color:rgba(255,255,255,.4); font-size:.72rem; font-weight:600;
+    text-transform:uppercase; letter-spacing:.07em; margin-right:.3rem; }
+  .prin-item { color:#c7d2fe; font-weight:600; }
+  .prin-dot  { color:rgba(255,255,255,.15); }
+
+  /* ── Guardrail callout ── */
+  .guard-bar {
+    display:flex; gap:10px; align-items:flex-start; background:#FFF7ED;
+    border:1px solid #FED7AA; border-radius:9px; padding:.75rem 1rem; margin:10px 0 0;
+  }
+  .guard-icon { color:#EA580C; flex-shrink:0; margin-top:1px; }
+  .guard-text { font-size:11.5px; color:#7C2D12; line-height:1.5; }
+
+  /* ── Phase intro strip ── */
+  .phase-intro { display:grid; grid-template-columns:repeat(3,1fr); gap:.65rem; margin-bottom:1.75rem; }
+  @media(max-width:640px){ .phase-intro { grid-template-columns:1fr; } }
+  .pi-card {
+    border-radius:9px; padding:.8rem .9rem; border:1px solid; text-align:center;
+  }
+  .pi-p1 { background:#EFF6FF; border-color:#BFDBFE; }
+  .pi-p2 { background:#F5F3FF; border-color:#DDD6FE; }
+  .pi-p3 { background:#FFFBEB; border-color:#FDE68A; }
+  .pi-tag { font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:.07em; margin-bottom:4px; }
+  .pi-p1 .pi-tag { color:#1D4ED8; }
+  .pi-p2 .pi-tag { color:#6D28D9; }
+  .pi-p3 .pi-tag { color:#B45309; }
+  .pi-title { font-size:12px; font-weight:700; color:var(--text); margin-bottom:3px; }
+  .pi-modules { font-size:10.5px; color:var(--text-dim); line-height:1.45; }
+
+</style>
+</head>
+<body>
+<header class="site-header">
+  <div class="header-inner">
+    <a href="../index.html" class="site-logo"><div class="logo-mark">R</div><span>Reap AI Platform</span></a>
+    <div class="header-divider"></div><span class="header-subtitle">KYB Review Copilot</span>
+    <nav class="header-nav"><a href="../index.html">Overview</a><a href="solution-architecture.html">Architecture</a><a href="reviewer-workflow.html">Workflow</a></nav>
+  </div>
+</header>
+<div class="page-layout">
+  <aside class="sidebar">
+    <a href="../index.html" class="sidebar-back"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M9 11L5 7l4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg> All Sections</a>
+    <div class="sidebar-section-title">Block 6 — Platform and Integration Layer</div>
+    <ul class="sidebar-nav">
+      <li><a href="platform-integration.html" class="active">6.1 Platform &amp; Integration</a></li>
+    </ul>
+  </aside>
+  <main class="content">
+    <nav class="breadcrumb"><a href="../index.html">Home</a><span class="breadcrumb-sep">›</span><span>Block 6 — Platform and Integration Layer</span><span class="breadcrumb-sep">›</span><span class="breadcrumb-current">6.1 Platform &amp; Integration Layer</span></nav>
+    <div class="section-header">
+      <div class="section-block-tag" style="background:var(--b6)">Block 6 — Platform and Integration Layer</div>
+      <h1>Platform &amp; Integration Layer</h1>
+      <p class="section-intro">The foundational backbone that makes every KYB capability dependable — case coordination, artifact storage, access control, workflow orchestration, audit, policy readiness, and operational instrumentation, phased across three delivery stages.</p>
+    </div>
+
+    <!-- Phase overview strip -->
+    <div class="phase-intro">
+      <div class="pi-card pi-p1">
+        <div class="pi-tag">Phase 1</div>
+        <div class="pi-title">Platform Infrastructure</div>
+        <div class="pi-modules">Case backbone · Artifact storage · IAM · Workflow orchestration · Job execution · Audit foundation · Policy layer · Observability · Extensibility</div>
+      </div>
+      <div class="pi-card pi-p2">
+        <div class="pi-tag">Phase 2</div>
+        <div class="pi-title">Communications &amp; Learning</div>
+        <div class="pi-modules">Notification &amp; Communication Module · Feedback &amp; Learning Loop</div>
+      </div>
+      <div class="pi-card pi-p3">
+        <div class="pi-tag">Phase 3</div>
+        <div class="pi-title">Analytics &amp; Expansion</div>
+        <div class="pi-modules">Analytics &amp; Reporting · External Connectors · Reusable Templates · Config &amp; Admin · Integration APIs &amp; Event Bus</div>
+      </div>
+    </div>
+
+    <!-- ── PHASE 1 ──────────────────────────────────────────── -->
+    <div class="phase-hdr ph1">
+      <span class="phase-hdr-tag">Phase 1</span>
+      <span class="phase-hdr-name">Platform Infrastructure</span>
+      <span class="phase-hdr-meta">Foundation · 9 capability areas</span>
+    </div>
+
+    <div class="obj-bar">
+      <div class="obj-icon">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.4"/><path d="M8 5v3l2 2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+      </div>
+      <div>
+        <div class="obj-label">Objective</div>
+        <div class="obj-text">Build the minimum production-grade platform infrastructure needed to support end-to-end KYB operations with strong controls for security, traceability, workflow state management, and extensibility.</div>
+      </div>
+    </div>
+
+    <div class="scope-grid">
+
+      <div class="scope-item">
+        <div class="scope-num">1</div>
+        <div class="scope-body">
+          <div class="scope-title">Case and Workflow Backbone</div>
+          <div class="scope-desc">A canonical case object that acts as the system of coordination for the entire KYB lifecycle — every document, output, transition, and decision resolves to a single case context.</div>
+          <ul class="scope-bullets">
+            <li>Unique case creation, lifecycle tracking, and metadata ownership</li>
+            <li>Workflow state transitions with status history and timestamps</li>
+            <li>Linkage across case, entity, documents, extracted outputs, review tasks, and decisions</li>
+            <li>Reprocessing and re-review without breaking traceability</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="scope-item">
+        <div class="scope-num">2</div>
+        <div class="scope-body">
+          <div class="scope-title">Document and Artifact Storage</div>
+          <div class="scope-desc">Secure storage of all source and derived artifacts. Originals remain immutable; processed outputs are versioned derivatives — not silent replacements.</div>
+          <ul class="scope-bullets">
+            <li>Immutable original file retention with tenant-scoped access</li>
+            <li>Versioned processed artifacts: OCR text, extractions, summaries, chunks</li>
+            <li>Every derivative artifact linked to its source file with provenance and processing version</li>
+            <li>Multi-document-type support per case with retention controls</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="scope-item">
+        <div class="scope-num">3</div>
+        <div class="scope-body">
+          <div class="scope-title">Identity, Access, and Tenant Isolation</div>
+          <div class="scope-desc">Strict role-based access and tenant separation from day one. Security boundaries are not an enhancement — they are a launch requirement for KYB data.</div>
+          <ul class="scope-bullets">
+            <li>Role-based access control across reviewer, compliance, ops, and admin roles</li>
+            <li>Tenant-aware data partitioning with case- and queue-level access checks</li>
+            <li>Environment separation: development, staging, production</li>
+            <li>Least-privilege service-to-service permissions; admin actions logged</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="scope-item">
+        <div class="scope-num">4</div>
+        <div class="scope-body">
+          <div class="scope-title">Workflow Orchestration and State Management</div>
+          <div class="scope-desc">Coordinates progression across ingestion, extraction, review, follow-up, escalation, and final decisioning — with predictable behavior under both normal and failure conditions.</div>
+          <ul class="scope-bullets">
+            <li>Explicit state machine for the KYB case lifecycle</li>
+            <li>Event-triggered transitions with retry-safe progression across async steps</li>
+            <li>Exception and dead-letter handling; manual override with audit trail</li>
+            <li>Re-entry into workflow after customer response or reprocessing</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="scope-item">
+        <div class="scope-num">5</div>
+        <div class="scope-body">
+          <div class="scope-title">Processing Job Orchestration</div>
+          <div class="scope-desc">Background job execution for ingestion, OCR, extraction, chunking, retrieval preparation, and reprocessing — observable, retryable, and case-linked.</div>
+          <ul class="scope-bullets">
+            <li>Asynchronous job execution with queueing and prioritisation</li>
+            <li>Idempotent retry handling and partial failure detection</li>
+            <li>Job state tracking with visibility into stuck or failed jobs</li>
+            <li>Operational observability across the full processing pipeline</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="scope-item">
+        <div class="scope-num">6</div>
+        <div class="scope-body">
+          <div class="scope-title">Audit and Decision Logging Foundation</div>
+          <div class="scope-desc">A foundational audit model built in Phase 1, not deferred. Every meaningful system and human action must be reconstructable for compliance, operational review, and dispute resolution.</div>
+          <ul class="scope-bullets">
+            <li>Document uploads, extraction runs, model versions, and confidence flags</li>
+            <li>Reviewer edits, follow-up requests, escalations, and decision outcomes</li>
+            <li>Policy version used at decision time</li>
+            <li>User identity and timestamp for every material action</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="scope-item">
+        <div class="scope-num">7</div>
+        <div class="scope-body">
+          <div class="scope-title">Policy and Retrieval Readiness Layer</div>
+          <div class="scope-desc">Structured, versioned storage and retrieval of policy content so AI recommendations are grounded in the right rule set from the start — preventing ungrounded model behavior.</div>
+          <ul class="scope-bullets">
+            <li>Policy repository with version control and metadata tagging</li>
+            <li>Tagging by geography, business type, risk class, and document context</li>
+            <li>Retrieval-ready indexing and policy-to-case applicability logic</li>
+            <li>Preservation of policy version used in each recommendation</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="scope-item">
+        <div class="scope-num">8</div>
+        <div class="scope-body">
+          <div class="scope-title">Observability, Reliability, and Operations Controls</div>
+          <div class="scope-desc">Operational instrumentation so teams can monitor health, detect failures, and diagnose workflow bottlenecks — without engineering deep-dives for routine issues.</div>
+          <ul class="scope-bullets">
+            <li>Processing latency, job failure, and retry visibility</li>
+            <li>Queue depth and workflow state volume tracking</li>
+            <li>Alerting for failed processing or broken integrations</li>
+            <li>Basic operational dashboards for platform support teams</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="scope-item">
+        <div class="scope-num">9</div>
+        <div class="scope-body">
+          <div class="scope-title">Extensibility Standards</div>
+          <div class="scope-desc">Platform designed with reusable patterns for future regulated review workflows — without over-engineering Phase 1 or painting the platform into a KYB-only corner.</div>
+          <ul class="scope-bullets">
+            <li>Reusable workflow state model with modular service boundaries</li>
+            <li>Pluggable connectors and event-driven architecture where useful</li>
+            <li>Case-scoped but use-case-extensible data model</li>
+            <li>Version-safe processing contracts</li>
+          </ul>
+        </div>
+      </div>
+
+    </div><!-- /scope-grid -->
+
+    <div class="outcome-bar">
+      <div class="outcome-label">Phase 1 Outcome</div>
+      <div class="outcome-text">By the end of Phase 1, Reap has a production-grade operational backbone that can securely store artifacts, coordinate KYB workflows, support AI-assisted review, preserve complete audit history, and provide the reliability needed for live onboarding operations.</div>
+    </div>
+
+    <!-- ── PHASE 2 ──────────────────────────────────────────── -->
+    <div class="phase-hdr ph2">
+      <span class="phase-hdr-tag">Phase 2</span>
+      <span class="phase-hdr-name">Communications &amp; Learning</span>
+      <span class="phase-hdr-meta">2 modules · medium detail</span>
+    </div>
+
+    <div class="p2-grid">
+
+      <!-- Notification & Communication -->
+      <div class="p2-card">
+        <div class="p2-card-hdr">
+          <div class="p2-card-icon">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 1a4 4 0 0 1 4 4v2l1 2H2L3 7V5a4 4 0 0 1 4-4z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/><path d="M5.5 11a1.5 1.5 0 0 0 3 0" stroke="currentColor" stroke-width="1.3"/></svg>
+          </div>
+          <span class="p2-card-title">Notification &amp; Communication Module</span>
+          <span class="p2-card-phase">Phase 2</span>
+        </div>
+        <div class="p2-card-body">
+          <div class="p2-section-label">Internal Notifications</div>
+          <ul class="p2-bullets">
+            <li>Review-ready case assigned; follow-up response received</li>
+            <li>Escalated case awaiting action; SLA threshold nearing breach</li>
+            <li>Processing failure requiring intervention</li>
+          </ul>
+          <div class="p2-section-label">External Communication</div>
+          <ul class="p2-bullets">
+            <li>Templated outreach with case-linked message history</li>
+            <li>Structured follow-up requests with response capture into case record</li>
+            <li>Email support with future channel expansion</li>
+          </ul>
+          <div class="p2-section-label">Traceability</div>
+          <ul class="p2-bullets">
+            <li>All messages, requests, responses, and reminders recorded against case</li>
+          </ul>
+          <div class="guard-bar">
+            <div class="guard-icon"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 2L2 5v4c0 2.5 2 4.5 5 5 3-0.5 5-2.5 5-5V5L7 2z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/><path d="M7 6v2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><circle cx="7" cy="10" r=".5" fill="currentColor"/></svg></div>
+            <div class="guard-text"><strong>Guardrail:</strong> Outbound communication is reviewer-controlled or policy-bound — not fully autonomous. Messages are editable before sending.</div>
+          </div>
+          <div class="p2-outcome"><strong>Outcome:</strong> Reduce turnaround delays from fragmented communication, improve follow-up closure rates, and preserve a complete audit trail of case-related interactions.</div>
+        </div>
+      </div>
+
+      <!-- Feedback & Learning Loop -->
+      <div class="p2-card">
+        <div class="p2-card-hdr">
+          <div class="p2-card-icon">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7a5 5 0 0 1 9.5-2M12 7a5 5 0 0 1-9.5 2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><path d="M11 3.5L11.5 5 13 4.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/><path d="M3 10.5L2.5 9 1 9.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <span class="p2-card-title">Feedback &amp; Learning Loop</span>
+          <span class="p2-card-phase">Phase 2</span>
+        </div>
+        <div class="p2-card-body">
+          <div class="p2-section-label">Reviewer Feedback Capture</div>
+          <ul class="p2-bullets">
+            <li>Structured marking: correct / partially correct / incorrect / not useful</li>
+            <li>Free-text feedback on extractions, recommendations, and follow-up drafts</li>
+          </ul>
+          <div class="p2-section-label">Implicit Signals</div>
+          <ul class="p2-bullets">
+            <li>Edit-based signals from reviewer field corrections and rationale edits</li>
+            <li>Outcome linkage: accepted without edits, frequently corrected fields, escalation patterns</li>
+            <li>False-positive / false-negative recommendation tracking</li>
+          </ul>
+          <div class="p2-section-label">Feedback Governance</div>
+          <ul class="p2-bullets">
+            <li>Feedback enters a governed review pipeline — no direct live system retraining</li>
+            <li>Controlled model or rules improvement via triage and analysis</li>
+            <li>Version comparison across model, prompt, extraction, and policy changes</li>
+          </ul>
+          <div class="p2-outcome"><strong>Outcome:</strong> Create a measurable path from reviewer behavior to product improvement — without compromising compliance control or model governance.</div>
+        </div>
+      </div>
+
+    </div><!-- /p2-grid -->
+
+    <!-- ── PHASE 3 ──────────────────────────────────────────── -->
+    <div class="phase-hdr ph3">
+      <span class="phase-hdr-tag">Phase 3</span>
+      <span class="phase-hdr-name">Analytics &amp; Expansion</span>
+      <span class="phase-hdr-meta">5 modules · lightly touched</span>
+    </div>
+
+    <div class="p3-grid">
+
+      <div class="p3-card">
+        <div class="p3-card-tag">Analytics</div>
+        <div class="p3-card-title">Analytics &amp; Reporting Layer</div>
+        <div class="p3-card-detail">Lightly touched</div>
+        <ul class="p3-bullets">
+          <li>Case volume and throughput reporting</li>
+          <li>SLA and turnaround monitoring</li>
+          <li>Reviewer productivity and queue performance</li>
+          <li>Extraction quality and confidence trend reporting</li>
+          <li>Audit and compliance reporting views</li>
+        </ul>
+      </div>
+
+      <div class="p3-card">
+        <div class="p3-card-tag">Connectors</div>
+        <div class="p3-card-title">External Verification &amp; Data Connectors</div>
+        <div class="p3-card-detail">Lightly touched</div>
+        <ul class="p3-bullets">
+          <li>Company registry lookups</li>
+          <li>Sanctions / watchlist screening</li>
+          <li>Beneficial ownership data enrichment</li>
+          <li>Document authenticity checks</li>
+          <li>Configurable connector framework for new providers</li>
+        </ul>
+      </div>
+
+      <div class="p3-card">
+        <div class="p3-card-tag">Templates</div>
+        <div class="p3-card-title">Reusable Templates for a Second Use Case</div>
+        <div class="p3-card-detail">Lightly touched</div>
+        <ul class="p3-bullets">
+          <li>Reusable workflow and task templates</li>
+          <li>Configurable policy packs</li>
+          <li>Reusable evidence and citation patterns</li>
+          <li>Configurable document requirements by use case</li>
+        </ul>
+      </div>
+
+      <div class="p3-card">
+        <div class="p3-card-tag">Admin</div>
+        <div class="p3-card-title">Configuration &amp; Admin Console</div>
+        <div class="p3-card-detail">Lightly touched</div>
+        <ul class="p3-bullets">
+          <li>Workflow configuration and SLA routing rules</li>
+          <li>Policy and template management</li>
+          <li>User and role administration</li>
+          <li>Connector and integration configuration</li>
+          <li>Audit access and operational controls</li>
+        </ul>
+      </div>
+
+      <div class="p3-card">
+        <div class="p3-card-tag">Integration</div>
+        <div class="p3-card-title">Integration APIs &amp; Event Bus</div>
+        <div class="p3-card-detail">Lightly touched</div>
+        <ul class="p3-bullets">
+          <li>APIs for case creation and status retrieval</li>
+          <li>Webhook / event emission for workflow changes</li>
+          <li>Integration with onboarding, CRM, or case systems</li>
+          <li>Standard contracts for external system interoperability</li>
+        </ul>
+      </div>
+
+    </div><!-- /p3-grid -->
+
+    <!-- Design Principles strip -->
+    <div class="prin-strip">
+      <span class="prin-label">Design Principles</span>
+      <span class="prin-item">Case-scoped</span><span class="prin-dot">·</span>
+      <span class="prin-item">Tenant-safe</span><span class="prin-dot">·</span>
+      <span class="prin-item">Audit-ready from day one</span><span class="prin-dot">·</span>
+      <span class="prin-item">Modular service boundaries</span><span class="prin-dot">·</span>
+      <span class="prin-item">Event-driven where useful</span><span class="prin-dot">·</span>
+      <span class="prin-item">Extensible beyond KYB</span>
+    </div>
+
+    <nav class="section-nav" style="margin-top:8px;">
+      <a href="data-privacy.html" class="nav-btn"><span class="nav-btn-dir">← Previous</span><span class="nav-btn-title">5.5 Data Privacy &amp; Security</span></a>
+      <span class="nav-center">Block 6 of 9</span>
+      <a href="solution-architecture.html" class="nav-btn"><span class="nav-btn-dir">Next →</span><span class="nav-btn-title">7.1 E2E Solution Architecture</span></a>
+    </nav>
+  </main>
+</div>
+<footer class="site-footer">
+  Reap AI Platform — KYB Review Copilot &nbsp;·&nbsp; Technical PRD &nbsp;·&nbsp;
+  Prepared for <a href="https://reap.global" target="_blank">Reap</a> &nbsp;·&nbsp;
+  <a href="https://github.com/chhedup-lama/Reap-casestudy" target="_blank">GitHub Repository</a>
+</footer>
+<script src="../js/main.js"></script>
+</body>
+</html>
