@@ -4,6 +4,225 @@
   <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>8.2 Go-to-Market &amp; Rollout — Reap KYB PRD</title>
   <link rel="stylesheet" href="../css/styles.css" />
+<style>
+
+  /* ── Section badge ── */
+  .sec-num {
+    display:inline-flex; align-items:center; justify-content:center;
+    width:24px; height:24px; border-radius:50%; font-size:.68rem; font-weight:800;
+    background:#FDF2F8; color:#9D174D; flex-shrink:0; margin-right:.4rem;
+  }
+  h2.numbered { display:flex; align-items:center; margin-top:2rem; }
+
+  /* ── Rollout Principles bar ── */
+  .principles-bar {
+    background:var(--navy); border-radius:10px; padding:1rem 1.25rem;
+    margin-bottom:1.75rem;
+  }
+  .pb-label { font-size:10px; font-weight:800; text-transform:uppercase;
+    letter-spacing:.08em; color:rgba(255,255,255,.4); margin-bottom:10px; }
+  .pb-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:.5rem; }
+  @media(max-width:600px){ .pb-grid { grid-template-columns:1fr; } }
+  .pb-item {
+    display:flex; align-items:flex-start; gap:8px;
+    background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.08);
+    border-radius:7px; padding:.55rem .75rem;
+  }
+  .pb-dot { width:6px; height:6px; border-radius:50%; background:#818CF8;
+    flex-shrink:0; margin-top:5px; }
+  .pb-text { font-size:11.5px; color:rgba(255,255,255,.75); line-height:1.4; }
+
+  /* ── Rollout stage cards ── */
+  .stage-cards { display:grid; grid-template-columns:repeat(3,1fr); gap:.85rem; margin-bottom:1.75rem; }
+  @media(max-width:700px){ .stage-cards { grid-template-columns:1fr; } }
+  .stage-card {
+    border-radius:11px; border:1px solid var(--border); overflow:hidden;
+    background:var(--surface);
+  }
+  .sc-hdr {
+    padding:.7rem 1rem; display:flex; align-items:center; gap:8px; border-bottom:1px solid var(--border);
+  }
+  .sc-badge {
+    font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:.07em;
+    padding:2px 8px; border-radius:4px;
+  }
+  .stage-alpha .sc-hdr  { background:#EFF6FF; }
+  .stage-alpha .sc-badge { background:#DBEAFE; color:#1D4ED8; }
+  .stage-alpha .sc-icon  { color:#2563EB; }
+  .stage-beta  .sc-hdr  { background:#F5F3FF; }
+  .stage-beta  .sc-badge { background:#EDE9FE; color:#6D28D9; }
+  .stage-beta  .sc-icon  { color:#7C3AED; }
+  .stage-ga    .sc-hdr  { background:#ECFDF5; }
+  .stage-ga    .sc-badge { background:#D1FAE5; color:#047857; }
+  .stage-ga    .sc-icon  { color:#059669; }
+  .sc-name { font-size:12px; font-weight:700; color:var(--text); }
+  .sc-body { padding:.85rem 1rem; display:flex; flex-direction:column; gap:.55rem; }
+  .sc-row  { display:flex; flex-direction:column; gap:2px; }
+  .sc-row-label { font-size:10px; font-weight:700; text-transform:uppercase;
+    letter-spacing:.06em; color:var(--text-dim); }
+  .sc-row-val { font-size:11.5px; color:var(--text-mid); line-height:1.45; }
+  .sc-threshold {
+    margin-top:4px; background:var(--bg); border-radius:6px;
+    padding:.5rem .65rem; border:1px solid var(--border);
+  }
+  .sc-threshold-label { font-size:10px; font-weight:700; color:var(--text-dim);
+    text-transform:uppercase; letter-spacing:.06em; margin-bottom:2px; }
+  .sc-threshold-val { font-size:11.5px; color:var(--text); font-weight:600; }
+
+  /* ── Shadow mode checks ── */
+  .shadow-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:.65rem; margin-bottom:1.75rem; }
+  @media(max-width:700px){ .shadow-grid { grid-template-columns:repeat(2,1fr); } }
+  @media(max-width:450px){ .shadow-grid { grid-template-columns:1fr; } }
+  .shadow-item {
+    background:var(--surface); border:1px solid var(--border); border-radius:9px;
+    padding:.75rem .9rem; display:flex; align-items:flex-start; gap:8px;
+  }
+  .shadow-icon { width:26px; height:26px; border-radius:6px; background:#DBEAFE;
+    display:flex; align-items:center; justify-content:center; color:#2563EB; flex-shrink:0; }
+  .shadow-text { font-size:11.5px; color:var(--text-mid); line-height:1.45; font-weight:500; }
+
+  /* ── Shadow outcome note ── */
+  .shadow-note {
+    background:#FFFBEB; border:1px solid #FDE68A; border-radius:9px;
+    padding:.75rem 1rem; margin-bottom:1.75rem; display:flex; gap:10px; align-items:flex-start;
+  }
+  .shadow-note-icon { color:#B45309; flex-shrink:0; margin-top:1px; }
+  .shadow-note-text { font-size:12px; color:#78350F; line-height:1.5; }
+
+  /* ── Pilot 2-col ── */
+  .pilot-2col { display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-bottom:1.75rem; }
+  @media(max-width:660px){ .pilot-2col { grid-template-columns:1fr; } }
+  .pilot-card {
+    background:var(--surface); border:1px solid var(--border); border-radius:10px; overflow:hidden;
+  }
+  .pilot-card-hdr {
+    padding:.65rem 1rem; background:var(--bg); border-bottom:1px solid var(--border);
+    display:flex; align-items:center; gap:7px;
+  }
+  .pilot-card-icon { color:var(--b8); }
+  .pilot-card-title { font-size:12px; font-weight:700; color:var(--text); }
+  .pilot-card-body { padding:.85rem 1rem; }
+  .pilot-bullets { list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:5px; }
+  .pilot-bullets li { font-size:11.5px; color:var(--text-mid); display:flex;
+    align-items:flex-start; gap:6px; line-height:1.45; }
+  .pilot-bullets li::before { content:''; width:5px; height:5px; border-radius:50%;
+    background:var(--b8); margin-top:5px; flex-shrink:0; }
+
+  /* ── Expand / gate 2-col ── */
+  .expand-2col { display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-bottom:1.75rem; }
+  @media(max-width:660px){ .expand-2col { grid-template-columns:1fr; } }
+  .expand-col { background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:1rem; }
+  .expand-col-label { font-size:10px; font-weight:800; text-transform:uppercase;
+    letter-spacing:.07em; color:var(--text-dim); margin-bottom:8px; }
+  .expand-chips { display:flex; flex-wrap:wrap; gap:.35rem; }
+  .expand-chip {
+    display:inline-flex; align-items:center; gap:4px; font-size:11px; font-weight:600;
+    background:var(--bg); border:1px solid var(--border); border-radius:5px;
+    padding:.3rem .65rem; color:var(--text-mid);
+  }
+  .expand-chip svg { flex-shrink:0; }
+
+  /* ── Metrics grid ── */
+  .metrics-grid { display:grid; grid-template-columns:repeat(5,1fr); gap:.5rem; margin-bottom:1.75rem; }
+  @media(max-width:800px){ .metrics-grid { grid-template-columns:repeat(3,1fr); } }
+  @media(max-width:500px){ .metrics-grid { grid-template-columns:repeat(2,1fr); } }
+  .metric-chip {
+    background:var(--surface); border:1px solid var(--border); border-radius:8px;
+    padding:.6rem .75rem; text-align:center;
+  }
+  .metric-icon { color:var(--b8); margin-bottom:4px; display:flex;
+    align-items:center; justify-content:center; }
+  .metric-label { font-size:10.5px; font-weight:600; color:var(--text-mid); line-height:1.35; }
+
+  /* ── Training 2-col ── */
+  .train-2col { display:grid; grid-template-columns:3fr 2fr; gap:1rem; margin-bottom:1.75rem; }
+  @media(max-width:700px){ .train-2col { grid-template-columns:1fr; } }
+  .train-card {
+    background:var(--surface); border:1px solid var(--border); border-radius:10px; overflow:hidden;
+  }
+  .train-card-hdr {
+    padding:.65rem 1rem; background:var(--bg); border-bottom:1px solid var(--border);
+    font-size:11px; font-weight:700; color:var(--text); display:flex; align-items:center; gap:6px;
+  }
+  .train-card-body { padding:.85rem 1rem; }
+  .train-bullets { list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:5px; }
+  .train-bullets li { font-size:11.5px; color:var(--text-mid); display:flex;
+    align-items:flex-start; gap:6px; line-height:1.45; }
+  .train-bullets li::before { content:''; width:5px; height:5px; border-radius:50%;
+    background:#A855F7; margin-top:5px; flex-shrink:0; }
+  .format-item {
+    display:flex; align-items:flex-start; gap:8px; padding:.5rem 0;
+    border-bottom:1px solid var(--border);
+  }
+  .format-item:last-child { border-bottom:none; }
+  .format-num { width:20px; height:20px; border-radius:50%; background:#EDE9FE;
+    color:#6D28D9; font-size:10px; font-weight:800; display:flex; align-items:center;
+    justify-content:center; flex-shrink:0; }
+  .format-text { font-size:11.5px; color:var(--text-mid); line-height:1.4; }
+
+  /* ── Change management 2-col ── */
+  .cm-2col { display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-bottom:1.75rem; }
+  @media(max-width:660px){ .cm-2col { grid-template-columns:1fr; } }
+  .cm-card { background:var(--surface); border:1px solid var(--border); border-radius:10px; overflow:hidden; }
+  .cm-card-hdr { padding:.65rem 1rem; border-bottom:1px solid var(--border);
+    font-size:11px; font-weight:700; color:var(--text); display:flex; align-items:center; gap:6px; }
+  .cm-messages .cm-card-hdr { background:#EFF6FF; }
+  .cm-actions  .cm-card-hdr { background:#F0FDF4; }
+  .cm-card-body { padding:.85rem 1rem; }
+  .cm-item { display:flex; align-items:flex-start; gap:8px; padding:.45rem 0;
+    border-bottom:1px solid var(--border); }
+  .cm-item:last-child { border-bottom:none; }
+  .cm-check { width:16px; height:16px; border-radius:50%; display:flex; align-items:center;
+    justify-content:center; flex-shrink:0; margin-top:1px; }
+  .cm-messages .cm-check { background:#DBEAFE; color:#1D4ED8; }
+  .cm-actions  .cm-check { background:#DCFCE7; color:#15803D; }
+  .cm-text { font-size:11.5px; color:var(--text-mid); line-height:1.45; }
+
+  /* ── Readiness checklist ── */
+  .readiness-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:.5rem; margin-bottom:1.75rem; }
+  @media(max-width:580px){ .readiness-grid { grid-template-columns:1fr; } }
+  .ready-item {
+    display:flex; align-items:flex-start; gap:8px; background:var(--surface);
+    border:1px solid var(--border); border-radius:8px; padding:.6rem .85rem;
+  }
+  .ready-icon { color:#059669; flex-shrink:0; margin-top:1px; }
+  .ready-text { font-size:11.5px; color:var(--text-mid); line-height:1.4; }
+
+  /* ── Exit criteria stages ── */
+  .exit-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:.85rem; margin-bottom:1.75rem; }
+  @media(max-width:700px){ .exit-grid { grid-template-columns:1fr; } }
+  .exit-card { border-radius:10px; padding:.9rem 1rem; border:1px solid; }
+  .exit-alpha { background:#EFF6FF; border-color:#BFDBFE; }
+  .exit-beta  { background:#F5F3FF; border-color:#DDD6FE; }
+  .exit-ga    { background:#ECFDF5; border-color:#A7F3D0; }
+  .exit-tag   { font-size:10px; font-weight:800; text-transform:uppercase;
+    letter-spacing:.07em; margin-bottom:5px; }
+  .exit-alpha .exit-tag { color:#1D4ED8; }
+  .exit-beta  .exit-tag { color:#6D28D9; }
+  .exit-ga    .exit-tag { color:#047857; }
+  .exit-cond  { font-size:11.5px; color:var(--text-mid); line-height:1.5; }
+
+  /* ── Non-goals ── */
+  .ng-list { display:flex; flex-direction:column; gap:.4rem; margin-bottom:1.75rem; }
+  .ng-item { display:flex; align-items:flex-start; gap:8px; background:#FEF2F2;
+    border:1px solid #FECACA; border-radius:8px; padding:.6rem .85rem; }
+  .ng-x { color:#DC2626; flex-shrink:0; margin-top:1px; }
+  .ng-text { font-size:11.5px; color:#7F1D1D; line-height:1.4; }
+
+  /* ── Final callout ── */
+  .final-callout {
+    background:var(--navy); border-radius:11px; padding:1.1rem 1.3rem;
+    border-left:4px solid #818CF8; margin-bottom:2rem;
+    display:flex; gap:14px; align-items:flex-start;
+  }
+  .fc-icon { width:32px; height:32px; border-radius:8px; background:rgba(129,140,248,.18);
+    border:1px solid rgba(129,140,248,.3); display:flex; align-items:center;
+    justify-content:center; color:#a5b4fc; flex-shrink:0; }
+  .fc-label { font-size:10px; font-weight:800; text-transform:uppercase;
+    letter-spacing:.08em; color:#818CF8; margin-bottom:5px; }
+  .fc-text  { font-size:13px; color:rgba(255,255,255,.85); line-height:1.6; }
+
+</style>
 </head>
 <body>
 <header class="site-header">
@@ -18,11 +237,10 @@
     <a href="../index.html" class="sidebar-back"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M9 11L5 7l4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg> All Sections</a>
     <div class="sidebar-section-title">Block 8 — Delivery Strategy</div>
     <ul class="sidebar-nav">
-      <li><a href="workflow-state.html">7.1 Workflow State</a></li>
       <li><a href="platform-reuse.html">8.1 Platform Reuse Map</a></li>
-      <li><a href="go-to-market.html" class="active">7.3 Go-to-Market</a></li>
+      <li><a href="go-to-market.html" class="active">8.2 Go-to-Market &amp; Rollout</a></li>
       <li><a href="team-resourcing.html">8.3 Team &amp; Resourcing</a></li>
-      <li><a href="dependency-map.html">7.5 Dependency Map</a></li>
+      <li><a href="dependency-map.html">8.4 Dependency &amp; Risk Map</a></li>
     </ul>
   </aside>
   <main class="content">
@@ -30,37 +248,363 @@
     <div class="section-header">
       <div class="section-block-tag" style="background:var(--b8)">Block 8 — Delivery Strategy</div>
       <h1>Go-to-Market &amp; Rollout</h1>
-      <p class="section-intro">Pilot design, staged rollout strategy, analyst training programme, and change management approach for introducing AI-assisted review to the KYB team.</p>
+      <p class="section-intro">De-risk compliance exposure, build analyst trust, and prove measurable operational value before broad release — controlled stages, clear success gates, structured enablement, and explicit change management.</p>
     </div>
-    <div class="stub-banner">&#9998; Content coming soon — this section is a structured stub awaiting full copy.</div>
 
-    <h2>Rollout Stages</h2>
-    <div class="table-wrap"><table>
-      <thead><tr><th>Stage</th><th>Scope</th><th>Duration</th><th>Success Threshold</th></tr></thead>
-      <tbody>
-        <tr><td>Alpha — Internal</td><td>2–3 analysts, all cases go through manual + AI in parallel (shadow mode)</td><td>[ ]</td><td>AI suggestion quality validated</td></tr>
-        <tr><td>Beta — Controlled</td><td>Full analyst team, AI suggestions visible but non-binding</td><td>[ ]</td><td>Acceptance rate ≥ [ ]%, no compliance issues</td></tr>
-        <tr><td>GA — Full Rollout</td><td>All incoming cases routed through AI workspace</td><td>[ ]</td><td>SLA improvement confirmed</td></tr>
-      </tbody>
-    </table></div>
+    <!-- ── 1. Rollout Principles ─────────────────────────────── -->
+    <h2 class="numbered"><span class="sec-num">1</span> Rollout Principles</h2>
+    <div class="principles-bar">
+      <div class="pb-label">Non-negotiable design rules for this launch</div>
+      <div class="pb-grid">
+        <div class="pb-item"><span class="pb-dot"></span><span class="pb-text">Launch in controlled stages — never big-bang</span></div>
+        <div class="pb-item"><span class="pb-dot"></span><span class="pb-text">Validate AI quality before analyst exposure</span></div>
+        <div class="pb-item"><span class="pb-dot"></span><span class="pb-text">Human judgement stays fully in control until trust is earned</span></div>
+        <div class="pb-item"><span class="pb-dot"></span><span class="pb-text">Hard go/no-go thresholds for each stage — not date-driven</span></div>
+        <div class="pb-item"><span class="pb-dot"></span><span class="pb-text">Measure operational impact and compliance safety in parallel</span></div>
+        <div class="pb-item"><span class="pb-dot"></span><span class="pb-text">Treat rollout as a product launch <em>and</em> an operating-model change</span></div>
+      </div>
+    </div>
 
-    <h2>Shadow Mode Design</h2>
-    <p>[ During alpha, AI runs in parallel but suggestions are not shown to analysts. AI and human outputs are compared offline. This validates quality before analysts see suggestions. ]</p>
+    <!-- ── 2. Rollout Stages ──────────────────────────────────── -->
+    <h2 class="numbered"><span class="sec-num">2</span> Rollout Stages</h2>
+    <div class="stage-cards">
 
-    <h2>Analyst Training Programme</h2>
-    <p>[ What analysts learn: how to interpret AI summaries, citation evidence, confidence bands, when to override, how to annotate. Training format and timeline. ]</p>
+      <div class="stage-card stage-alpha">
+        <div class="sc-hdr">
+          <svg class="sc-icon" width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="5.5" stroke="currentColor" stroke-width="1.4"/><path d="M4.5 9.5L7 4.5L9.5 9.5M5.5 7.5h3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+          <span class="sc-badge">Alpha</span>
+          <span class="sc-name">Internal / Shadow</span>
+        </div>
+        <div class="sc-body">
+          <div class="sc-row">
+            <span class="sc-row-label">Scope</span>
+            <span class="sc-row-val">2–3 analysts · AI runs in parallel on live cases in shadow mode</span>
+          </div>
+          <div class="sc-row">
+            <span class="sc-row-label">Duration</span>
+            <span class="sc-row-val">2–4 weeks</span>
+          </div>
+          <div class="sc-threshold">
+            <div class="sc-threshold-label">Exit threshold</div>
+            <div class="sc-threshold-val">Suggestion quality validated · No critical grounding or policy failures</div>
+          </div>
+        </div>
+      </div>
 
-    <h2>Change Management</h2>
-    <p>[ Addressing analyst concerns: AI is a tool, not a replacement. Override data is not used for performance evaluation. Focus on eliminating tedious work, not judgement. ]</p>
+      <div class="stage-card stage-beta">
+        <div class="sc-hdr">
+          <svg class="sc-icon" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 3h5l3 3-3 3H3V3z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/><path d="M8 7h3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+          <span class="sc-badge">Beta</span>
+          <span class="sc-name">Controlled Rollout</span>
+        </div>
+        <div class="sc-body">
+          <div class="sc-row">
+            <span class="sc-row-label">Scope</span>
+            <span class="sc-row-val">Full KYB analyst team · AI outputs visible but non-binding</span>
+          </div>
+          <div class="sc-row">
+            <span class="sc-row-label">Duration</span>
+            <span class="sc-row-val">4–6 weeks</span>
+          </div>
+          <div class="sc-threshold">
+            <div class="sc-threshold-label">Exit threshold</div>
+            <div class="sc-threshold-val">Acceptance rate ≥ TBD · Override patterns understood · No compliance incidents</div>
+          </div>
+        </div>
+      </div>
 
-    <nav class="section-nav">
-      <a href="platform-reuse.html" class="nav-btn"><span class="nav-btn-dir">← Previous</span><span class="nav-btn-title">Platform Reuse Map</span></a>
-      <span class="nav-center">33 of 39</span>
-      <a href="team-resourcing.html" class="nav-btn next"><span class="nav-btn-dir">Next →</span><span class="nav-btn-title">Team &amp; Resourcing</span></a>
+      <div class="stage-card stage-ga">
+        <div class="sc-hdr">
+          <svg class="sc-icon" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2.5 7.5L5.5 10.5L11.5 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span class="sc-badge">GA</span>
+          <span class="sc-name">Full Rollout</span>
+        </div>
+        <div class="sc-body">
+          <div class="sc-row">
+            <span class="sc-row-label">Scope</span>
+            <span class="sc-row-val">All incoming eligible cases routed through AI-assisted workspace</span>
+          </div>
+          <div class="sc-row">
+            <span class="sc-row-label">Duration</span>
+            <span class="sc-row-val">2–4 weeks post-Beta decision</span>
+          </div>
+          <div class="sc-threshold">
+            <div class="sc-threshold-label">Exit threshold</div>
+            <div class="sc-threshold-val">SLA improvement confirmed · Stable quality metrics · Operational readiness signed off</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ── 3. Shadow Mode ─────────────────────────────────────── -->
+    <h2 class="numbered"><span class="sec-num">3</span> Shadow Mode Design</h2>
+    <p style="font-size:13px;color:var(--text-mid);line-height:1.6;margin-bottom:1rem;">During Alpha, AI runs on the same live cases as analysts but outputs don't influence active decisions. Human and AI outputs are compared offline to validate quality before any analyst-facing exposure.</p>
+    <div class="shadow-grid">
+      <div class="shadow-item">
+        <div class="shadow-icon"><svg width="13" height="13" viewBox="0 0 14 14" fill="none"><rect x="2" y="3" width="10" height="8" rx="1.5" stroke="currentColor" stroke-width="1.3"/><path d="M5 6h4M5 8.5h2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg></div>
+        <span class="shadow-text">Field extraction accuracy</span>
+      </div>
+      <div class="shadow-item">
+        <div class="shadow-icon"><svg width="13" height="13" viewBox="0 0 14 14" fill="none"><path d="M2 4h10M2 7h7M2 10h5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg></div>
+        <span class="shadow-text">Summary quality &amp; missing-info detection</span>
+      </div>
+      <div class="shadow-item">
+        <div class="shadow-icon"><svg width="13" height="13" viewBox="0 0 14 14" fill="none"><path d="M7 2a4 4 0 0 1 4 4c0 1.5-.8 2.8-2 3.5V11H5V9.5C3.8 8.8 3 7.5 3 6a4 4 0 0 1 4-4z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg></div>
+        <span class="shadow-text">Recommendation usefulness</span>
+      </div>
+      <div class="shadow-item">
+        <div class="shadow-icon"><svg width="13" height="13" viewBox="0 0 14 14" fill="none"><path d="M3 7h8M8 4l3 3-3 3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <span class="shadow-text">Citation grounding quality</span>
+      </div>
+      <div class="shadow-item">
+        <div class="shadow-icon"><svg width="13" height="13" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="5" stroke="currentColor" stroke-width="1.3"/><path d="M7 4v3l2 2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg></div>
+        <span class="shadow-text">False confidence &amp; abstention behavior</span>
+      </div>
+      <div class="shadow-item">
+        <div class="shadow-icon"><svg width="13" height="13" viewBox="0 0 14 14" fill="none"><path d="M7 1.5L2 4v3.5c0 3 2.2 5.5 5 6 2.8-.5 5-3 5-6V4L7 1.5z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg></div>
+        <span class="shadow-text">Policy alignment across representative case types</span>
+      </div>
+    </div>
+    <div class="shadow-note">
+      <div class="shadow-note-icon"><svg width="15" height="15" viewBox="0 0 14 14" fill="none"><path d="M7 1.5L1.5 12.5h11L7 1.5z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/><path d="M7 5.5v3M7 10v.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg></div>
+      <div class="shadow-note-text">Shadow mode should also surface <strong>where the system performs poorly</strong>, which case types should be excluded initially, and what safeguards are required before Beta proceeds.</div>
+    </div>
+
+    <!-- ── 4. Pilot Design ───────────────────────────────────── -->
+    <h2 class="numbered"><span class="sec-num">4</span> Pilot Design</h2>
+    <div class="pilot-2col">
+      <div class="pilot-card">
+        <div class="pilot-card-hdr">
+          <svg class="pilot-card-icon" width="13" height="13" viewBox="0 0 14 14" fill="none"><path d="M7 1L2 4v6l5 3 5-3V4L7 1z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>
+          <span class="pilot-card-title">Recommended Pilot Design</span>
+        </div>
+        <div class="pilot-card-body">
+          <ul class="pilot-bullets">
+            <li>Start with a limited analyst cohort</li>
+            <li>Representative mix of low- and medium-complexity cases</li>
+            <li>Exclude highest-risk or highly ambiguous edge cases initially</li>
+            <li>Compare analyst-only vs AI-assisted handling patterns</li>
+            <li>Track both quality and throughput — not speed alone</li>
+            <li>Weekly review checkpoints across Product, Ops, Compliance, Engineering</li>
+          </ul>
+        </div>
+      </div>
+      <div class="pilot-card">
+        <div class="pilot-card-hdr">
+          <svg class="pilot-card-icon" width="13" height="13" viewBox="0 0 14 14" fill="none"><path d="M2 3h10M2 7h7M5 10l3-3 3 3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span class="pilot-card-title">Key Pilot Decisions</span>
+        </div>
+        <div class="pilot-card-body">
+          <ul class="pilot-bullets">
+            <li>Which case types are in or out of scope</li>
+            <li>What counts as a critical failure</li>
+            <li>When analyst-visible suggestions can be enabled</li>
+            <li>What triggers rollback, pause, or narrower rollout</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── 5. Staged Rollout Strategy ───────────────────────── -->
+    <h2 class="numbered"><span class="sec-num">5</span> Staged Rollout Strategy</h2>
+    <p style="font-size:13px;color:var(--text-mid);line-height:1.6;margin-bottom:1rem;">Expansion along multiple dimensions — only when evidence supports it.</p>
+    <div class="expand-2col">
+      <div class="expand-col">
+        <div class="expand-col-label">Expand along these dimensions</div>
+        <div class="expand-chips">
+          <span class="expand-chip"><svg width="11" height="11" viewBox="0 0 12 12" fill="none"><circle cx="6" cy="4" r="2" stroke="currentColor" stroke-width="1.2"/><path d="M2 10c0-2.2 1.8-4 4-4s4 1.8 4 4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg> More analysts</span>
+          <span class="expand-chip"><svg width="11" height="11" viewBox="0 0 12 12" fill="none"><rect x="2" y="2" width="8" height="8" rx="1.5" stroke="currentColor" stroke-width="1.2"/><path d="M5 6h2M6 5v2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg> More case types</span>
+          <span class="expand-chip"><svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M2 6h8M8 3l3 3-3 3" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg> More workflow steps</span>
+          <span class="expand-chip"><svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M6 2v8M3 5l3-3 3 3" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg> Higher AI reliance</span>
+          <span class="expand-chip"><svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M2 6c0-2.2 1.8-4 4-4s4 1.8 4 4-1.8 4-4 4-4-1.8-4-4z" stroke="currentColor" stroke-width="1.2"/></svg> Broader routing</span>
+        </div>
+      </div>
+      <div class="expand-col">
+        <div class="expand-col-label">Gated by performance on</div>
+        <div class="expand-chips">
+          <span class="expand-chip">Suggestion acceptance</span>
+          <span class="expand-chip">Override frequency &amp; reasons</span>
+          <span class="expand-chip">Compliance-safe behavior</span>
+          <span class="expand-chip">SLA impact</span>
+          <span class="expand-chip">Analyst trust &amp; usability</span>
+          <span class="expand-chip">System stability</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── 6. Success Metrics ────────────────────────────────── -->
+    <h2 class="numbered"><span class="sec-num">6</span> Success Metrics</h2>
+    <div class="metrics-grid">
+      <div class="metric-chip">
+        <div class="metric-icon"><svg width="15" height="15" viewBox="0 0 14 14" fill="none"><path d="M2 10L5 6l3 2 4-6" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="metric-label">Analyst Acceptance Rate</div>
+      </div>
+      <div class="metric-chip">
+        <div class="metric-icon"><svg width="15" height="15" viewBox="0 0 14 14" fill="none"><path d="M7 2v5l3 2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><circle cx="7" cy="7" r="5" stroke="currentColor" stroke-width="1.3"/></svg></div>
+        <div class="metric-label">Review Time per Case</div>
+      </div>
+      <div class="metric-chip">
+        <div class="metric-icon"><svg width="15" height="15" viewBox="0 0 14 14" fill="none"><path d="M2 12L5 2l2 7 2-4 2 5 1-3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="metric-label">End-to-End Turnaround</div>
+      </div>
+      <div class="metric-chip">
+        <div class="metric-icon"><svg width="15" height="15" viewBox="0 0 14 14" fill="none"><path d="M9 3L5 7l-2-2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="7" cy="7" r="5" stroke="currentColor" stroke-width="1.3"/></svg></div>
+        <div class="metric-label">Override Rate by Reason</div>
+      </div>
+      <div class="metric-chip">
+        <div class="metric-icon"><svg width="15" height="15" viewBox="0 0 14 14" fill="none"><path d="M3 7h8M8 4l3 3-3 3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="metric-label">Citation Usefulness</div>
+      </div>
+      <div class="metric-chip">
+        <div class="metric-icon"><svg width="15" height="15" viewBox="0 0 14 14" fill="none"><path d="M2 9l3-4 2.5 2 2-3L12 9" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="metric-label">Follow-up Quality</div>
+      </div>
+      <div class="metric-chip">
+        <div class="metric-icon"><svg width="15" height="15" viewBox="0 0 14 14" fill="none"><path d="M7 1.5L2 4v3.5c0 3 2.2 5.5 5 6 2.8-.5 5-3 5-6V4L7 1.5z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg></div>
+        <div class="metric-label">Compliance Incidents</div>
+      </div>
+      <div class="metric-chip">
+        <div class="metric-icon"><svg width="15" height="15" viewBox="0 0 14 14" fill="none"><path d="M7 3v4l2.5 1.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><path d="M2 7a5 5 0 1 1 10 0" stroke="currentColor" stroke-width="1.3"/></svg></div>
+        <div class="metric-label">Escalation Rate</div>
+      </div>
+      <div class="metric-chip">
+        <div class="metric-icon"><svg width="15" height="15" viewBox="0 0 14 14" fill="none"><path d="M7 2a3 3 0 0 1 3 3c0 1-.5 2-1.5 2.5V9H5.5V7.5C4.5 7 4 6 4 5a3 3 0 0 1 3-3z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/><path d="M5.5 9h3M6 11h2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg></div>
+        <div class="metric-label">Analyst Trust Score</div>
+      </div>
+      <div class="metric-chip">
+        <div class="metric-icon"><svg width="15" height="15" viewBox="0 0 14 14" fill="none"><rect x="2" y="2" width="10" height="10" rx="2" stroke="currentColor" stroke-width="1.3"/><path d="M5 7l2 2 2-4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="metric-label">System Stability &amp; Failure Rate</div>
+      </div>
+    </div>
+
+    <!-- ── 7. Analyst Training ───────────────────────────────── -->
+    <h2 class="numbered"><span class="sec-num">7</span> Analyst Training Programme</h2>
+    <div class="train-2col">
+      <div class="train-card">
+        <div class="train-card-hdr">
+          <svg width="13" height="13" viewBox="0 0 14 14" fill="none"><path d="M2 11V5l5-3 5 3v6" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/><rect x="5" y="8" width="4" height="3" rx=".5" stroke="currentColor" stroke-width="1.2"/></svg>
+          Analysts are trained on
+        </div>
+        <div class="train-card-body">
+          <ul class="train-bullets">
+            <li>What the AI workspace does and does not do</li>
+            <li>How to interpret summaries, extracted fields, and recommendations</li>
+            <li>How to verify citation-backed evidence</li>
+            <li>How to read confidence and uncertainty indicators</li>
+            <li>When to override, escalate, or ignore suggestions</li>
+            <li>How to annotate corrections and capture useful feedback</li>
+            <li>What remains the analyst's responsibility at decision time</li>
+          </ul>
+        </div>
+      </div>
+      <div class="train-card">
+        <div class="train-card-hdr">
+          <svg width="13" height="13" viewBox="0 0 14 14" fill="none"><path d="M3 3h8v6H3z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/><path d="M5 9v2M9 9v2M3 11h8" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+          Recommended Format
+        </div>
+        <div class="train-card-body">
+          <div class="format-item"><span class="format-num">1</span><span class="format-text">Short role-based onboarding session</span></div>
+          <div class="format-item"><span class="format-num">2</span><span class="format-text">Guided walkthrough of real case examples</span></div>
+          <div class="format-item"><span class="format-num">3</span><span class="format-text">Sandbox or supervised practice cases</span></div>
+          <div class="format-item"><span class="format-num">4</span><span class="format-text">Decision playbooks for common scenarios</span></div>
+          <div class="format-item"><span class="format-num">5</span><span class="format-text">Refresher sessions after Beta findings</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── 8. Change Management ──────────────────────────────── -->
+    <h2 class="numbered"><span class="sec-num">8</span> Change Management</h2>
+    <div class="cm-2col">
+      <div class="cm-card cm-messages">
+        <div class="cm-card-hdr">
+          <svg width="13" height="13" viewBox="0 0 14 14" fill="none"><path d="M2 3h10v7H8.5L7 12l-1.5-2H2V3z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>
+          Key Messages to Analysts
+        </div>
+        <div class="cm-card-body">
+          <div class="cm-item"><div class="cm-check"><svg width="9" height="9" viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5L8 3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="cm-text">AI supports judgement — it does not replace reviewer accountability</span></div>
+          <div class="cm-item"><div class="cm-check"><svg width="9" height="9" viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5L8 3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="cm-text">Final decision authority stays with human reviewers</span></div>
+          <div class="cm-item"><div class="cm-check"><svg width="9" height="9" viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5L8 3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="cm-text">Overrides are expected and valuable — not a failure signal</span></div>
+          <div class="cm-item"><div class="cm-check"><svg width="9" height="9" viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5L8 3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="cm-text">Feedback improves the system — it is not performance management</span></div>
+          <div class="cm-item"><div class="cm-check"><svg width="9" height="9" viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5L8 3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="cm-text">The goal is to remove repetitive work and improve consistency — not automate away expertise</span></div>
+        </div>
+      </div>
+      <div class="cm-card cm-actions">
+        <div class="cm-card-hdr">
+          <svg width="13" height="13" viewBox="0 0 14 14" fill="none"><path d="M7 2v10M3.5 5.5L7 2l3.5 3.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Supporting Actions
+        </div>
+        <div class="cm-card-body">
+          <div class="cm-item"><div class="cm-check"><svg width="9" height="9" viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5L8 3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="cm-text">Identify analyst champions early</span></div>
+          <div class="cm-item"><div class="cm-check"><svg width="9" height="9" viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5L8 3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="cm-text">Create a structured feedback loop during rollout</span></div>
+          <div class="cm-item"><div class="cm-check"><svg width="9" height="9" viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5L8 3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="cm-text">Publish known limitations transparently</span></div>
+          <div class="cm-item"><div class="cm-check"><svg width="9" height="9" viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5L8 3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="cm-text">Review override themes without blame</span></div>
+          <div class="cm-item"><div class="cm-check"><svg width="9" height="9" viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5L8 3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="cm-text">Communicate go-live criteria clearly so trust is built through discipline</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── 9. Operational Readiness ──────────────────────────── -->
+    <h2 class="numbered"><span class="sec-num">9</span> Operational Readiness</h2>
+    <p style="font-size:13px;color:var(--text-mid);line-height:1.6;margin-bottom:1rem;">Confirm readiness across product, compliance, operations, and engineering before each stage.</p>
+    <div class="readiness-grid">
+      <div class="ready-item"><div class="ready-icon"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2.5 7.5L5.5 10.5L11.5 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="ready-text">Agreed success and failure thresholds defined</span></div>
+      <div class="ready-item"><div class="ready-icon"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2.5 7.5L5.5 10.5L11.5 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="ready-text">Support ownership confirmed during rollout</span></div>
+      <div class="ready-item"><div class="ready-icon"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2.5 7.5L5.5 10.5L11.5 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="ready-text">Incident escalation path established</span></div>
+      <div class="ready-item"><div class="ready-icon"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2.5 7.5L5.5 10.5L11.5 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="ready-text">Rollback / feature-disable mechanism tested</span></div>
+      <div class="ready-item"><div class="ready-icon"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2.5 7.5L5.5 10.5L11.5 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="ready-text">Analyst training completed</span></div>
+      <div class="ready-item"><div class="ready-icon"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2.5 7.5L5.5 10.5L11.5 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="ready-text">Quality and operational health monitoring in place</span></div>
+      <div class="ready-item"><div class="ready-icon"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2.5 7.5L5.5 10.5L11.5 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="ready-text">In-scope and out-of-scope case definitions agreed</span></div>
+    </div>
+
+    <!-- ── 10. Exit Criteria ─────────────────────────────────── -->
+    <h2 class="numbered"><span class="sec-num">10</span> Exit Criteria by Stage</h2>
+    <div class="exit-grid">
+      <div class="exit-card exit-alpha">
+        <div class="exit-tag">Alpha exits when</div>
+        <div class="exit-cond">Offline quality is validated — extraction accuracy, grounding, and policy alignment confirmed on representative case types. No critical failures observed.</div>
+      </div>
+      <div class="exit-card exit-beta">
+        <div class="exit-tag">Beta exits when</div>
+        <div class="exit-cond">Live analyst usage is stable and compliance-safe. Override patterns are understood. Acceptance rate meets threshold. No compliance incidents recorded.</div>
+      </div>
+      <div class="exit-card exit-ga">
+        <div class="exit-tag">GA proceeds when</div>
+        <div class="exit-cond">Measurable SLA or productivity gains are confirmed. Control effectiveness is not degraded. Operational and compliance readiness signed off across all functions.</div>
+      </div>
+    </div>
+
+    <!-- ── 11. Non-Goals ─────────────────────────────────────── -->
+    <h2 class="numbered"><span class="sec-num">11</span> Non-Goals for Initial Rollout</h2>
+    <div class="ng-list">
+      <div class="ng-item"><div class="ng-x"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 3l8 8M11 3L3 11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div><span class="ng-text">Fully autonomous case decisions</span></div>
+      <div class="ng-item"><div class="ng-x"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 3l8 8M11 3L3 11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div><span class="ng-text">Universal support for all edge-case KYB scenarios from day one</span></div>
+      <div class="ng-item"><div class="ng-x"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 3l8 8M11 3L3 11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div><span class="ng-text">Unrestricted use across all geographies or risk tiers</span></div>
+      <div class="ng-item"><div class="ng-x"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 3l8 8M11 3L3 11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div><span class="ng-text">Automatic learning from live feedback without governed review</span></div>
+      <div class="ng-item"><div class="ng-x"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 3l8 8M11 3L3 11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div><span class="ng-text">Replacing existing compliance controls</span></div>
+    </div>
+
+    <!-- ── Final Callout ─────────────────────────────────────── -->
+    <div class="final-callout">
+      <div class="fc-icon"><svg width="15" height="15" viewBox="0 0 14 14" fill="none"><path d="M7 1.5L2 4v3.5c0 3 2.2 5.5 5 6 2.8-.5 5-3 5-6V4L7 1.5z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/><path d="M5 7l1.5 1.5L9 5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <div>
+        <div class="fc-label">Rollout Principle</div>
+        <div class="fc-text">Rollout success depends as much on trust, training, and operational discipline as on model quality. The launch should be gated not only by AI performance, but also by analyst adoption, compliance safety, and operational readiness.</div>
+      </div>
+    </div>
+
+    <nav class="section-nav" style="margin-top:8px;">
+      <a href="platform-reuse.html" class="nav-btn"><span class="nav-btn-dir">← Previous</span><span class="nav-btn-title">8.1 Platform Reuse Map</span></a>
+      <span class="nav-center">8.2 of Block 8</span>
+      <a href="team-resourcing.html" class="nav-btn"><span class="nav-btn-dir">Next →</span><span class="nav-btn-title">8.3 Team &amp; Resourcing</span></a>
     </nav>
   </main>
 </div>
-<footer class="site-footer">Reap AI Platform — KYB Review Copilot &nbsp;·&nbsp; Technical PRD</footer>
-<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<footer class="site-footer">
+  Reap AI Platform — KYB Review Copilot &nbsp;·&nbsp; Technical PRD &nbsp;·&nbsp;
+  Prepared for <a href="https://reap.global" target="_blank">Reap</a> &nbsp;·&nbsp;
+  <a href="https://github.com/chhedup-lama/Reap-casestudy" target="_blank">GitHub Repository</a>
+</footer>
 <script src="../js/main.js"></script>
-</body></html>
+</body>
+</html>

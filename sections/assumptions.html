@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>3.6 Working Assumptions — Reap KYB PRD</title>
+  <link rel="stylesheet" href="../css/styles.css" />
+<style>
+
+  /* ── Context banner ── */
+  .ctx-bar {
+    background:var(--navy); border-radius:10px; padding:1.1rem 1.25rem;
+    margin-bottom:1.75rem; display:flex; gap:1rem; align-items:flex-start;
+  }
+  .ctx-icon {
+    width:36px; height:36px; border-radius:8px; flex-shrink:0;
+    background:rgba(165,180,252,.12); border:1px solid rgba(165,180,252,.22);
+    display:flex; align-items:center; justify-content:center; color:#A5B4FC;
+  }
+  .ctx-label { font-size:10px; font-weight:800; text-transform:uppercase;
+    letter-spacing:.08em; color:rgba(165,180,252,.7); margin-bottom:5px; }
+  .ctx-body { font-size:12.5px; color:rgba(255,255,255,.68); line-height:1.55; }
+  .ctx-body strong { color:rgba(255,255,255,.92); }
+
+  /* ── Theme section header ── */
+  .theme-hdr {
+    display:flex; align-items:center; gap:9px;
+    padding:9px 14px; border-radius:8px; margin-bottom:.9rem;
+  }
+  .th-ops   { background:#EFF6FF; border-left:3px solid #2563EB; }
+  .th-tech  { background:#F5F3FF; border-left:3px solid #7C3AED; }
+  .th-strat { background:#ECFDF5; border-left:3px solid #059669; }
+  .th-icon {
+    width:26px; height:26px; border-radius:6px; flex-shrink:0;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .th-ops  .th-icon { background:#DBEAFE; color:#1D4ED8; }
+  .th-tech .th-icon { background:#EDE9FE; color:#6D28D9; }
+  .th-strat .th-icon { background:#D1FAE5; color:#047857; }
+  .th-label { font-size:12px; font-weight:800; color:var(--text); }
+  .th-sub   { font-size:11px; color:var(--text-dim); margin-left:auto; }
+
+  /* ── Assumption cards ── */
+  .assume-grid {
+    display:grid; grid-template-columns:repeat(3,1fr); gap:.75rem;
+    margin-bottom:1.75rem;
+  }
+  @media(max-width:820px){ .assume-grid { grid-template-columns:1fr 1fr; } }
+  @media(max-width:540px){ .assume-grid { grid-template-columns:1fr; } }
+
+  .assume-card {
+    border:1px solid var(--border); border-radius:10px;
+    background:var(--surface); overflow:hidden;
+  }
+  .ac-hdr {
+    padding:.65rem 1rem; display:flex; align-items:center; gap:8px;
+    border-bottom:1px solid var(--border); background:var(--bg);
+  }
+  .ac-num {
+    width:22px; height:22px; border-radius:50%; font-size:10px; font-weight:800;
+    display:flex; align-items:center; justify-content:center; flex-shrink:0;
+  }
+  .an-ops   { background:#DBEAFE; color:#1D4ED8; }
+  .an-tech  { background:#EDE9FE; color:#6D28D9; }
+  .an-strat { background:#D1FAE5; color:#047857; }
+  .ac-title { font-size:12.5px; font-weight:700; color:var(--text); }
+  .ac-body  { padding:.75rem 1rem; }
+
+  .ac-pts { list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:.4rem; }
+  .ac-pts li {
+    display:flex; align-items:flex-start; gap:7px;
+    font-size:11.5px; color:var(--text-mid); line-height:1.45;
+  }
+  .ac-dot {
+    width:5px; height:5px; border-radius:50%; flex-shrink:0; margin-top:5px;
+  }
+  .d-ops   { background:#2563EB; }
+  .d-tech  { background:#7C3AED; }
+  .d-strat { background:#059669; }
+
+  /* ── Inline note tag ── */
+  .ntag {
+    display:inline-block; padding:1px 6px; border-radius:3px;
+    font-size:10px; font-weight:700; background:#FEF3C7; color:#92400E;
+    margin-left:3px; vertical-align:middle; white-space:nowrap;
+  }
+  .ntag-build {
+    background:#DCFCE7; color:#166534;
+  }
+
+</style>
+</head>
+<body>
+<header class="site-header">
+  <div class="header-inner">
+    <a href="../index.html" class="site-logo"><div class="logo-mark">R</div><span>Reap AI Platform</span></a>
+    <div class="header-divider"></div><span class="header-subtitle">KYB Review Copilot</span>
+    <nav class="header-nav"><a href="../index.html">Overview</a><a href="solution-architecture.html">Architecture</a><a href="reviewer-workflow.html">Workflow</a></nav>
+  </div>
+</header>
+
+<div class="page-layout">
+  <aside class="sidebar">
+    <a href="../index.html" class="sidebar-back"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M9 11L5 7l4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg> All Sections</a>
+    <div class="sidebar-section-title">Block 3 — Product Scope</div>
+    <ul class="sidebar-nav">
+      <li><a href="feature-scope.html">3.1 Feature Scope</a></li>
+      <li><a href="out-of-scope.html">3.2 Out of Scope</a></li>
+      <li><a href="build-vs-buy.html">3.3 Build vs Buy</a></li>
+      <li><a href="phased-delivery.html">3.4 Phased Delivery</a></li>
+      <li><a href="dependencies.html">3.5 Dependencies</a></li>
+      <li><a href="assumptions.html" class="active">3.6 Assumptions</a></li>
+    </ul>
+  </aside>
+
+  <main class="content">
+    <nav class="breadcrumb">
+      <a href="../index.html">Home</a><span class="breadcrumb-sep">›</span>
+      <span>Block 3 — Product Scope</span><span class="breadcrumb-sep">›</span>
+      <span class="breadcrumb-current">3.6 Working Assumptions</span>
+    </nav>
+    <div class="section-header">
+      <div class="section-block-tag" style="background:var(--b3)">Block 3 — Product Scope</div>
+      <h1>Working Assumptions</h1>
+      <p class="section-intro">Practical working assumptions that make the roadmap and design concrete. Directionally realistic, not operational facts — intended to be validated and refined as discovery progresses.</p>
+    </div>
+
+    <!-- Context bar -->
+    <div class="ctx-bar">
+      <div class="ctx-icon">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <circle cx="8" cy="8" r="6.5" stroke="currentColor" stroke-width="1.4"/>
+          <path d="M8 7v4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          <circle cx="8" cy="5" r=".8" fill="currentColor"/>
+        </svg>
+      </div>
+      <div>
+        <div class="ctx-label">How to use these</div>
+        <div class="ctx-body">Each assumption informs a scope, phasing, or build-vs-buy decision. Where an assumption is wrong, adjust scope or phasing accordingly. Grouped into three themes: <strong>Operational Reality</strong> (volume, effort, policy), <strong>Technical Environment</strong> (systems, data, storage), and <strong>Design &amp; Strategy</strong> (HITL, stakeholders, platform vision).</div>
+      </div>
+    </div>
+
+
+    <!-- ── THEME 1: Operational Reality ── -->
+    <div class="theme-hdr th-ops">
+      <div class="th-icon">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+          <path d="M2 12c0-2.2 1.8-4 4-4s4 1.8 4 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+          <circle cx="6" cy="5" r="2.5" stroke="currentColor" stroke-width="1.4"/>
+          <path d="M10.5 8.5c1.1.5 2 1.5 2 2.8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+          <circle cx="10" cy="4.5" r="1.8" stroke="currentColor" stroke-width="1.4"/>
+        </svg>
+      </div>
+      <span class="th-label">Operational Reality</span>
+      <span class="th-sub">Volume &nbsp;·&nbsp; Effort &nbsp;·&nbsp; Policy</span>
+    </div>
+    <div class="assume-grid">
+
+      <!-- 1. Case Volume -->
+      <div class="assume-card">
+        <div class="ac-hdr">
+          <div class="ac-num an-ops">1</div>
+          <span class="ac-title">Case Volume &amp; Throughput</span>
+        </div>
+        <div class="ac-body">
+          <ul class="ac-pts">
+            <li><span class="ac-dot d-ops"></span>Recurring monthly volume is high enough that per-case time savings create clear operational value</li>
+            <li><span class="ac-dot d-ops"></span>Volume is uneven — queue build-ups track sales and onboarding cycles</li>
+            <li><span class="ac-dot d-ops"></span>Mix of low / medium / escalated-complexity cases exists across the queue</li>
+            <li><span class="ac-dot d-ops"></span>A small cohort of complex cases consumes a disproportionate share of Ops &amp; Compliance time</li>
+            <li><span class="ac-dot d-ops"></span>Goal is to improve both average handling time <em>and</em> queue predictability — not just peak throughput</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- 2. Manual Effort -->
+      <div class="assume-card">
+        <div class="ac-hdr">
+          <div class="ac-num an-ops">2</div>
+          <span class="ac-title">Manual Effort &amp; Workflow</span>
+        </div>
+        <div class="ac-body">
+          <ul class="ac-pts">
+            <li><span class="ac-dot d-ops"></span>~40 min average per case is directionally correct, spanning: document review, entity assessment, SOP lookup, follow-up drafting, and re-review</li>
+            <li><span class="ac-dot d-ops"></span>Effort is not evenly distributed — document classification, fact reconstruction, and follow-up management dominate</li>
+            <li><span class="ac-dot d-ops"></span>Re-review loops are the biggest source of avoidable effort</li>
+            <li><span class="ac-dot d-ops"></span>Rule-based WF assignment already exists for KYB case ownership <span class="ntag">don't rebuild</span></li>
+            <li><span class="ac-dot d-ops"></span>Distinct queue loads exist across KYB Analysts, Ops Reviewers, Compliance Reviewers, and Team Leads</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- 3. Policy Environment -->
+      <div class="assume-card">
+        <div class="ac-hdr">
+          <div class="ac-num an-ops">3</div>
+          <span class="ac-title">Policy &amp; Rules Environment</span>
+        </div>
+        <div class="ac-body">
+          <ul class="ac-pts">
+            <li><span class="ac-dot d-ops"></span>Eligibility rules, risk appetite guidance, and SOPs already exist and are stable enough for retrieval-based workflows</li>
+            <li><span class="ac-dot d-ops"></span>Policy changes occasionally but won't immediately obsolete a structured policy layer</li>
+            <li><span class="ac-dot d-ops"></span>Core challenge is translating narrative policy into consistent operational decisions — not lack of policy itself</li>
+            <li><span class="ac-dot d-ops"></span>Grey-area cases requiring judgment and escalation are expected and appropriate</li>
+            <li><span class="ac-dot d-ops"></span>An internal CMS for documentation exists (CRUD capable); policy owners are available to tag and interpret content during build</li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+
+
+    <!-- ── THEME 2: Technical Environment ── -->
+    <div class="theme-hdr th-tech">
+      <div class="th-icon">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+          <rect x="1.5" y="1.5" width="11" height="4" rx="1.5" stroke="currentColor" stroke-width="1.4"/>
+          <rect x="1.5" y="8.5" width="11" height="4" rx="1.5" stroke="currentColor" stroke-width="1.4"/>
+          <circle cx="4" cy="3.5" r=".7" fill="currentColor"/>
+          <circle cx="4" cy="10.5" r=".7" fill="currentColor"/>
+        </svg>
+      </div>
+      <span class="th-label">Technical Environment</span>
+      <span class="th-sub">Systems &nbsp;·&nbsp; Data &nbsp;·&nbsp; Storage</span>
+    </div>
+    <div class="assume-grid">
+
+      <!-- 4. Internal Tools -->
+      <div class="assume-card">
+        <div class="ac-hdr">
+          <div class="ac-num an-tech">4</div>
+          <span class="ac-title">Internal Tools &amp; Systems</span>
+        </div>
+        <div class="ac-body">
+          <ul class="ac-pts">
+            <li><span class="ac-dot d-tech"></span>An internal case-review / admin tool exists for final decisioning and account activation</li>
+            <li><span class="ac-dot d-tech"></span>Accessible inputs include: form data, uploaded docs, analyst notes, follow-up comms, and policy content</li>
+            <li><span class="ac-dot d-tech"></span>Tooling can be extended via APIs, workflow integrations, or embedded UI components</li>
+            <li><span class="ac-dot d-tech"></span>External vendor integration is possible for OCR, screening data, and model access where appropriate</li>
+            <li><span class="ac-dot d-tech"></span>Sufficient engineering flexibility exists to layer AI assistance above the core ops system without rebuilding it</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- 5. Data Quality -->
+      <div class="assume-card">
+        <div class="ac-hdr">
+          <div class="ac-num an-tech">5</div>
+          <span class="ac-title">Data Quality &amp; Variability</span>
+        </div>
+        <div class="ac-body">
+          <ul class="ac-pts">
+            <li><span class="ac-dot d-tech"></span>Submitted documents vary in quality, structure, and completeness</li>
+            <li><span class="ac-dot d-tech"></span>Inputs include scanned PDFs, images, screenshots, and mixed formats — extraction will be imperfect</li>
+            <li><span class="ac-dot d-tech"></span>Form fields, uploaded documents, and registry data won't always align cleanly</li>
+            <li><span class="ac-dot d-tech"></span>Platform must be designed around <em>"assist and verify"</em> — not extract once and trust blindly</li>
+            <li><span class="ac-dot d-tech"></span>Sufficient historical case data exists for initial evaluation and workflow design, even if not fully labelled</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- 6. Data Ingestion & Tenancy -->
+      <div class="assume-card">
+        <div class="ac-hdr">
+          <div class="ac-num an-tech">6</div>
+          <span class="ac-title">Data Ingestion &amp; Tenancy</span>
+        </div>
+        <div class="ac-body">
+          <ul class="ac-pts">
+            <li><span class="ac-dot d-tech"></span>KYB data enters via multiple channels: forms, uploads, resubmissions, analyst files, and external providers</li>
+            <li><span class="ac-dot d-tech"></span>Source documents remain in secure Reap-controlled storage</li>
+            <li><span class="ac-dot d-tech"></span><span class="ntag ntag-build">Must Build</span> Ingestion → parsing → extraction → indexing pipelines layered above existing systems of record</li>
+            <li><span class="ac-dot d-tech"></span>Raw artifacts, case metadata, retrieval-ready content, and audit logs stored in separate but linked layers</li>
+            <li><span class="ac-dot d-tech"></span>Platform is tenant-safe and permission-aware by design: case-level access controls, encrypted storage, scoped retrieval, and full auditability</li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+
+
+    <!-- ── THEME 3: Design & Strategy ── -->
+    <div class="theme-hdr th-strat">
+      <div class="th-icon">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+          <circle cx="7" cy="7" r="5.5" stroke="currentColor" stroke-width="1.4"/>
+          <circle cx="7" cy="7" r="2.5" stroke="currentColor" stroke-width="1.4"/>
+          <circle cx="7" cy="7" r=".8" fill="currentColor"/>
+        </svg>
+      </div>
+      <span class="th-label">Design &amp; Strategy</span>
+      <span class="th-sub">HITL &nbsp;·&nbsp; Stakeholders &nbsp;·&nbsp; Platform Vision</span>
+    </div>
+    <div class="assume-grid">
+
+      <!-- 7. HITL Decisioning -->
+      <div class="assume-card">
+        <div class="ac-hdr">
+          <div class="ac-num an-strat">7</div>
+          <span class="ac-title">Human-in-the-Loop Decisioning</span>
+        </div>
+        <div class="ac-body">
+          <ul class="ac-pts">
+            <li><span class="ac-dot d-strat"></span>Final onboarding decisions remain human-owned throughout Phase 1</li>
+            <li><span class="ac-dot d-strat"></span>Initial objective is assistive decision support — not autonomous approval or rejection</li>
+            <li><span class="ac-dot d-strat"></span>AI outputs must be reviewable, editable, and grounded in inspectable evidence</li>
+            <li><span class="ac-dot d-strat"></span>Reviewers can always: inspect source evidence, accept/edit/reject suggestions, override recommendations, and document rationale</li>
+            <li><span class="ac-dot d-strat"></span>Architecture must support staged evolution: HITL → selective autonomy — controlled via admin-managed policy and risk thresholds, without rebuilding the system</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- 8. Stakeholders -->
+      <div class="assume-card">
+        <div class="ac-hdr">
+          <div class="ac-num an-strat">8</div>
+          <span class="ac-title">Stakeholders &amp; Operating Model</span>
+        </div>
+        <div class="ac-body">
+          <ul class="ac-pts">
+            <li><span class="ac-dot d-strat"></span>Primary users: KYB Analysts and Operations Reviewers</li>
+            <li><span class="ac-dot d-strat"></span>Key cross-functional: Compliance Policy (define logic &amp; escalation rules), Compliance/Risk (handle escalations)</li>
+            <li><span class="ac-dot d-strat"></span>Secondary stakeholders: Sales/Onboarding (onboarding speed), Audit/Legal/Security (traceability &amp; access controls)</li>
+            <li><span class="ac-dot d-strat"></span>Successful rollout requires tight weekly collaboration across Product, Engineering, Ops, and Compliance — not a handoff model</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- 9. Success & Platform Scope -->
+      <div class="assume-card">
+        <div class="ac-hdr">
+          <div class="ac-num an-strat">9</div>
+          <span class="ac-title">Success &amp; Platform Scope</span>
+        </div>
+        <div class="ac-body">
+          <ul class="ac-pts">
+            <li><span class="ac-dot d-strat"></span>Success is measured by quality and control — not speed alone</li>
+            <li><span class="ac-dot d-strat"></span>First 6 months: improve efficiency, review consistency, follow-up quality, auditability, and user trust/adoption</li>
+            <li><span class="ac-dot d-strat"></span>Business prefers a phased, low-risk rollout with measurable gains over an aggressive push to end-to-end automation</li>
+            <li><span class="ac-dot d-strat"></span>KYB is the lighthouse use case — platform reuse targeted for: EDD, sanctions/adverse media, support ops, payment exceptions</li>
+            <li><span class="ac-dot d-strat"></span>Commodity infrastructure: buy or integrate. Differentiated workflow intelligence, policy reasoning, review UX, and eval controls: build in-house</li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+
+    <nav class="section-nav">
+      <a href="dependencies.html" class="nav-btn"><span class="nav-btn-dir">← Previous</span><span class="nav-btn-title">Dependencies &amp; Integration Points</span></a>
+      <span class="nav-center">16 of 40</span>
+      <a href="rag-overview.html" class="nav-btn next"><span class="nav-btn-dir">Next →</span><span class="nav-btn-title">RAG Architecture Overview</span></a>
+    </nav>
+  </main>
+</div>
+
+<footer class="site-footer">Reap AI Platform — KYB Review Copilot &nbsp;·&nbsp; Technical PRD</footer>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script src="../js/main.js"></script>
+</body>
+</html>
