@@ -4,6 +4,45 @@
   <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>9.3 Monitoring &amp; Alerting — Reap KYB PRD</title>
   <link rel="stylesheet" href="../css/styles.css" />
+<style>
+  .p1-bar { background:var(--navy); border-left:4px solid #2563EB; border-radius:9px; padding:.9rem 1.1rem; font-size:13px; color:rgba(255,255,255,.75); line-height:1.6; margin-bottom:1.75rem; }
+  .p1-bar strong { color:#fff; }
+
+  .layer-grid { display:grid; grid-template-columns:1fr 1fr; gap:.65rem; margin-bottom:1.75rem; }
+  @media(max-width:620px){ .layer-grid { grid-template-columns:1fr; } }
+  .layer-card { border:1px solid var(--border); border-radius:9px; padding:.8rem 1rem; background:var(--surface); }
+  .lc-label { font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:.07em; color:var(--text-dim); margin-bottom:.5rem; }
+  .lc-items { list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:.25rem; }
+  .lc-items li { font-size:12px; color:var(--text-mid); padding-left:10px; position:relative; line-height:1.4; }
+  .lc-items li::before { content:'·'; position:absolute; left:0; color:var(--text-dim); }
+
+  .alert-wrap { border:1px solid var(--border); border-radius:9px; overflow:hidden; margin-bottom:1.75rem; }
+  .alert-table { width:100%; font-size:12px; border-collapse:collapse; }
+  .alert-table th { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.06em; padding:8px 12px; background:var(--bg); border-bottom:2px solid var(--border); color:var(--text-dim); text-align:left; }
+  .alert-table td { padding:9px 12px; border-bottom:1px solid var(--border); vertical-align:top; color:var(--text-mid); font-size:12px; line-height:1.4; }
+  .alert-table tr:last-child td { border-bottom:none; }
+  .alert-table td:first-child { font-weight:600; color:var(--text); white-space:nowrap; }
+  .sev-imm { display:inline-block; padding:1px 7px; border-radius:4px; font-size:10px; font-weight:700; background:#FEF2F2; color:#B91C1C; }
+  .sev-hi  { display:inline-block; padding:1px 7px; border-radius:4px; font-size:10px; font-weight:700; background:#FFFBEB; color:#B45309; }
+  .sev-med { display:inline-block; padding:1px 7px; border-radius:4px; font-size:10px; font-weight:700; background:#EFF6FF; color:#1D4ED8; }
+
+  .dash-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:.65rem; margin-bottom:1.75rem; }
+  @media(max-width:700px){ .dash-grid { grid-template-columns:1fr; } }
+  .dash-card { border:1px solid var(--border); border-radius:9px; padding:.8rem 1rem; background:var(--surface); }
+  .dc-audience { font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:.07em; color:var(--text-dim); margin-bottom:.3rem; }
+  .dc-name { font-size:13px; font-weight:700; color:var(--text); margin-bottom:.5rem; }
+  .dc-items { list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:.25rem; }
+  .dc-items li { font-size:11.5px; color:var(--text-mid); padding-left:10px; position:relative; line-height:1.4; }
+  .dc-items li::before { content:'·'; position:absolute; left:0; color:var(--text-dim); }
+
+  .rb-list { list-style:none; padding:0; margin:0 0 1.75rem; display:flex; flex-direction:column; gap:.4rem; }
+  .rb-list li { display:flex; align-items:flex-start; gap:8px; font-size:12.5px; color:var(--text-mid); line-height:1.4; }
+  .rb-dot { width:6px; height:6px; border-radius:50%; background:#0E7490; flex-shrink:0; margin-top:5px; }
+
+  .future-list { list-style:none; padding:0; margin:0 0 1.75rem; display:flex; flex-direction:column; gap:.3rem; }
+  .future-list li { font-size:12px; color:var(--text-dim); padding-left:10px; position:relative; line-height:1.4; }
+  .future-list li::before { content:'→'; position:absolute; left:0; color:var(--text-dim); font-size:10px; top:2px; }
+</style>
 </head>
 <body>
 <header class="site-header">
@@ -20,8 +59,7 @@
     <ul class="sidebar-nav">
       <li><a href="metrics-framework.html">9.1 Metrics Framework</a></li>
       <li><a href="experimentation.html">9.2 Experimentation</a></li>
-      <li><a href="monitoring.html" class="active">9.3 Monitoring</a></li>
-      <li><a href="recommendation.html">9.4 Recommendation</a></li>
+      <li><a href="monitoring.html" class="active">9.3 Monitoring &amp; Alerting</a></li>
     </ul>
   </aside>
   <main class="content">
@@ -29,40 +67,135 @@
     <div class="section-header">
       <div class="section-block-tag" style="background:var(--b9)">Block 9 — Measurement &amp; Recommendation</div>
       <h1>Monitoring &amp; Alerting</h1>
-      <p class="section-intro">Platform health, AI model drift detection, queue SLA monitoring, and the alerting thresholds that keep the KYB Review Copilot operating reliably in production.</p>
+      <p class="section-intro">Phase 1 monitoring focuses on production reliability, workflow continuity, and control failures. Detect issues early, route them to the right owner, and ensure the system fails visibly and safely — not silently.</p>
     </div>
-    <div class="stub-banner">&#9998; Content coming soon — this section is a structured stub awaiting full copy.</div>
 
-    <h2>Monitoring Stack</h2>
-    <div class="table-wrap"><table>
-      <thead><tr><th>Layer</th><th>What's Monitored</th><th>Tool</th><th>Alerting Threshold</th></tr></thead>
-      <tbody>
-        <tr><td>Infrastructure</td><td>CPU, memory, queue depth, DB connections</td><td>[ ]</td><td>[ ]</td></tr>
-        <tr><td>Application</td><td>API latency p50/p95/p99, error rate</td><td>[ ]</td><td>p95 &gt; 3s for &gt; 5 min</td></tr>
-        <tr><td>AI Pipeline</td><td>OCR latency, LLM latency, token usage</td><td>[ ]</td><td>[ ]</td></tr>
-        <tr><td>AI Quality</td><td>Override rate, confidence distribution, acceptance rate</td><td>[ ]</td><td>Override rate &gt; [ ]% in 24h</td></tr>
-        <tr><td>Queue Health</td><td>Cases in queue, SLA breach count, age distribution</td><td>[ ]</td><td>Queue age p95 &gt; [ ] hours</td></tr>
-        <tr><td>Compliance</td><td>Audit log write failures, missing events</td><td>[ ]</td><td>Any failure — immediate page</td></tr>
-      </tbody>
-    </table></div>
+    <div class="p1-bar"><strong>Phase 1 Principle.</strong> Monitor for operational breakage and control failure first. Deeper AI optimisation — model drift, quality scorecards, anomaly detection — comes in later phases.</div>
 
-    <h2>Model Drift Detection</h2>
-    <p>[ Monitor: confidence score distribution over time (should remain stable). Override rate trend (rising = model degrading). Alert thresholds and retraining trigger process. ]</p>
+    <h2>Phase 1 Monitoring Scope</h2>
+    <p style="font-size:13px;color:var(--text-mid);margin-bottom:.9rem;">Four launch-critical layers must be covered from day one:</p>
+    <div class="layer-grid">
+      <div class="layer-card">
+        <div class="lc-label">Infrastructure Health</div>
+        <ul class="lc-items">
+          <li>CPU and memory utilisation</li>
+          <li>Service availability</li>
+          <li>Database health</li>
+          <li>Queue depth</li>
+        </ul>
+      </div>
+      <div class="layer-card">
+        <div class="lc-label">Application Health</div>
+        <ul class="lc-items">
+          <li>API latency</li>
+          <li>Error rate</li>
+          <li>Failed workflow transitions</li>
+          <li>Processing job failures</li>
+        </ul>
+      </div>
+      <div class="layer-card">
+        <div class="lc-label">Pipeline Health</div>
+        <ul class="lc-items">
+          <li>OCR and extraction latency</li>
+          <li>LLM call failures and timeouts</li>
+          <li>Reprocessing failure rate</li>
+        </ul>
+      </div>
+      <div class="layer-card">
+        <div class="lc-label">Control Health</div>
+        <ul class="lc-items">
+          <li>Audit log write failures</li>
+          <li>Missing workflow events</li>
+          <li>Notification delivery failures</li>
+        </ul>
+      </div>
+    </div>
+
+    <h2>Alerting Priorities</h2>
+    <p style="font-size:13px;color:var(--text-mid);margin-bottom:.9rem;">Phase 1 alerts are limited to signals that directly affect operations or compliance. Any control-plane failure that affects auditability or case progression triggers immediate investigation.</p>
+    <div class="alert-wrap">
+      <table class="alert-table">
+        <thead><tr><th>Signal</th><th>Why it matters</th><th>Severity</th></tr></thead>
+        <tbody>
+          <tr><td>Audit logging failure</td><td>Control and compliance obligation — cannot proceed without a trace</td><td><span class="sev-imm">Immediate</span></td></tr>
+          <tr><td>Failed workflow state updates</td><td>Cases may be stuck or invisible to reviewers</td><td><span class="sev-imm">Immediate</span></td></tr>
+          <tr><td>LLM / OCR provider unavailable</td><td>Pipeline halts; fallback mode must activate</td><td><span class="sev-imm">Immediate</span></td></tr>
+          <tr><td>Sustained API latency degradation</td><td>Reviewer experience degrades; throughput drops</td><td><span class="sev-hi">High</span></td></tr>
+          <tr><td>Elevated application error rate</td><td>Indicates systemic failure, not isolated errors</td><td><span class="sev-hi">High</span></td></tr>
+          <tr><td>Queue backlog or SLA breach risk</td><td>Cases may miss turnaround commitments</td><td><span class="sev-hi">High</span></td></tr>
+          <tr><td>Failed or stuck processing jobs</td><td>Documents not processed = case cannot proceed</td><td><span class="sev-hi">High</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>Fallback Monitoring</h2>
+    <p style="font-size:13px;color:var(--text-mid);margin-bottom:.75rem;">Monitoring must explicitly detect when the system has entered a degraded operating mode — so the team knows operations are now on a fallback path, not just that something failed:</p>
+    <ul style="font-size:13px;color:var(--text-mid);padding-left:1.25rem;line-height:1.7;margin-bottom:1.75rem;">
+      <li>AI service unavailable</li>
+      <li>Extraction failure rate above threshold</li>
+      <li>Queue backlog beyond acceptable limits</li>
+      <li>Manual fallback volume spike</li>
+    </ul>
 
     <h2>Operational Dashboards</h2>
-    <p>[ Dashboard 1: Real-time queue health (for Operations). Dashboard 2: AI quality metrics (for Product). Dashboard 3: Compliance metrics (for Compliance Lead). ]</p>
+    <div class="dash-grid">
+      <div class="dash-card">
+        <div class="dc-audience">Operations</div>
+        <div class="dc-name">Queue &amp; Case Health</div>
+        <ul class="dc-items">
+          <li>Queue health and case backlog</li>
+          <li>Processing status</li>
+          <li>SLA risk indicators</li>
+        </ul>
+      </div>
+      <div class="dash-card">
+        <div class="dc-audience">Engineering</div>
+        <div class="dc-name">System Health</div>
+        <ul class="dc-items">
+          <li>API latency and error rates</li>
+          <li>Dependency health</li>
+          <li>Worker and job failures</li>
+        </ul>
+      </div>
+      <div class="dash-card">
+        <div class="dc-audience">Compliance / Product</div>
+        <div class="dc-name">Control &amp; Exception View</div>
+        <ul class="dc-items">
+          <li>Audit event completeness</li>
+          <li>Workflow exceptions</li>
+          <li>Override and fallback trends</li>
+        </ul>
+      </div>
+    </div>
 
-    <h2>On-Call Runbooks</h2>
-    <p>[ For each alert type: what it means, immediate action, escalation path. Specific runbook for AI service unavailability triggering fallback mode. ]</p>
+    <h2>Runbooks &amp; Ownership</h2>
+    <p style="font-size:13px;color:var(--text-mid);margin-bottom:.75rem;">Each critical alert must have a named owner, severity level, and first-response action. Phase 1 needs clear runbooks for:</p>
+    <ul class="rb-list">
+      <li><span class="rb-dot"></span>Service degradation — owner, triage steps, escalation path</li>
+      <li><span class="rb-dot"></span>Queue backlog — threshold definition, ops escalation, SLA communication</li>
+      <li><span class="rb-dot"></span>Provider outage (LLM, OCR) — fallback activation, reviewer communication</li>
+      <li><span class="rb-dot"></span>Audit logging failure — immediate halt decision, compliance notification</li>
+      <li><span class="rb-dot"></span>Workflow blockage requiring manual intervention — ops steps, case recovery</li>
+    </ul>
+
+    <h2>Future Expansion</h2>
+    <p style="font-size:13px;color:var(--text-mid);margin-bottom:.6rem;">Later phases add deeper AI observability:</p>
+    <ul class="future-list">
+      <li>Model drift and confidence-distribution monitoring</li>
+      <li>AI quality scorecards by case type</li>
+      <li>Alerting on override-rate or acceptance-rate shifts</li>
+      <li>Cost and token-usage monitoring</li>
+      <li>Deeper tracing across retrieval, reasoning, and reviewer actions</li>
+      <li>Automated anomaly detection and retraining triggers</li>
+    </ul>
 
     <nav class="section-nav">
       <a href="experimentation.html" class="nav-btn"><span class="nav-btn-dir">← Previous</span><span class="nav-btn-title">Experimentation Plan</span></a>
-      <span class="nav-center">38 of 39</span>
-      <a href="recommendation.html" class="nav-btn next"><span class="nav-btn-dir">Next →</span><span class="nav-btn-title">Executive Recommendation</span></a>
+      <span class="nav-center">35 of 36</span>
+      <a href="../index.html" class="nav-btn next"><span class="nav-btn-dir">Home →</span><span class="nav-btn-title">All Sections</span></a>
     </nav>
   </main>
 </div>
 <footer class="site-footer">Reap AI Platform — KYB Review Copilot &nbsp;·&nbsp; Technical PRD</footer>
-<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
 <script src="../js/main.js"></script>
 </body></html>
