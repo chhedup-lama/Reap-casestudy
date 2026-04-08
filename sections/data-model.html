@@ -1,0 +1,991 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>4.2 Data Model &amp; Object Relationships — Reap KYB PRD</title>
+  <link rel="stylesheet" href="../css/styles.css" />
+  <style>
+    /* ── Type badges ─────────────────────────────────── */
+    .type { display:inline-flex; align-items:center; font-family:'JetBrains Mono',monospace;
+            font-size:11px; font-weight:500; padding:2px 7px; border-radius:4px;
+            white-space:nowrap; letter-spacing:.1px; }
+    .type-uuid      { background:#F3E8FF; color:#6B21A8; }
+    .type-uuid-arr  { background:#F3E8FF; color:#6B21A8; font-style:italic; }
+    .type-string    { background:#DBEAFE; color:#1D4ED8; }
+    .type-text      { background:#CCFBF1; color:#0F766E; }
+    .type-float     { background:#FFEDD5; color:#C2410C; }
+    .type-boolean   { background:#DCFCE7; color:#15803D; }
+    .type-timestamp { background:#F3F4F6; color:#374151; }
+    .type-date      { background:#F3F4F6; color:#374151; }
+    .type-jsonb     { background:#E0E7FF; color:#4338CA; }
+
+    /* ── Principles grid ─────────────────────────────── */
+    .principles-grid {
+      display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
+      gap:12px; margin:20px 0 36px;
+    }
+    .principle-card {
+      background:var(--surface); border:1px solid var(--border);
+      border-left:3px solid var(--b4); border-radius:var(--radius);
+      padding:16px 18px;
+    }
+    .principle-card h4 {
+      font-size:13px; font-weight:700; color:var(--text);
+      margin-bottom:6px; letter-spacing:-.1px;
+    }
+    .principle-card p {
+      font-size:13px; color:var(--text-dim); line-height:1.55; margin:0;
+    }
+
+    /* ── Object index grid ───────────────────────────── */
+    .object-index {
+      display:grid; grid-template-columns:repeat(auto-fill,minmax(170px,1fr));
+      gap:8px; margin:20px 0 36px;
+    }
+    .object-index-card {
+      background:var(--surface); border:1px solid var(--border);
+      border-radius:var(--radius); padding:12px 14px;
+      text-decoration:none; transition:border-color .15s, box-shadow .15s;
+    }
+    .object-index-card:hover {
+      border-color:var(--b4); box-shadow:var(--shadow-sm);
+      text-decoration:none;
+    }
+    .oi-num {
+      font-size:10px; font-weight:700; letter-spacing:.5px;
+      text-transform:uppercase; color:var(--b4); margin-bottom:4px;
+    }
+    .oi-name {
+      font-size:13px; font-weight:600; color:var(--text);
+      line-height:1.3; margin-bottom:4px;
+    }
+    .oi-desc { font-size:11px; color:var(--text-dim); line-height:1.45; }
+
+    /* ── Object entry ────────────────────────────────── */
+    .object-entry {
+      margin-top:52px; padding-top:28px;
+      border-top:1px solid var(--border);
+      scroll-margin-top:80px;
+    }
+    .object-entry:first-of-type { margin-top:36px; }
+    .object-header {
+      display:flex; align-items:center; gap:12px; margin-bottom:12px;
+    }
+    .object-num {
+      width:28px; height:28px; background:var(--b4); border-radius:6px;
+      display:flex; align-items:center; justify-content:center;
+      font-size:12px; font-weight:700; color:white; flex-shrink:0;
+    }
+    .object-header h3 {
+      font-size:17px; font-weight:700; color:var(--text);
+      letter-spacing:-.2px; margin:0;
+    }
+    .object-header .object-badge {
+      font-family:'JetBrains Mono',monospace; font-size:11px;
+      font-weight:500; background:var(--bg); border:1px solid var(--border);
+      color:var(--text-dim); padding:2px 8px; border-radius:4px;
+    }
+    .object-entry > p {
+      margin-bottom:14px; font-size:14px;
+    }
+    .why-matters {
+      background:#FFFBEB; border:1px solid #FDE68A;
+      border-radius:var(--radius); padding:12px 16px;
+      margin-top:16px; margin-bottom:4px;
+      font-size:13px; color:#78350F; line-height:1.6;
+    }
+    .why-matters strong { color:#92400E; }
+
+    /* ── Attribute table overrides ───────────────────── */
+    .attr-table { margin:14px 0 0; }
+    .attr-table thead th:nth-child(2) { width:110px; }
+    .attr-table tbody td:first-child code {
+      font-size:12.5px; font-weight:500; color:var(--text);
+    }
+
+    /* ── Sidebar on-this-page ────────────────────────── */
+    .sidebar-on-page-title {
+      font-size:10px; font-weight:700; letter-spacing:.8px;
+      text-transform:uppercase; color:var(--text-dim);
+      margin:20px 0 6px; padding-left:4px;
+    }
+    .sidebar-on-page { list-style:none; }
+    .sidebar-on-page li a {
+      display:block; padding:3px 10px; font-size:12px;
+      color:var(--text-mid); border-radius:4px; text-decoration:none;
+      transition:color .12s, background .12s; line-height:1.4;
+    }
+    .sidebar-on-page li a:hover { color:var(--text); background:var(--border); }
+
+    /* ── Relationships table special column ─────────── */
+    .rel-cardinality {
+      font-size:12px; font-weight:600; color:var(--text-dim);
+      font-family:'JetBrains Mono',monospace;
+    }
+  </style>
+</head>
+<body>
+<header class="site-header">
+  <div class="header-inner">
+    <a href="../index.html" class="site-logo"><div class="logo-mark">R</div><span>Reap AI Platform</span></a>
+    <div class="header-divider"></div><span class="header-subtitle">KYB Review Copilot</span>
+    <nav class="header-nav"><a href="../index.html">Overview</a><a href="solution-architecture.html">Architecture</a><a href="reviewer-workflow.html">Workflow</a></nav>
+  </div>
+</header>
+
+<div class="page-layout">
+  <aside class="sidebar">
+    <a href="../index.html" class="sidebar-back">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M9 11L5 7l4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      All Sections
+    </a>
+    <div class="sidebar-section-title">Block 4 — Solution Architecture</div>
+    <ul class="sidebar-nav">
+      <li><a href="solution-architecture.html">4.1 E2E Architecture</a></li>
+      <li><a href="data-model.html" class="active">4.2 Data Model</a></li>
+      <li><a href="api-design.html">4.3 API Design</a></li>
+      <li><a href="infrastructure.html">4.4 Infrastructure</a></li>
+      <li><a href="security-design.html">4.5 Security</a></li>
+    </ul>
+
+    <div class="sidebar-on-page-title">On this page</div>
+    <ul class="sidebar-on-page">
+      <li><a href="#principles">Design Principles</a></li>
+      <li><a href="#erd">Entity Relationship Diagram</a></li>
+      <li><a href="#case">1. Case</a></li>
+      <li><a href="#document">2. Document</a></li>
+      <li><a href="#extracted-field">3. Extracted Field</a></li>
+      <li><a href="#entity">4. Entity</a></li>
+      <li><a href="#evidence-snippet">5. Evidence Snippet</a></li>
+      <li><a href="#policy">6. Policy</a></li>
+      <li><a href="#open-item">7. Open Item</a></li>
+      <li><a href="#checklist-item">8. Checklist Item</a></li>
+      <li><a href="#task">9. Task</a></li>
+      <li><a href="#recommendation">10. Recommendation</a></li>
+      <li><a href="#decision">11. Decision</a></li>
+      <li><a href="#audit-event">12. Audit Event</a></li>
+      <li><a href="#relationships">Object Relationships</a></li>
+    </ul>
+  </aside>
+
+  <main class="content">
+    <nav class="breadcrumb">
+      <a href="../index.html">Home</a><span class="breadcrumb-sep">›</span>
+      <span>Block 4 — Solution Architecture</span><span class="breadcrumb-sep">›</span>
+      <span class="breadcrumb-current">4.2 Data Model &amp; Object Relationships</span>
+    </nav>
+
+    <div class="section-header">
+      <div class="section-block-tag" style="background:var(--b4)">Block 4 — Solution Architecture</div>
+      <h1>Data Model &amp; Object Relationships</h1>
+      <p class="section-intro">
+        The platform is anchored on twelve shared objects that create a common contract across
+        every layer — ingestion, extraction, retrieval, review, orchestration, and governance.
+        These objects ensure outputs remain evidence-backed and that every reviewer action,
+        policy reference, and final decision can be fully reconstructed.
+      </p>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════
+         DESIGN PRINCIPLES
+    ════════════════════════════════════════════════════ -->
+    <h2 id="principles">Design Principles</h2>
+    <p>The data model is built around five principles that govern every object and relationship.</p>
+
+    <div class="principles-grid">
+      <div class="principle-card">
+        <h4>Case-centric</h4>
+        <p>Every object attaches back to a single Case as the primary workflow unit. No orphaned data, no floating context.</p>
+      </div>
+      <div class="principle-card">
+        <h4>Evidence-linked</h4>
+        <p>Extractions, summaries, recommendations, and decisions all reference their source evidence — nothing floats free.</p>
+      </div>
+      <div class="principle-card">
+        <h4>Version-aware</h4>
+        <p>Policy references, prompts, model versions, and reviewer edits are traceable over time for full audit reconstruction.</p>
+      </div>
+      <div class="principle-card">
+        <h4>Workflow-native</h4>
+        <p>Objects natively support state transitions, open items, tasks, escalations, and multi-step follow-up cycles.</p>
+      </div>
+      <div class="principle-card">
+        <h4>Reusable</h4>
+        <p>Generic enough to power adjacent workflows — KYC, transaction monitoring, merchant onboarding — without redesign.</p>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════
+         OBJECT QUICK REFERENCE
+    ════════════════════════════════════════════════════ -->
+    <h2>Object Reference</h2>
+    <p>Twelve objects form the shared contract. Click any object to jump to its full definition.</p>
+
+    <div class="object-index">
+      <a href="#case" class="object-index-card">
+        <div class="oi-num">01</div>
+        <div class="oi-name">Case</div>
+        <div class="oi-desc">Top-level workflow anchor</div>
+      </a>
+      <a href="#document" class="object-index-card">
+        <div class="oi-num">02</div>
+        <div class="oi-name">Document</div>
+        <div class="oi-desc">Raw source of truth</div>
+      </a>
+      <a href="#extracted-field" class="object-index-card">
+        <div class="oi-num">03</div>
+        <div class="oi-name">Extracted Field</div>
+        <div class="oi-desc">Structured values from documents</div>
+      </a>
+      <a href="#entity" class="object-index-card">
+        <div class="oi-num">04</div>
+        <div class="oi-name">Entity</div>
+        <div class="oi-desc">Real-world legal party</div>
+      </a>
+      <a href="#evidence-snippet" class="object-index-card">
+        <div class="oi-num">05</div>
+        <div class="oi-name">Evidence Snippet</div>
+        <div class="oi-desc">Grounding source fragment</div>
+      </a>
+      <a href="#policy" class="object-index-card">
+        <div class="oi-num">06</div>
+        <div class="oi-name">Policy</div>
+        <div class="oi-desc">Rule or SOP artifact</div>
+      </a>
+      <a href="#open-item" class="object-index-card">
+        <div class="oi-num">07</div>
+        <div class="oi-name">Open Item</div>
+        <div class="oi-desc">Trackable gap or discrepancy</div>
+      </a>
+      <a href="#checklist-item" class="object-index-card">
+        <div class="oi-num">08</div>
+        <div class="oi-name">Checklist Item</div>
+        <div class="oi-desc">Policy-derived requirement</div>
+      </a>
+      <a href="#task" class="object-index-card">
+        <div class="oi-num">09</div>
+        <div class="oi-name">Task</div>
+        <div class="oi-desc">Assigned reviewer work unit</div>
+      </a>
+      <a href="#recommendation" class="object-index-card">
+        <div class="oi-num">10</div>
+        <div class="oi-name">Recommendation</div>
+        <div class="oi-desc">AI-generated suggestion</div>
+      </a>
+      <a href="#decision" class="object-index-card">
+        <div class="oi-num">11</div>
+        <div class="oi-name">Decision</div>
+        <div class="oi-desc">Final reviewer outcome</div>
+      </a>
+      <a href="#audit-event" class="object-index-card">
+        <div class="oi-num">12</div>
+        <div class="oi-name">Audit Event</div>
+        <div class="oi-desc">Immutable action record</div>
+      </a>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════
+         ERD DIAGRAM — unchanged
+    ════════════════════════════════════════════════════ -->
+    <div class="diagram-section" id="erd">
+      <div class="diagram-label">
+        <h3>Core Data Model — Entity Relationships</h3>
+        <span class="diagram-badge">Mermaid ERD</span>
+      </div>
+      <div class="diagram-wrap">
+        <div class="mermaid">
+erDiagram
+    CASE {
+        uuid case_id PK
+        string business_name
+        string case_type
+        string current_stage
+        string status
+        string risk_tier
+        string jurisdiction
+        string source_channel
+        uuid assigned_reviewer
+        timestamp created_at
+    }
+    DOCUMENT {
+        uuid document_id PK
+        uuid case_id FK
+        string source_type
+        string file_type
+        string doc_type_classification
+        string language
+        string status
+        string storage_ref
+        timestamp uploaded_at
+    }
+    EXTRACTED_FIELD {
+        uuid field_id PK
+        uuid case_id FK
+        uuid document_id FK
+        string field_name
+        string extracted_value
+        float confidence_score
+        string normalization_status
+        string validation_status
+        boolean reviewer_edited
+    }
+    ENTITY {
+        uuid entity_id PK
+        uuid case_id FK
+        string entity_type
+        string name
+        string registration_id
+        string jurisdiction
+        string role_in_case
+        boolean deduplicated
+    }
+    EVIDENCE_SNIPPET {
+        uuid evidence_id PK
+        uuid case_id FK
+        string source_type
+        string snippet_text
+        string page_section_ref
+        float relevance_score
+    }
+    POLICY {
+        uuid policy_id PK
+        string policy_name
+        string section_clause
+        string jurisdiction
+        string applicable_case_type
+        date effective_date
+        string version
+    }
+    OPEN_ITEM {
+        uuid open_item_id PK
+        uuid case_id FK
+        string type
+        string severity
+        string created_by
+        string status
+        uuid owner
+        timestamp due_date
+        timestamp resolved_at
+    }
+    CHECKLIST_ITEM {
+        uuid checklist_item_id PK
+        uuid case_id FK
+        uuid policy_id FK
+        string requirement_name
+        string status
+        string reviewer_confirmation
+        string override_reason
+    }
+    TASK {
+        uuid task_id PK
+        uuid case_id FK
+        string task_type
+        uuid assigned_owner
+        string queue
+        string status
+        string priority
+        timestamp sla_deadline
+    }
+    RECOMMENDATION {
+        uuid recommendation_id PK
+        uuid case_id FK
+        string recommendation_type
+        text rationale
+        float confidence_score
+        string reviewer_action
+    }
+    DECISION {
+        uuid decision_id PK
+        uuid case_id FK
+        uuid reviewer_id FK
+        string decision_type
+        text rationale
+        boolean override_flag
+        string approval_hierarchy
+        timestamp decided_at
+    }
+    AUDIT_EVENT {
+        uuid audit_event_id PK
+        uuid case_id FK
+        string actor_type
+        string action_type
+        timestamp occurred_at
+        string changed_object_ref
+        jsonb before_after_delta
+        string model_policy_version
+    }
+
+    CASE ||--o{ DOCUMENT          : "has"
+    CASE ||--o{ EXTRACTED_FIELD   : "has"
+    CASE ||--o{ ENTITY            : "references"
+    CASE ||--o{ OPEN_ITEM         : "tracks"
+    CASE ||--o{ CHECKLIST_ITEM    : "requires"
+    CASE ||--o{ TASK              : "assigns"
+    CASE ||--o{ RECOMMENDATION    : "receives"
+    CASE ||--|| DECISION          : "produces"
+    CASE ||--o{ AUDIT_EVENT       : "logged in"
+    DOCUMENT ||--o{ EXTRACTED_FIELD : "yields"
+    DOCUMENT ||--o{ EVIDENCE_SNIPPET : "sourced from"
+    EVIDENCE_SNIPPET }o--o{ CHECKLIST_ITEM : "supports"
+    EVIDENCE_SNIPPET }o--o{ RECOMMENDATION : "grounds"
+    EVIDENCE_SNIPPET }o--o{ DECISION       : "cited in"
+    POLICY ||--o{ CHECKLIST_ITEM  : "defines"
+    POLICY }o--o{ RECOMMENDATION  : "informs"
+    POLICY }o--|| DECISION        : "referenced by"
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════
+         OBJECT DEFINITIONS
+    ════════════════════════════════════════════════════ -->
+
+    <!-- 1. Case -->
+    <div class="object-entry" id="case">
+      <div class="object-header">
+        <div class="object-num">1</div>
+        <h3>Case</h3>
+        <span class="object-badge">CASE</span>
+      </div>
+      <p>
+        The top-level object and system anchor. A Case represents one business review instance
+        moving through the KYB workflow. Every document, extracted fact, open item, task,
+        recommendation, and decision attaches to this object. All workflow state resolves here.
+      </p>
+      <div class="table-wrap attr-table">
+        <table>
+          <thead><tr><th>Field</th><th>Type</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td><code>case_id</code></td><td><span class="type type-uuid">uuid</span></td><td>System-wide unique identifier and primary workflow anchor</td></tr>
+            <tr><td><code>business_name</code></td><td><span class="type type-string">string</span></td><td>Legal entity name of the applicant business</td></tr>
+            <tr><td><code>case_type</code></td><td><span class="type type-string">string</span></td><td>Determines applicable policy partition and checklist set</td></tr>
+            <tr><td><code>current_stage</code></td><td><span class="type type-string">string</span></td><td>Where the case sits in the review lifecycle</td></tr>
+            <tr><td><code>status</code></td><td><span class="type type-string">string</span></td><td><code>open</code> / <code>pending_info</code> / <code>escalated</code> / <code>closed</code></td></tr>
+            <tr><td><code>risk_tier</code></td><td><span class="type type-string">string</span></td><td>Drives routing, escalation thresholds, and SLA assignment</td></tr>
+            <tr><td><code>jurisdiction</code></td><td><span class="type type-string">string</span></td><td>Determines which policy partition is retrieved during grounding</td></tr>
+            <tr><td><code>source_channel</code></td><td><span class="type type-string">string</span></td><td>How the case was initiated — portal, email, API, or internal system</td></tr>
+            <tr><td><code>assigned_reviewer</code></td><td><span class="type type-uuid">uuid</span></td><td>Links to the active analyst or queue</td></tr>
+            <tr><td><code>created_at</code></td><td><span class="type type-timestamp">timestamp</span></td><td>Case creation time</td></tr>
+            <tr><td><code>updated_at</code></td><td><span class="type type-timestamp">timestamp</span></td><td>Last modification time across any linked object</td></tr>
+            <tr><td><code>linked_decision_status</code></td><td><span class="type type-string">string</span></td><td>Denormalized current decision state for fast status reads</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="why-matters">
+        <strong>Why it matters —</strong> The Case ties together documents, extracted fields, policy
+        retrieval, open items, reviewer actions, and final decisions. All major processing and
+        workflow state must resolve back to this object — there is no meaningful output that
+        exists outside a Case.
+      </div>
+    </div>
+
+    <!-- 2. Document -->
+    <div class="object-entry" id="document">
+      <div class="object-header">
+        <div class="object-num">2</div>
+        <h3>Document</h3>
+        <span class="object-badge">DOCUMENT</span>
+      </div>
+      <p>
+        Each file or submitted artifact attached to the case — application forms, identity
+        documents, certificates, bank statements. Documents are the raw source of truth and must
+        remain persistently linked to the Case to support parsing, extraction, retrieval,
+        evidence grounding, and full audit reconstruction.
+      </p>
+      <div class="table-wrap attr-table">
+        <table>
+          <thead><tr><th>Field</th><th>Type</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td><code>document_id</code></td><td><span class="type type-uuid">uuid</span></td><td>Unique document identifier</td></tr>
+            <tr><td><code>case_id</code></td><td><span class="type type-uuid">uuid</span></td><td>Foreign key to parent Case</td></tr>
+            <tr><td><code>source_type</code></td><td><span class="type type-string">string</span></td><td>How the document arrived — upload, email, API push, registry pull</td></tr>
+            <tr><td><code>file_type</code></td><td><span class="type type-string">string</span></td><td>PDF, JPEG, DOCX, etc.</td></tr>
+            <tr><td><code>uploaded_at</code></td><td><span class="type type-timestamp">timestamp</span></td><td>When the document was received by the platform</td></tr>
+            <tr><td><code>doc_type_classification</code></td><td><span class="type type-string">string</span></td><td>Certificate of Incorporation, UBO Declaration, Bank Statement, etc.</td></tr>
+            <tr><td><code>language</code></td><td><span class="type type-string">string</span></td><td>Detected document language (ISO 639-1)</td></tr>
+            <tr><td><code>status</code></td><td><span class="type type-string">string</span></td><td><code>received</code> → <code>parsed</code> → <code>failed</code> / <code>superseded</code></td></tr>
+            <tr><td><code>storage_ref</code></td><td><span class="type type-string">string</span></td><td>Pointer to encrypted blob storage location</td></tr>
+            <tr><td><code>parsed_text_ref</code></td><td><span class="type type-string">string</span></td><td>Reference to the extracted text layer used for downstream processing</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="why-matters">
+        <strong>Why it matters —</strong> Documents are the raw source of truth. Every extracted
+        field, evidence snippet, and checklist finding must trace back to a specific document.
+        The persistent link to the Case is what makes audit reconstruction possible — even after
+        a review is completed or a decision is appealed.
+      </div>
+    </div>
+
+    <!-- 3. Extracted Field -->
+    <div class="object-entry" id="extracted-field">
+      <div class="object-header">
+        <div class="object-num">3</div>
+        <h3>Extracted Field</h3>
+        <span class="object-badge">EXTRACTED_FIELD</span>
+      </div>
+      <p>
+        Structured values derived from documents by the extraction pipeline. Critically, this
+        object distinguishes between machine-extracted values, normalized values, and
+        reviewer-corrected values — rather than collapsing them into an opaque final value.
+        This distinction is what makes extraction transparent, reviewable, and auditable.
+      </p>
+      <div class="table-wrap attr-table">
+        <table>
+          <thead><tr><th>Field</th><th>Type</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td><code>field_id</code></td><td><span class="type type-uuid">uuid</span></td><td>Unique field identifier</td></tr>
+            <tr><td><code>case_id</code></td><td><span class="type type-uuid">uuid</span></td><td>Foreign key to parent Case</td></tr>
+            <tr><td><code>document_id</code></td><td><span class="type type-uuid">uuid</span></td><td>Source document this field was extracted from</td></tr>
+            <tr><td><code>field_name</code></td><td><span class="type type-string">string</span></td><td>Semantic field name — e.g. <code>company_name</code>, <code>registration_number</code>, <code>ubo_ownership_pct</code></td></tr>
+            <tr><td><code>extracted_value</code></td><td><span class="type type-string">string</span></td><td>Raw machine-extracted value before normalization</td></tr>
+            <tr><td><code>confidence_score</code></td><td><span class="type type-float">float</span></td><td>Extraction quality signal used in case confidence scoring</td></tr>
+            <tr><td><code>normalization_status</code></td><td><span class="type type-string">string</span></td><td><code>raw</code> / <code>normalized</code> / <code>failed</code></td></tr>
+            <tr><td><code>validation_status</code></td><td><span class="type type-string">string</span></td><td>Whether the value has been cross-checked against other documents or registries</td></tr>
+            <tr><td><code>evidence_link</code></td><td><span class="type type-uuid">uuid</span></td><td>Link to the Evidence Snippet that sourced this field</td></tr>
+            <tr><td><code>reviewer_edited</code></td><td><span class="type type-boolean">boolean</span></td><td>True when an analyst overrode the machine-extracted value</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="why-matters">
+        <strong>Why it matters —</strong> This object makes extraction transparent and reviewable.
+        It allows the platform to distinguish between what the machine extracted, what was
+        normalized, and what a reviewer corrected — rather than presenting a hidden final
+        value that conflates all three. This distinction is essential for model evals,
+        override analytics, and compliance audits.
+      </div>
+    </div>
+
+    <!-- 4. Entity -->
+    <div class="object-entry" id="entity">
+      <div class="object-header">
+        <div class="object-num">4</div>
+        <h3>Entity</h3>
+        <span class="object-badge">ENTITY</span>
+      </div>
+      <p>
+        A real-world legal or business entity identified within the case — the applicant
+        business, a parent company, a beneficial owner, a director, or a related party.
+        Entity modeling is essential because KYB almost always involves more than one party.
+      </p>
+      <div class="table-wrap attr-table">
+        <table>
+          <thead><tr><th>Field</th><th>Type</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td><code>entity_id</code></td><td><span class="type type-uuid">uuid</span></td><td>Unique entity identifier</td></tr>
+            <tr><td><code>entity_type</code></td><td><span class="type type-string">string</span></td><td><code>applicant</code> / <code>parent_co</code> / <code>ubo</code> / <code>director</code> / <code>related_party</code></td></tr>
+            <tr><td><code>case_id</code></td><td><span class="type type-uuid">uuid</span></td><td>Foreign key to parent Case</td></tr>
+            <tr><td><code>name</code></td><td><span class="type type-string">string</span></td><td>Legal name of the entity</td></tr>
+            <tr><td><code>registration_id</code></td><td><span class="type type-string">string</span></td><td>Company registration number or national identifier</td></tr>
+            <tr><td><code>address</code></td><td><span class="type type-string">string</span></td><td>Registered address</td></tr>
+            <tr><td><code>jurisdiction</code></td><td><span class="type type-string">string</span></td><td>Country or regulatory territory of registration</td></tr>
+            <tr><td><code>role_in_case</code></td><td><span class="type type-string">string</span></td><td>How this entity relates to the review decision</td></tr>
+            <tr><td><code>deduplicated</code></td><td><span class="type type-boolean">boolean</span></td><td>Whether the entity has been resolved across multiple document references</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="why-matters">
+        <strong>Why it matters —</strong> KYB often involves multiple parties — an applicant,
+        its parent company, beneficial owners, and related parties. Explicit entity modeling
+        supports UBO mapping, cross-document consistency checks, ownership graph construction,
+        and external registry verification. Without it, multi-party cases collapse into
+        unstructured text.
+      </div>
+    </div>
+
+    <!-- 5. Evidence Snippet -->
+    <div class="object-entry" id="evidence-snippet">
+      <div class="object-header">
+        <div class="object-num">5</div>
+        <h3>Evidence Snippet</h3>
+        <span class="object-badge">EVIDENCE_SNIPPET</span>
+      </div>
+      <p>
+        The exact source fragment — a passage, clause, table row, or data point — used to
+        support a claim, extraction, checklist finding, summary statement, or recommendation.
+        This is the foundation of explainability. Every major AI output and every reviewer
+        decision links to a specific, retrievable piece of evidence.
+      </p>
+      <div class="table-wrap attr-table">
+        <table>
+          <thead><tr><th>Field</th><th>Type</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td><code>evidence_id</code></td><td><span class="type type-uuid">uuid</span></td><td>Unique evidence identifier</td></tr>
+            <tr><td><code>case_id</code></td><td><span class="type type-uuid">uuid</span></td><td>Foreign key to parent Case</td></tr>
+            <tr><td><code>linked_source_id</code></td><td><span class="type type-uuid">uuid</span></td><td>Document ID or Policy ID depending on <code>source_type</code></td></tr>
+            <tr><td><code>source_type</code></td><td><span class="type type-string">string</span></td><td><code>document</code> (applicant-submitted) or <code>policy</code> (internal rules)</td></tr>
+            <tr><td><code>snippet_text</code></td><td><span class="type type-string">string</span></td><td>The exact extracted passage or clause text</td></tr>
+            <tr><td><code>page_section_ref</code></td><td><span class="type type-string">string</span></td><td>Precise page and section location for human verification</td></tr>
+            <tr><td><code>citation_metadata</code></td><td><span class="type type-string">string</span></td><td>Additional provenance metadata — retrieval method, embedding model version</td></tr>
+            <tr><td><code>relevance_score</code></td><td><span class="type type-float">float</span></td><td>Retrieval confidence for this snippet against the query context</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="why-matters">
+        <strong>Why it matters —</strong> This is the foundation of explainability. It allows
+        reviewers and auditors to trace every important output — a checklist state, a
+        recommendation, a decision — back to a precise source fragment, rather than trusting
+        opaque model behavior. Without Evidence Snippets, grounded AI assistance becomes
+        unverifiable.
+      </div>
+    </div>
+
+    <!-- 6. Policy -->
+    <div class="object-entry" id="policy">
+      <div class="object-header">
+        <div class="object-num">6</div>
+        <h3>Policy</h3>
+        <span class="object-badge">POLICY</span>
+      </div>
+      <p>
+        The retrieved policy, SOP, or rule artifact used in case assessment. The platform
+        records not just that a policy was applied, but exactly which version and which clause
+        informed a checklist state or recommendation — essential for regulatory defensibility
+        as rules evolve over time.
+      </p>
+      <div class="table-wrap attr-table">
+        <table>
+          <thead><tr><th>Field</th><th>Type</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td><code>policy_id</code></td><td><span class="type type-uuid">uuid</span></td><td>Unique policy identifier</td></tr>
+            <tr><td><code>policy_name</code></td><td><span class="type type-string">string</span></td><td>Human-readable policy or SOP name</td></tr>
+            <tr><td><code>section_clause</code></td><td><span class="type type-string">string</span></td><td>Granular rule reference — not just the top-level policy document</td></tr>
+            <tr><td><code>jurisdiction</code></td><td><span class="type type-string">string</span></td><td>Scopes retrieval to the applicable regulatory context</td></tr>
+            <tr><td><code>applicable_case_type</code></td><td><span class="type type-string">string</span></td><td>Which case types this policy governs</td></tr>
+            <tr><td><code>effective_date</code></td><td><span class="type type-date">date</span></td><td>When this version became active</td></tr>
+            <tr><td><code>version</code></td><td><span class="type type-string">string</span></td><td>Enables point-in-time reconstruction of past decisions as rules change</td></tr>
+            <tr><td><code>source_repository_ref</code></td><td><span class="type type-string">string</span></td><td>Pointer to the authoritative policy store or document</td></tr>
+            <tr><td><code>retrieval_metadata</code></td><td><span class="type type-jsonb">jsonb</span></td><td>Embedding and retrieval provenance for the policy chunk</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="why-matters">
+        <strong>Why it matters —</strong> KYB review is policy-sensitive. The platform needs to
+        know not just that policy was used, but exactly which version and which section informed
+        a recommendation or checklist state. This version-locking is what makes decisions
+        defensible when regulators ask why a specific rule was or was not applied at a
+        particular point in time.
+      </div>
+    </div>
+
+    <!-- 7. Open Item -->
+    <div class="object-entry" id="open-item">
+      <div class="object-header">
+        <div class="object-num">7</div>
+        <h3>Open Item</h3>
+        <span class="object-badge">OPEN_ITEM</span>
+      </div>
+      <p>
+        A missing document, unresolved discrepancy, unanswered question, or pending
+        clarification. Open Items convert vague review friction into trackable workflow objects
+        with ownership, priority, and due dates — critical for follow-up communication cycles
+        and case continuity across reviewer handoffs.
+      </p>
+      <div class="table-wrap attr-table">
+        <table>
+          <thead><tr><th>Field</th><th>Type</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td><code>open_item_id</code></td><td><span class="type type-uuid">uuid</span></td><td>Unique open item identifier</td></tr>
+            <tr><td><code>case_id</code></td><td><span class="type type-uuid">uuid</span></td><td>Foreign key to parent Case</td></tr>
+            <tr><td><code>type</code></td><td><span class="type type-string">string</span></td><td><code>missing_document</code> / <code>discrepancy</code> / <code>clarification_request</code></td></tr>
+            <tr><td><code>severity</code></td><td><span class="type type-string">string</span></td><td><code>blocking</code> / <code>high</code> / <code>medium</code> / <code>low</code> — determines whether the case can progress</td></tr>
+            <tr><td><code>created_by</code></td><td><span class="type type-string">string</span></td><td><code>system</code> (extraction gap detected) or <code>reviewer</code> (manually raised)</td></tr>
+            <tr><td><code>status</code></td><td><span class="type type-string">string</span></td><td><code>open</code> / <code>in_progress</code> / <code>resolved</code> / <code>dismissed</code></td></tr>
+            <tr><td><code>linked_evidence_id</code></td><td><span class="type type-uuid">uuid</span></td><td>Evidence or rationale that triggered this open item</td></tr>
+            <tr><td><code>owner</code></td><td><span class="type type-uuid">uuid</span></td><td>Assigned reviewer or team queue responsible for resolution</td></tr>
+            <tr><td><code>due_date</code></td><td><span class="type type-timestamp">timestamp</span></td><td>Target resolution date for SLA tracking</td></tr>
+            <tr><td><code>resolved_at</code></td><td><span class="type type-timestamp">timestamp</span></td><td>When the open item was closed or dismissed</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="why-matters">
+        <strong>Why it matters —</strong> Open Items turn vague review friction into trackable
+        workflow objects. Without them, missing information and discrepancies get lost in
+        unstructured reviewer notes. With them, every gap has an owner, a status, and a
+        resolution path — especially important for follow-up communication, re-review cycles,
+        and handoffs between reviewers.
+      </div>
+    </div>
+
+    <!-- 8. Checklist Item -->
+    <div class="object-entry" id="checklist-item">
+      <div class="object-header">
+        <div class="object-num">8</div>
+        <h3>Checklist Item</h3>
+        <span class="object-badge">CHECKLIST_ITEM</span>
+      </div>
+      <p>
+        A review requirement derived from policy, SOP, or mandatory process controls.
+        Checklisting makes policy application explicit and consistent — creating a structured,
+        auditable bridge between policy retrieval, evidence review, and final decisioning that
+        a reviewer and an auditor can follow step by step.
+      </p>
+      <div class="table-wrap attr-table">
+        <table>
+          <thead><tr><th>Field</th><th>Type</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td><code>checklist_item_id</code></td><td><span class="type type-uuid">uuid</span></td><td>Unique checklist item identifier</td></tr>
+            <tr><td><code>case_id</code></td><td><span class="type type-uuid">uuid</span></td><td>Foreign key to parent Case</td></tr>
+            <tr><td><code>policy_id</code></td><td><span class="type type-uuid">uuid</span></td><td>Traces each requirement back to the exact policy clause that defines it</td></tr>
+            <tr><td><code>requirement_name</code></td><td><span class="type type-string">string</span></td><td>Human-readable requirement description</td></tr>
+            <tr><td><code>status</code></td><td><span class="type type-string">string</span></td><td><code>passed</code> / <code>failed</code> / <code>needs_review</code> / <code>blocked</code></td></tr>
+            <tr><td><code>supporting_evidence</code></td><td><span class="type type-uuid">uuid</span></td><td>Evidence Snippet ID that supports the current status assessment</td></tr>
+            <tr><td><code>reviewer_confirmation</code></td><td><span class="type type-string">string</span></td><td>Whether the reviewer confirmed, adjusted, or overrode the AI status</td></tr>
+            <tr><td><code>override_reason</code></td><td><span class="type type-string">string</span></td><td>Mandatory annotation when a reviewer bypasses a failed or blocked item</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="why-matters">
+        <strong>Why it matters —</strong> Checklisting makes policy application explicit and
+        consistent across reviewers, teams, and time. It creates a structured bridge between
+        policy retrieval, evidence review, and final decisioning — and the override reason
+        field is what makes departures from policy defensible rather than invisible.
+      </div>
+    </div>
+
+    <!-- 9. Task -->
+    <div class="object-entry" id="task">
+      <div class="object-header">
+        <div class="object-num">9</div>
+        <h3>Task</h3>
+        <span class="object-badge">TASK</span>
+      </div>
+      <p>
+        Work assigned to a reviewer, specialist, or queue. Tasks are the operational
+        orchestration layer that carries the review forward when cases involve multiple teams,
+        escalation handoffs, or multi-step follow-up loops.
+      </p>
+      <div class="table-wrap attr-table">
+        <table>
+          <thead><tr><th>Field</th><th>Type</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td><code>task_id</code></td><td><span class="type type-uuid">uuid</span></td><td>Unique task identifier</td></tr>
+            <tr><td><code>case_id</code></td><td><span class="type type-uuid">uuid</span></td><td>Foreign key to parent Case</td></tr>
+            <tr><td><code>task_type</code></td><td><span class="type type-string">string</span></td><td><code>initial_review</code> / <code>escalation</code> / <code>re_review</code> / <code>clarification_follow_up</code></td></tr>
+            <tr><td><code>assigned_owner</code></td><td><span class="type type-uuid">uuid</span></td><td>Individual reviewer or team queue</td></tr>
+            <tr><td><code>queue</code></td><td><span class="type type-string">string</span></td><td><code>standard</code> / <code>senior</code> / <code>compliance_lead</code></td></tr>
+            <tr><td><code>status</code></td><td><span class="type type-string">string</span></td><td><code>pending</code> / <code>in_progress</code> / <code>completed</code> / <code>cancelled</code></td></tr>
+            <tr><td><code>priority</code></td><td><span class="type type-string">string</span></td><td><code>high</code> / <code>medium</code> / <code>low</code></td></tr>
+            <tr><td><code>sla_deadline</code></td><td><span class="type type-timestamp">timestamp</span></td><td>Drives queue-age alerts and SLA breach tracking</td></tr>
+            <tr><td><code>handoff_notes</code></td><td><span class="type type-text">text</span></td><td>Context passed when reassigning or escalating the task</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="why-matters">
+        <strong>Why it matters —</strong> Tasks are required for operational orchestration,
+        especially where reviews involve multiple teams, SLA commitments, or escalation
+        follow-up loops. Without a Task object, multi-step reviews collapse into informal
+        communication channels and SLA tracking becomes impossible.
+      </div>
+    </div>
+
+    <!-- 10. Recommendation -->
+    <div class="object-entry" id="recommendation">
+      <div class="object-header">
+        <div class="object-num">10</div>
+        <h3>Recommendation</h3>
+        <span class="object-badge">RECOMMENDATION</span>
+      </div>
+      <p>
+        A system-generated suggestion — proceed, request more information, escalate, reject,
+        or monitor. Keeping Recommendation as a separate object from Decision is a deliberate
+        design choice: it makes AI assistance inspectable and measurable, enables
+        acceptance-rate tracking and override analysis, and preserves the clean separation
+        between what the AI suggested and what a human decided.
+      </p>
+      <div class="table-wrap attr-table">
+        <table>
+          <thead><tr><th>Field</th><th>Type</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td><code>recommendation_id</code></td><td><span class="type type-uuid">uuid</span></td><td>Unique recommendation identifier</td></tr>
+            <tr><td><code>case_id</code></td><td><span class="type type-uuid">uuid</span></td><td>Foreign key to parent Case</td></tr>
+            <tr><td><code>recommendation_type</code></td><td><span class="type type-string">string</span></td><td><code>proceed</code> / <code>request_info</code> / <code>escalate</code> / <code>reject</code> / <code>monitor</code></td></tr>
+            <tr><td><code>rationale</code></td><td><span class="type type-text">text</span></td><td>LLM-generated reasoning, cited to specific Evidence Snippets and Policy clauses</td></tr>
+            <tr><td><code>linked_evidence</code></td><td><span class="type type-uuid-arr">uuid[]</span></td><td>Evidence Snippet IDs that support this recommendation</td></tr>
+            <tr><td><code>linked_policy_refs</code></td><td><span class="type type-uuid-arr">uuid[]</span></td><td>Policy IDs and versions that informed this recommendation</td></tr>
+            <tr><td><code>confidence_score</code></td><td><span class="type type-float">float</span></td><td>Model confidence in this recommendation</td></tr>
+            <tr><td><code>reviewer_action</code></td><td><span class="type type-string">string</span></td><td><code>accepted</code> / <code>edited</code> / <code>rejected</code> — powers override and acceptance-rate analytics</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="why-matters">
+        <strong>Why it matters —</strong> This object makes AI assistance inspectable and
+        measurable. It also supports acceptance-rate tracking, override analysis, and safe
+        separation between what the system recommended and what a human decided. This
+        separation is not just good design — it is a regulatory requirement in many
+        jurisdictions where automated recommendations influence compliance outcomes.
+      </div>
+    </div>
+
+    <!-- 11. Decision -->
+    <div class="object-entry" id="decision">
+      <div class="object-header">
+        <div class="object-num">11</div>
+        <h3>Decision</h3>
+        <span class="object-badge">DECISION</span>
+      </div>
+      <p>
+        The final reviewer outcome on the case. There is exactly one current Decision per
+        Case. It is the core business outcome object — and it must be defensible, auditable,
+        and tied to both a specific evidence set and a named reviewer. The override flag
+        records when a reviewer departed from the AI recommendation.
+      </p>
+      <div class="table-wrap attr-table">
+        <table>
+          <thead><tr><th>Field</th><th>Type</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td><code>decision_id</code></td><td><span class="type type-uuid">uuid</span></td><td>Unique decision identifier</td></tr>
+            <tr><td><code>case_id</code></td><td><span class="type type-uuid">uuid</span></td><td>Foreign key to parent Case (one active Decision per Case)</td></tr>
+            <tr><td><code>decision_type</code></td><td><span class="type type-string">string</span></td><td><code>approve</code> / <code>reject</code> / <code>pending_info</code> / <code>escalated</code></td></tr>
+            <tr><td><code>reviewer_id</code></td><td><span class="type type-uuid">uuid</span></td><td>Identity of the deciding reviewer — mandatory for accountability</td></tr>
+            <tr><td><code>decided_at</code></td><td><span class="type type-timestamp">timestamp</span></td><td>When the decision was recorded</td></tr>
+            <tr><td><code>rationale</code></td><td><span class="type type-text">text</span></td><td>Reviewer-authored justification for the outcome</td></tr>
+            <tr><td><code>linked_evidence_set</code></td><td><span class="type type-uuid-arr">uuid[]</span></td><td>Evidence Snippet IDs cited in this decision</td></tr>
+            <tr><td><code>linked_policy_version</code></td><td><span class="type type-uuid">uuid</span></td><td>Point-in-time policy version snapshot applied at decision time</td></tr>
+            <tr><td><code>override_flag</code></td><td><span class="type type-boolean">boolean</span></td><td>True when the reviewer departed from the AI recommendation</td></tr>
+            <tr><td><code>approval_hierarchy</code></td><td><span class="type type-string">string</span></td><td>Records senior reviewer or compliance lead sign-off chain where applicable</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="why-matters">
+        <strong>Why it matters —</strong> This is the core business outcome object. It must be
+        defensible, auditable, and tied to both a specific evidence set and a named reviewer.
+        The policy version lock ensures that future regulatory review can reconstruct exactly
+        what rules governed the decision — even if the policy has since changed.
+      </div>
+    </div>
+
+    <!-- 12. Audit Event -->
+    <div class="object-entry" id="audit-event">
+      <div class="object-header">
+        <div class="object-num">12</div>
+        <h3>Audit Event</h3>
+        <span class="object-badge">AUDIT_EVENT</span>
+      </div>
+      <p>
+        An immutable, append-only record of every system and human action across the case
+        lifecycle. Audit Events make the platform fully reconstructable — Compliance, Ops,
+        and Engineering can answer what happened, when, by whom, and against what version
+        of the model, prompt, and policy.
+      </p>
+      <div class="table-wrap attr-table">
+        <table>
+          <thead><tr><th>Field</th><th>Type</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td><code>audit_event_id</code></td><td><span class="type type-uuid">uuid</span></td><td>Unique audit event identifier</td></tr>
+            <tr><td><code>case_id</code></td><td><span class="type type-uuid">uuid</span></td><td>Foreign key to parent Case</td></tr>
+            <tr><td><code>actor_type</code></td><td><span class="type type-string">string</span></td><td><code>system</code> / <code>user</code> / <code>service</code> — who or what triggered the event</td></tr>
+            <tr><td><code>action_type</code></td><td><span class="type type-string">string</span></td><td>What occurred — e.g. <code>document_parsed</code>, <code>field_extracted</code>, <code>decision_recorded</code>, <code>reviewer_override</code></td></tr>
+            <tr><td><code>occurred_at</code></td><td><span class="type type-timestamp">timestamp</span></td><td>Precise time of the event</td></tr>
+            <tr><td><code>changed_object_ref</code></td><td><span class="type type-string">string</span></td><td>Object type and ID that was affected by this event</td></tr>
+            <tr><td><code>before_after_delta</code></td><td><span class="type type-jsonb">jsonb</span></td><td>Structured diff of the state change — before and after values</td></tr>
+            <tr><td><code>model_policy_version</code></td><td><span class="type type-string">string</span></td><td>Snapshot of the AI model and policy version active at the time of the event</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="why-matters">
+        <strong>Why it matters —</strong> Audit Events make the platform reconstructable.
+        They allow Compliance, Ops, and Engineering to understand what happened, when, why,
+        and with what system state. This object is append-only — no Audit Event is ever
+        modified or deleted. It is the platform's memory of itself.
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════
+         OBJECT RELATIONSHIPS
+    ════════════════════════════════════════════════════ -->
+    <h2 id="relationships">Object Relationships</h2>
+    <div class="callout callout-info">
+      <div class="callout-icon">&#9900;</div>
+      <div class="callout-body">
+        <strong>Case is the anchor.</strong> Every other object resolves back to it.
+        <strong>Evidence Snippets</strong> are the connective tissue — they link extractions,
+        checklist findings, recommendations, and decisions to their source material.
+        <strong>Policy</strong> objects are version-locked at decision time so past decisions
+        remain defensible as rules evolve.
+      </div>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>From</th><th>To</th><th>Cardinality</th><th>Description</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Case</strong></td>
+            <td>Document, Extracted Field, Entity</td>
+            <td><span class="rel-cardinality">1 → many</span></td>
+            <td>A case accumulates documents and the fields and entities derived from them</td>
+          </tr>
+          <tr>
+            <td><strong>Case</strong></td>
+            <td>Open Item, Checklist Item, Task</td>
+            <td><span class="rel-cardinality">1 → many</span></td>
+            <td>Workflow objects that track progress and gaps through the review lifecycle</td>
+          </tr>
+          <tr>
+            <td><strong>Case</strong></td>
+            <td>Recommendation</td>
+            <td><span class="rel-cardinality">1 → many</span></td>
+            <td>Multiple recommendations may be generated across review stages; only the latest is active</td>
+          </tr>
+          <tr>
+            <td><strong>Case</strong></td>
+            <td>Decision</td>
+            <td><span class="rel-cardinality">1 → 1</span></td>
+            <td>One current final decision per case — the core business outcome</td>
+          </tr>
+          <tr>
+            <td><strong>Document</strong></td>
+            <td>Extracted Field, Evidence Snippet</td>
+            <td><span class="rel-cardinality">1 → many</span></td>
+            <td>A document yields structured fields and sourced evidence fragments</td>
+          </tr>
+          <tr>
+            <td><strong>Evidence Snippet</strong></td>
+            <td>Checklist Item, Recommendation, Decision</td>
+            <td><span class="rel-cardinality">many → many</span></td>
+            <td>A snippet may support multiple outputs; an output may cite multiple snippets</td>
+          </tr>
+          <tr>
+            <td><strong>Policy</strong></td>
+            <td>Checklist Item, Recommendation, Decision</td>
+            <td><span class="rel-cardinality">1 → many</span></td>
+            <td>Policy clauses define checklist requirements and inform recommendations; version is locked at decision time</td>
+          </tr>
+          <tr>
+            <td><strong>Audit Event</strong></td>
+            <td>All objects</td>
+            <td><span class="rel-cardinality">append-only</span></td>
+            <td>Generated for every object state change and workflow transition; never modified or deleted</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout callout-success">
+      <div class="callout-icon">&#9881;</div>
+      <div class="callout-body">
+        <strong>Why this model matters —</strong> This shared data model is what turns the
+        solution from a collection of AI features into a real product platform. It lets every
+        service — ingestion, retrieval, review, orchestration, governance — work against the
+        same system contract. It supports auditability and reviewer control, and makes future
+        extension into adjacent workflows (KYC, transaction monitoring, merchant onboarding)
+        much easier. Without this layer, the product risks becoming a set of disconnected
+        prompts and workflow hacks rather than a scalable operational system.
+      </div>
+    </div>
+
+    <nav class="section-nav">
+      <a href="solution-architecture.html" class="nav-btn"><span class="nav-btn-dir">← Previous</span><span class="nav-btn-title">E2E Architecture</span></a>
+      <span class="nav-center">17 of 39</span>
+      <a href="api-design.html" class="nav-btn next"><span class="nav-btn-dir">Next →</span><span class="nav-btn-title">API Design Principles</span></a>
+    </nav>
+  </main>
+</div>
+
+<footer class="site-footer">Reap AI Platform — KYB Review Copilot &nbsp;·&nbsp; Technical PRD</footer>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script src="../js/main.js"></script>
+</body>
+</html>

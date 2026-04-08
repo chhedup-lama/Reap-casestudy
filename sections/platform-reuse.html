@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>7.2 Platform Reuse Map — Reap KYB PRD</title>
+  <link rel="stylesheet" href="../css/styles.css" />
+</head>
+<body>
+<header class="site-header">
+  <div class="header-inner">
+    <a href="../index.html" class="site-logo"><div class="logo-mark">R</div><span>Reap AI Platform</span></a>
+    <div class="header-divider"></div><span class="header-subtitle">KYB Review Copilot</span>
+    <nav class="header-nav"><a href="../index.html">Overview</a><a href="solution-architecture.html">Architecture</a><a href="reviewer-workflow.html">Workflow</a></nav>
+  </div>
+</header>
+<div class="page-layout">
+  <aside class="sidebar">
+    <a href="../index.html" class="sidebar-back"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M9 11L5 7l4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg> All Sections</a>
+    <div class="sidebar-section-title">Block 7 — Delivery Strategy</div>
+    <ul class="sidebar-nav">
+      <li><a href="workflow-state.html">7.1 Workflow State</a></li>
+      <li><a href="platform-reuse.html" class="active">7.2 Platform Reuse Map</a></li>
+      <li><a href="go-to-market.html">7.3 Go-to-Market</a></li>
+      <li><a href="team-resourcing.html">7.4 Team &amp; Resourcing</a></li>
+      <li><a href="dependency-map.html">7.5 Dependency Map</a></li>
+    </ul>
+  </aside>
+  <main class="content">
+    <nav class="breadcrumb"><a href="../index.html">Home</a><span class="breadcrumb-sep">›</span><span>Block 7 — Delivery Strategy</span><span class="breadcrumb-sep">›</span><span class="breadcrumb-current">7.2 Platform Reuse Map</span></nav>
+    <div class="section-header">
+      <div class="section-block-tag" style="background:var(--b7)">Block 7 — Delivery Strategy</div>
+      <h1>Platform Reuse Map</h1>
+      <p class="section-intro">How KYB-specific services are abstracted into reusable platform capabilities — enabling other Reap products (KYC, transaction monitoring, onboarding) to leverage the same AI and compliance infrastructure.</p>
+    </div>
+
+    <div class="diagram-section">
+      <div class="diagram-label">
+        <h3>Platform Layer Reuse — Service Map</h3>
+        
+      </div>
+      <div class="diagram-wrap">
+        <div class="mermaid">
+flowchart TB
+    subgraph Products["Product Layer — Consumers"]
+        P1[KYB Review\nCopilot]
+        P2[KYC Individual\nVerification]
+        P3[Transaction\nMonitoring]
+        P4[Merchant\nOnboarding]
+    end
+
+    subgraph Platform["Platform Services Layer — Shared"]
+        direction LR
+        SVC1[Document Intelligence\nService\nOCR + Extraction API]
+        SVC2[Policy Engine\nRAG + Policy Store API]
+        SVC3[AI Reasoning\nService\nLLM + Evidence API]
+        SVC4[HITL Framework\nReview Workspace SDK]
+        SVC5[Audit &amp; Lineage\nService]
+        SVC6[Confidence Scoring\nService]
+    end
+
+    subgraph Infra["Infrastructure Layer — Shared"]
+        I1[Vector Store]
+        I2[Document Storage]
+        I3[Message Queue]
+        I4[Observability Stack]
+    end
+
+    P1 --> SVC1 & SVC2 & SVC3 & SVC4 & SVC5 & SVC6
+    P2 --> SVC1 & SVC2 & SVC4 & SVC5
+    P3 --> SVC2 & SVC3 & SVC5 & SVC6
+    P4 --> SVC1 & SVC4 & SVC5
+
+    SVC1 & SVC2 & SVC3 --> I1 & I2
+    SVC3 --> I3
+    SVC5 --> I4
+
+    style Products fill:#EEF2FF,stroke:#C7D2FE
+    style Platform fill:#F5F3FF,stroke:#DDD6FE
+    style Infra fill:#F6F9FC,stroke:#C8D0DB
+        </div>
+      </div>
+    </div>
+
+    <h2>Platform-First Design Principle</h2>
+    <div class="callout callout-info">
+      <div class="callout-icon">&#128161;</div>
+      <div class="callout-body"><strong>Principle:</strong> Build every KYB capability as a versioned API service, not a hard-wired feature. KYB is the first consumer, not the only one.</div>
+    </div>
+
+    <h2>Service API Contracts</h2>
+    <p>[ Each platform service exposes a stable, versioned REST API. KYB-specific logic lives in the product layer, not the platform service. ]</p>
+
+    <h2>Reuse Roadmap</h2>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Platform Service</th><th>KYB (Phase)</th><th>KYC Reuse (Phase)</th><th>Transaction Monitoring (Phase)</th></tr></thead>
+      <tbody>
+        <tr><td>Document Intelligence</td><td>Phase 1</td><td>Phase 2</td><td>Phase 3</td></tr>
+        <tr><td>Policy Engine</td><td>Phase 2</td><td>Phase 2</td><td>Phase 2</td></tr>
+        <tr><td>AI Reasoning</td><td>Phase 2</td><td>Phase 3</td><td>Phase 3</td></tr>
+        <tr><td>HITL Framework</td><td>Phase 2</td><td>Phase 3</td><td>—</td></tr>
+        <tr><td>Audit &amp; Lineage</td><td>Phase 1</td><td>Phase 2</td><td>Phase 2</td></tr>
+      </tbody>
+    </table></div>
+
+    <nav class="section-nav">
+      <a href="workflow-state.html" class="nav-btn"><span class="nav-btn-dir">← Previous</span><span class="nav-btn-title">Workflow State Transitions</span></a>
+      <span class="nav-center">32 of 39</span>
+      <a href="go-to-market.html" class="nav-btn next"><span class="nav-btn-dir">Next →</span><span class="nav-btn-title">Go-to-Market &amp; Rollout</span></a>
+    </nav>
+  </main>
+</div>
+<footer class="site-footer">Reap AI Platform — KYB Review Copilot &nbsp;·&nbsp; Technical PRD</footer>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script src="../js/main.js"></script>
+</body></html>

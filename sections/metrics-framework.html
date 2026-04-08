@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>8.1 Metrics Framework — Reap KYB PRD</title>
+  <link rel="stylesheet" href="../css/styles.css" />
+  <style>
+    /* ── Phase headline strip ── */
+    .ph-strip { display:grid; grid-template-columns:repeat(4,1fr); gap:.75rem; margin-bottom:2rem; }
+    .ph-card {
+      border-radius:10px; padding:1rem 1.1rem; border-left:4px solid transparent;
+      background:var(--surface); border:1px solid var(--border);
+    }
+    .ph-card-top { display:flex; align-items:center; gap:.5rem; margin-bottom:.6rem; }
+    .ph-badge {
+      font-size:.68rem; font-weight:800; letter-spacing:.06em; text-transform:uppercase;
+      border-radius:4px; padding:.2rem .5rem; flex-shrink:0;
+    }
+    .ph-chips { display:flex; flex-wrap:wrap; gap:.3rem; }
+    .ph-chip {
+      font-size:.69rem; background:#f1f5f9; color:var(--text-mid); border-radius:3px;
+      padding:.15rem .4rem; border:1px solid var(--border);
+    }
+    .p1-card { border-left-color:#1D4ED8; } .p1-badge { background:#dbeafe; color:#1e40af; }
+    .p2-card { border-left-color:#4338CA; } .p2-badge { background:#e0e7ff; color:#3730a3; }
+    .p3-card { border-left-color:#6D28D9; } .p3-badge { background:#ede9fe; color:#5b21b6; }
+    .p4-card { border-left-color:#B45309; } .p4-badge { background:#fef3c7; color:#92400e; }
+
+    /* ── Legend ── */
+    .grp-legend { display:flex; gap:.75rem; flex-wrap:wrap; margin-bottom:1.25rem; font-size:.76rem; }
+    .gl-item { display:flex; align-items:center; gap:.35rem; color:var(--text-mid); }
+    .gl-dot { width:10px; height:10px; border-radius:50%; flex-shrink:0; }
+
+    /* ── Phase section header ── */
+    .mf-phase-hdr {
+      display:flex; align-items:center; gap:.65rem;
+      padding:.55rem 1rem; border-radius:7px; margin:1.75rem 0 .5rem;
+      font-size:.73rem; font-weight:700; letter-spacing:.07em; text-transform:uppercase;
+    }
+    .mf-ph1 { background:#eff6ff; color:#1e40af; border-left:3px solid #1D4ED8; }
+    .mf-ph2 { background:#eef2ff; color:#3730a3; border-left:3px solid #4338CA; }
+    .mf-ph3 { background:#f5f3ff; color:#5b21b6; border-left:3px solid #6D28D9; }
+    .mf-ph4 { background:#fffbeb; color:#92400e; border-left:3px solid #B45309; }
+
+    /* ── Metrics table ── */
+    .mf-wrap { overflow-x:auto; margin-bottom:.25rem; }
+    .mf-table { width:100%; border-collapse:collapse; min-width:640px; font-size:.8rem; }
+    .mf-table thead th {
+      background:var(--navy); color:#fff; font-weight:600; text-transform:uppercase;
+      letter-spacing:.05em; font-size:.68rem; padding:.5rem .75rem;
+      border:1px solid rgba(255,255,255,.08); text-align:left;
+    }
+    .mf-table thead th.metric-col { min-width:180px; }
+    .mf-table tbody td {
+      padding:.55rem .75rem; border:1px solid var(--border); vertical-align:top;
+      color:var(--text); line-height:1.45;
+    }
+    .mf-table tbody tr:hover { background:#f8faff; }
+
+    /* Group badge inline */
+    .grp-badge {
+      display:inline-block; font-size:.62rem; font-weight:700; letter-spacing:.04em;
+      text-transform:uppercase; border-radius:3px; padding:.1rem .4rem;
+      margin-bottom:.3rem; white-space:nowrap;
+    }
+    .grp-reviewer  { background:#dbeafe; color:#1e40af; }
+    .grp-platform  { background:#ede9fe; color:#5b21b6; }
+    .grp-risk      { background:#fee2e2; color:#b91c1c; }
+    .grp-biz       { background:#dcfce7; color:#14532d; }
+    .grp-scale     { background:#fef3c7; color:#92400e; }
+
+    /* Metric name */
+    .metric-name { font-weight:600; color:var(--text); display:block; }
+
+    /* Target pill */
+    .tgt-pill {
+      display:inline-block; font-size:.72rem; font-weight:600;
+      background:#f0fdf4; color:#15803d; border:1px solid #bbf7d0;
+      border-radius:4px; padding:.15rem .5rem; white-space:nowrap;
+    }
+
+    /* Human track badge */
+    .ht-yes  { display:inline-flex; align-items:center; gap:.3rem; font-size:.72rem; font-weight:600; color:#15803d; }
+    .ht-part { display:inline-flex; align-items:center; gap:.3rem; font-size:.72rem; font-weight:600; color:#b45309; }
+    .ht-no   { display:inline-flex; align-items:center; gap:.3rem; font-size:.72rem; font-weight:600; color:#b91c1c; }
+
+    /* Track cell secondary */
+    .track-need { font-size:.72rem; color:var(--text-dim); line-height:1.4; }
+
+    @media(max-width:900px){ .ph-strip { grid-template-columns:repeat(2,1fr); } }
+    @media(max-width:540px){ .ph-strip { grid-template-columns:1fr; } }
+  </style>
+</head>
+<body>
+<header class="site-header">
+  <div class="header-inner">
+    <a href="../index.html" class="site-logo"><div class="logo-mark">R</div><span>Reap AI Platform</span></a>
+    <div class="header-divider"></div><span class="header-subtitle">KYB Review Copilot</span>
+    <nav class="header-nav"><a href="../index.html">Overview</a><a href="solution-architecture.html">Architecture</a><a href="reviewer-workflow.html">Workflow</a></nav>
+  </div>
+</header>
+<div class="page-layout">
+  <aside class="sidebar">
+    <a href="../index.html" class="sidebar-back"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M9 11L5 7l4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg> All Sections</a>
+    <div class="sidebar-section-title">Block 8 — Measurement</div>
+    <ul class="sidebar-nav">
+      <li><a href="metrics-framework.html" class="active">8.1 Metrics Framework</a></li>
+      <li><a href="experimentation.html">8.2 Experimentation</a></li>
+      <li><a href="monitoring.html">8.3 Monitoring</a></li>
+      <li><a href="recommendation.html">8.4 Recommendation</a></li>
+    </ul>
+  </aside>
+  <main class="content">
+    <nav class="breadcrumb"><a href="../index.html">Home</a><span class="breadcrumb-sep">›</span><span>Block 8 — Measurement</span><span class="breadcrumb-sep">›</span><span class="breadcrumb-current">8.1 Metrics Framework</span></nav>
+    <div class="section-header">
+      <div class="section-block-tag" style="background:var(--b8)">Block 8 — Measurement &amp; Recommendation</div>
+      <h1>Metrics Framework</h1>
+      <p class="section-intro">28 metrics across 4 phases and 5 outcome groups — each with a target style, tracking requirement, and manual-fallback signal.</p>
+    </div>
+
+    <!-- Phase headline strip -->
+    <div class="ph-strip">
+      <div class="ph-card p1-card">
+        <div class="ph-card-top"><span class="ph-badge p1-badge">Phase 1</span></div>
+        <div class="ph-chips">
+          <span class="ph-chip">Review-time reduction</span>
+          <span class="ph-chip">Extraction accuracy</span>
+          <span class="ph-chip">Citation coverage</span>
+          <span class="ph-chip">Audit completeness</span>
+          <span class="ph-chip">Turnaround time</span>
+        </div>
+      </div>
+      <div class="ph-card p2-card">
+        <div class="ph-card-top"><span class="ph-badge p2-badge">Phase 2</span></div>
+        <div class="ph-chips">
+          <span class="ph-chip">Reviewer productivity</span>
+          <span class="ph-chip">Decision consistency</span>
+          <span class="ph-chip">Follow-up cycle ↓</span>
+          <span class="ph-chip">HITL control rate</span>
+          <span class="ph-chip">Recommendation usefulness</span>
+        </div>
+      </div>
+      <div class="ph-card p3-card">
+        <div class="ph-card-top"><span class="ph-badge p3-badge">Phase 3</span></div>
+        <div class="ph-chips">
+          <span class="ph-chip">Policy adherence</span>
+          <span class="ph-chip">Eval pass rate</span>
+          <span class="ph-chip">Regression rate</span>
+          <span class="ph-chip">Cost per case</span>
+          <span class="ph-chip">Operational visibility</span>
+        </div>
+      </div>
+      <div class="ph-card p4-card">
+        <div class="ph-card-top"><span class="ph-badge p4-badge">Phase 4</span></div>
+        <div class="ph-chips">
+          <span class="ph-chip">Time to 2nd use case</span>
+          <span class="ph-chip">Reusable component rate</span>
+          <span class="ph-chip">Low-risk automation rate</span>
+          <span class="ph-chip">Scale @ same headcount</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Legend -->
+    <div class="grp-legend">
+      <span class="gl-item"><span class="gl-dot" style="background:#3b82f6"></span>Reviewer / User Outcomes</span>
+      <span class="gl-item"><span class="gl-dot" style="background:#7c3aed"></span>Platform / AI Quality</span>
+      <span class="gl-item"><span class="gl-dot" style="background:#dc2626"></span>Risk / Compliance</span>
+      <span class="gl-item"><span class="gl-dot" style="background:#16a34a"></span>Business / Operations</span>
+      <span class="gl-item"><span class="gl-dot" style="background:#d97706"></span>Scalability / Reuse</span>
+    </div>
+
+    <!-- ── Phase 1 ── -->
+    <div class="mf-phase-hdr mf-ph1">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" stroke="currentColor" stroke-width="1.4"/><path d="M5 7l2 2 2-2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Phase 1 — Core Build &nbsp;·&nbsp; 11 metrics
+    </div>
+    <div class="mf-wrap">
+      <table class="mf-table">
+        <thead><tr>
+          <th class="metric-col">Metric</th>
+          <th>Target</th>
+          <th>Tracking Requirement</th>
+          <th>Human-Trackable?</th>
+        </tr></thead>
+        <tbody>
+          <tr>
+            <td><span class="grp-badge grp-reviewer">Reviewer</span><span class="metric-name">Review-time reduction</span></td>
+            <td><span class="tgt-pill">15–25% vs baseline</span></td>
+            <td class="track-need">Baseline time study · case open/close timestamps · reviewer activity logs</td>
+            <td><span class="ht-yes"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Yes</span><div class="track-need" style="margin-top:3px">Sample stopwatch study or reviewer self-log</div></td>
+          </tr>
+          <tr>
+            <td><span class="grp-badge grp-reviewer">Reviewer</span><span class="metric-name">Acceptance rate of AI outputs</span></td>
+            <td><span class="tgt-pill">50–70% early</span></td>
+            <td class="track-need">Reviewer action logging: accepted / edited / rejected</td>
+            <td><span class="ht-yes"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Yes</span><div class="track-need" style="margin-top:3px">QA sampling or manual reviewer tagging</div></td>
+          </tr>
+          <tr>
+            <td><span class="grp-badge grp-reviewer">Reviewer</span><span class="metric-name">Edit rate</span></td>
+            <td><span class="tgt-pill">Lower is better*</span></td>
+            <td class="track-need">Track field edits, summary edits, checklist edits · *interpret with complexity mix</td>
+            <td><span class="ht-yes"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Yes</span><div class="track-need" style="margin-top:3px">Manual review audits on sample cases</div></td>
+          </tr>
+          <tr>
+            <td><span class="grp-badge grp-platform">Platform / AI</span><span class="metric-name">Extraction accuracy</span></td>
+            <td><span class="tgt-pill">85–95% F1 (field-level)</span></td>
+            <td class="track-need">Gold-labelled benchmark set · extraction eval pipeline</td>
+            <td><span class="ht-yes"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Yes</span><div class="track-need" style="margin-top:3px">Manual benchmark set review</div></td>
+          </tr>
+          <tr>
+            <td><span class="grp-badge grp-platform">Platform / AI</span><span class="metric-name">Missing-doc detection accuracy</span></td>
+            <td><span class="tgt-pill">High recall for required docs</span></td>
+            <td class="track-need">Checklist logic · policy mapping · benchmark cases</td>
+            <td><span class="ht-yes"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Yes</span><div class="track-need" style="margin-top:3px">Manual QA against checklist</div></td>
+          </tr>
+          <tr>
+            <td><span class="grp-badge grp-platform">Platform / AI</span><span class="metric-name">Retrieval relevance</span></td>
+            <td><span class="tgt-pill">Recall@k / hit@k</span></td>
+            <td class="track-need">Retrieval test set · relevance judgments</td>
+            <td><span class="ht-yes"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Yes</span><div class="track-need" style="margin-top:3px">Human graders score top-k results</div></td>
+          </tr>
+          <tr>
+            <td><span class="grp-badge grp-risk">Risk / Compliance</span><span class="metric-name">Citation coverage</span></td>
+            <td><span class="tgt-pill">Near 100%</span></td>
+            <td class="track-need">Citation service · source references · output logging</td>
+            <td><span class="ht-yes"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Yes</span><div class="track-need" style="margin-top:3px">Human audit of random sample</div></td>
+          </tr>
+          <tr>
+            <td><span class="grp-badge grp-risk">Risk / Compliance</span><span class="metric-name">Audit completeness</span></td>
+            <td><span class="tgt-pill">95–100%</span></td>
+            <td class="track-need">Audit logs · case object · document links · decision event logging</td>
+            <td><span class="ht-yes"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Yes</span><div class="track-need" style="margin-top:3px">Compliance/ops audit checklist</div></td>
+          </tr>
+          <tr>
+            <td><span class="grp-badge grp-risk">Risk / Compliance</span><span class="metric-name">Policy retrieval correctness</span></td>
+            <td><span class="tgt-pill">90%+</span></td>
+            <td class="track-need">Policy metadata · versioning · benchmark cases</td>
+            <td><span class="ht-yes"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Yes</span><div class="track-need" style="margin-top:3px">Compliance review sample</div></td>
+          </tr>
+          <tr>
+            <td><span class="grp-badge grp-biz">Business / Ops</span><span class="metric-name">Effort per case</span></td>
+            <td><span class="tgt-pill">15–20% reduction</span></td>
+            <td class="track-need">Process map · time study · reviewer touchpoint counts</td>
+            <td><span class="ht-yes"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Yes</span><div class="track-need" style="margin-top:3px">Manual effort diary / ops sampling</div></td>
+          </tr>
+          <tr>
+            <td><span class="grp-badge grp-biz">Business / Ops</span><span class="metric-name">Turnaround time</span></td>
+            <td><span class="tgt-pill">Median hrs/days vs SLA</span></td>
+            <td class="track-need">Intake timestamp · review-ready timestamp · case status changes</td>
+            <td><span class="ht-yes"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Yes</span><div class="track-need" style="margin-top:3px">Manual timestamp tracking in ops sheet</div></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ── Phase 2 ── -->
+    <div class="mf-phase-hdr mf-ph2">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" stroke="currentColor" stroke-width="1.4"/><path d="M5 7l2 2 2-2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Phase 2 — AI Layer &nbsp;·&nbsp; 8 metrics
+    </div>
+    <div class="mf-wrap">
+      <table class="mf-table">
+        <thead><tr>
+          <th class="metric-col">Metric</th>
+          <th>Target</th>
+          <th>Tracking Requirement</th>
+          <th>Human-Trackable?</th>
+        </tr></thead>
+        <tbody>
+          <tr>
+            <td><span class="grp-badge grp-reviewer">Reviewer</span><span class="metric-name">Checklist completion assist rate</span></td>
+            <td><span class="tgt-pill">50–80% (by case type)</span></td>
+            <td class="track-need">Checklist logging · item status tracking</td>
+            <td><span class="ht-yes"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Yes</span><div class="track-need" style="margin-top:3px">Manual checklist QA</div></td>
+          </tr>
+          <tr>
+            <td><span class="grp-badge grp-reviewer">Reviewer</span><span class="metric-name">Re-review-time reduction</span></td>
+            <td><span class="tgt-pill">% reduction vs baseline</span></td>
+            <td class="track-need">Reopened-case timestamps · review cycle data</td>
+            <td><span class="ht-yes"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Yes</span><div class="track-need" style="margin-top:3px">Sample time study</div></td>
+          </tr>
+          <tr>
+            <td><span class="grp-badge grp-biz">Business / Ops</span><span class="metric-name">Decision consistency</span></td>
+            <td><span class="tgt-pill">Reviewer variance ↓</span></td>
+            <td class="track-need">Comparable case groups · decision logs</td>
+            <td><span class="ht-yes"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Yes</span><div class="track-need" style="margin-top:3px">QA panel review on sampled matched cases</div></td>
+          </tr>
+          <tr>
+            <td><span class="grp-badge grp-biz">Business / Ops</span><span class="metric-name">Reviewer productivity</span></td>
+            <td><span class="tgt-pill">Cases/FTE · Throughput/FTE</span></td>
+            <td class="track-need">Reviewer assignment data · throughput data</td>
+            <td><span class="ht-yes"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Yes</span><div class="track-need" style="margin-top:3px">Ops manager reporting</div></td>
+          </tr>
+          <tr>
+            <td><span class="grp-badge grp-biz">Business / Ops</span><span class="metric-name">Progressive automation rate</span></td>
+            <td><span class="tgt-pill">% AI-assisted next-step or pre-completed sections</span></td>
+            <td class="track-need">Stage-level automation markers</td>
+            <td><span class="ht-yes"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Yes</span><div class="track-need" style="margin-top:3px">Ops tagging</div></td>
+          </tr>
+          <tr>
+            <td><span class="grp-badge grp-risk">Risk / Compliance</span><span class="metric-name">Assessment quality</span></td>
+            <td><span class="tgt-pill">False approve/reject · QA defect rate</span></td>
+            <td class="track-need">Downstream QA outcomes · sampled ground truth · audit reviews</td>
+            <td><span class="ht-part"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M6 2v4m0 3h.01" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>Partial</span><div class="track-need" style="margin-top:3px">Manual QA review</div></td>
+          </tr>
+          <tr>
+            <td><span class="grp-badge grp-risk">Risk / Compliance</span><span class="metric-name">Human-in-the-loop control rate</span></td>
+            <td><span class="tgt-pill">% high-risk cases manually reviewed</span></td>
+            <td class="track-need">Confidence thresholds · override logging · risk-tier tagging</td>
+            <td><span class="ht-yes"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Yes</span><div class="track-need" style="margin-top:3px">Manual case review log</div></td>
+          </tr>
+          <tr>
+            <td><span class="grp-badge grp-risk">Risk / Compliance</span><span class="metric-name">Decision explainability quality</span></td>
+            <td><span class="tgt-pill">Human rating score</span></td>
+            <td class="track-need">Explanation UI · review rubric</td>
+            <td><span class="ht-yes"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Yes</span><div class="track-need" style="margin-top:3px">Human scoring rubric</div></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ── Phase 3 ── -->
+    <div class="mf-phase-hdr mf-ph3">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" stroke="currentColor" stroke-width="1.4"/><path d="M5 7l2 2 2-2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Phase 3 — Scale &amp; Infra &nbsp;·&nbsp; 6 metrics
+    </div>
+    <div class="mf-wrap">
+      <table class="mf-table">
+        <thead><tr>
+          <th class="metric-col">Metric</th>
+          <th>Target</th>
+          <th>Tracking Requirement</th>
+          <th>Human-Trackable?</th>
+        </tr></thead>
+        <tbody>
+          <tr>
+            <td><span class="grp-badge grp-platform">Platform / AI</span><span class="metric-name">Eval pass rate</span></td>
+            <td><span class="tgt-pill">≥ 95% critical checks</span></td>
+            <td class="track-need">Eval framework · golden set</td>
+            <td><span class="ht-yes"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Yes</span><div class="track-need" style="margin-top:3px">Manual test set execution if needed</div></td>
+          </tr>
+          <tr>
+            <td><span class="grp-badge grp-platform">Platform / AI</span><span class="metric-name">Regression rate</span></td>
+            <td><span class="tgt-pill">Low / single digits</span></td>
+            <td class="track-need">Release history · benchmark comparisons</td>
+            <td><span class="ht-part"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M6 2v4m0 3h.01" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>Partial</span><div class="track-need" style="margin-top:3px">Manual release review</div></td>
+          </tr>
+          <tr>
+            <td><span class="grp-badge grp-risk">Risk / Compliance</span><span class="metric-name">Policy adherence &amp; governance</span></td>
+            <td><span class="tgt-pill">Adherence rate · exception rate</span></td>
+            <td class="track-need">Policy versioning · evaluation suite · audit review</td>
+            <td><span class="ht-yes"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Yes</span><div class="track-need" style="margin-top:3px">Compliance sampling</div></td>
+          </tr>
+          <tr>
+            <td><span class="grp-badge grp-risk">Risk / Compliance</span><span class="metric-name">Traceability &amp; auditability</span></td>
+            <td><span class="tgt-pill">% fully traceable E2E · audit pass rate</span></td>
+            <td class="track-need">Audit trail · evidence capture · decision logs</td>
+            <td><span class="ht-yes"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Yes</span><div class="track-need" style="margin-top:3px">Audit team checklist</div></td>
+          </tr>
+          <tr>
+            <td><span class="grp-badge grp-biz">Business / Ops</span><span class="metric-name">Cost per case</span></td>
+            <td><span class="tgt-pill">15–30% reduction (medium term)</span></td>
+            <td class="track-need">Staffing cost assumptions · volume · throughput</td>
+            <td><span class="ht-yes"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Yes</span><div class="track-need" style="margin-top:3px">Finance + ops model</div></td>
+          </tr>
+          <tr>
+            <td><span class="grp-badge grp-biz">Business / Ops</span><span class="metric-name">Operational scalability</span></td>
+            <td><span class="tgt-pill">Cases/FTE @ same headcount</span></td>
+            <td class="track-need">Volume, staffing, throughput trend</td>
+            <td><span class="ht-yes"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Yes</span><div class="track-need" style="margin-top:3px">Manual team reporting</div></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ── Phase 4 ── -->
+    <div class="mf-phase-hdr mf-ph4">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" stroke="currentColor" stroke-width="1.4"/><path d="M5 7l2 2 2-2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Phase 4 — Sustain &amp; Expand &nbsp;·&nbsp; 3 metrics
+    </div>
+    <div class="mf-wrap">
+      <table class="mf-table">
+        <thead><tr>
+          <th class="metric-col">Metric</th>
+          <th>Target</th>
+          <th>Tracking Requirement</th>
+          <th>Human-Trackable?</th>
+        </tr></thead>
+        <tbody>
+          <tr>
+            <td><span class="grp-badge grp-scale">Scalability / Reuse</span><span class="metric-name">Reusable component rate</span></td>
+            <td><span class="tgt-pill">% reused per new workflow</span></td>
+            <td class="track-need">Module inventory · new use case architecture review</td>
+            <td><span class="ht-yes"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Yes</span><div class="track-need" style="margin-top:3px">Architecture review sheet</div></td>
+          </tr>
+          <tr>
+            <td><span class="grp-badge grp-scale">Scalability / Reuse</span><span class="metric-name">Time to launch 2nd use case</span></td>
+            <td><span class="tgt-pill">Weeks / months to MVP</span></td>
+            <td class="track-need">Program timeline · dependency tracking</td>
+            <td><span class="ht-yes"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Yes</span><div class="track-need" style="margin-top:3px">Manual project plan</div></td>
+          </tr>
+          <tr>
+            <td><span class="grp-badge grp-biz">Business / Ops</span><span class="metric-name">Low-risk automation rate</span></td>
+            <td><span class="tgt-pill">% straight-through processing</span></td>
+            <td class="track-need">Risk segmentation · automation flags · audit review</td>
+            <td><span class="ht-part"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M6 2v4m0 3h.01" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>Partial</span><div class="track-need" style="margin-top:3px">Manual count possible</div></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <nav class="section-nav" style="margin-top:2.5rem">
+      <a href="dependency-map.html" class="nav-btn"><span class="nav-btn-dir">← Previous</span><span class="nav-btn-title">Dependency Map</span></a>
+      <span class="nav-center">36 of 39</span>
+      <a href="experimentation.html" class="nav-btn next"><span class="nav-btn-dir">Next →</span><span class="nav-btn-title">Experimentation Plan</span></a>
+    </nav>
+  </main>
+</div>
+<footer class="site-footer">Reap AI Platform — KYB Review Copilot &nbsp;·&nbsp; Technical PRD</footer>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script src="../js/main.js"></script>
+</body></html>

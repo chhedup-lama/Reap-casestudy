@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>6.1 HITL &amp; Fallback Control Model — Reap KYB PRD</title>
+  <link rel="stylesheet" href="../css/styles.css" />
+  <style>
+    /* ── Control Point Cards ── */
+    .cp-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 16px;
+      margin: 24px 0;
+    }
+    .cp-card {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 20px;
+      background: var(--surface);
+      position: relative;
+    }
+    .cp-card-letter {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+      background: var(--b6);
+      color: #fff;
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+    .cp-card h4 {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text);
+      margin: 0 0 6px 0;
+    }
+    .cp-card p {
+      font-size: 13px;
+      color: var(--text-mid);
+      margin: 0;
+      line-height: 1.55;
+    }
+    .cp-card .cp-trigger {
+      margin-top: 10px;
+      font-size: 11.5px;
+      color: var(--text-dim);
+      padding-top: 10px;
+      border-top: 1px solid var(--border);
+    }
+    .cp-trigger strong { color: var(--text-mid); }
+
+    /* ── Abstention Banner ── */
+    .abstention-banner {
+      background: #0f172a;
+      border-radius: 8px;
+      padding: 24px 28px;
+      margin: 24px 0;
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 20px;
+    }
+    .ab-col h5 {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #94a3b8;
+      margin: 0 0 10px 0;
+    }
+    .ab-col ul {
+      margin: 0;
+      padding: 0 0 0 16px;
+      list-style: disc;
+    }
+    .ab-col ul li {
+      font-size: 13px;
+      color: #e2e8f0;
+      line-height: 1.6;
+      margin-bottom: 4px;
+    }
+    @media (max-width: 700px) {
+      .abstention-banner { grid-template-columns: 1fr; }
+    }
+
+    /* ── Status Pill ── */
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 500;
+    }
+    .pill-required { background: #FEF2F2; color: #991B1B; border: 1px solid #FECACA; }
+    .pill-auto     { background: #EFF6FF; color: #1D4ED8; border: 1px solid #BFDBFE; }
+    .pill-manual   { background: #F0FDF4; color: #166534; border: 1px solid #BBF7D0; }
+    .pill-system   { background: #F5F3FF; color: #5B21B6; border: 1px solid #DDD6FE; }
+
+    /* ── Automation Boundary Table ── */
+    .boundary-table td:first-child { font-weight: 500; }
+    .allowed-tag, .blocked-tag {
+      display: inline-block;
+      padding: 2px 9px;
+      border-radius: 4px;
+      font-size: 11.5px;
+      font-weight: 600;
+    }
+    .allowed-tag { background: #F0FDF4; color: #166534; }
+    .blocked-tag { background: #FEF2F2; color: #991B1B; }
+
+    /* ── Override Flow Steps ── */
+    .override-steps {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      margin: 20px 0;
+      position: relative;
+    }
+    .override-steps::before {
+      content: '';
+      position: absolute;
+      left: 16px;
+      top: 24px;
+      bottom: 24px;
+      width: 2px;
+      background: var(--border);
+    }
+    .ov-step {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      padding: 14px 0;
+    }
+    .ov-num {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--b6);
+      color: #fff;
+      font-size: 13px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      position: relative;
+      z-index: 1;
+    }
+    .ov-body h5 {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text);
+      margin: 4px 0 4px 0;
+    }
+    .ov-body p {
+      font-size: 13px;
+      color: var(--text-mid);
+      margin: 0;
+      line-height: 1.5;
+    }
+
+    /* ── Fallback Mode Block ── */
+    .fallback-modes {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin: 20px 0;
+    }
+    .fallback-mode-card {
+      border-radius: 8px;
+      padding: 18px 20px;
+      border: 1px solid var(--border);
+    }
+    .fallback-mode-card.mode-normal { border-left: 3px solid #22c55e; }
+    .fallback-mode-card.mode-degraded { border-left: 3px solid #f59e0b; }
+    .fallback-mode-card.mode-full-fallback { border-left: 3px solid #ef4444; }
+    .fallback-mode-card h5 {
+      font-size: 13px;
+      font-weight: 700;
+      margin: 0 0 8px 0;
+    }
+    .fallback-mode-card ul {
+      margin: 0;
+      padding: 0 0 0 16px;
+      font-size: 13px;
+      color: var(--text-mid);
+      line-height: 1.6;
+    }
+    @media (max-width: 600px) {
+      .fallback-modes { grid-template-columns: 1fr; }
+    }
+
+    /* ── Audit Trigger grid ── */
+    .audit-triggers {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 10px;
+      margin: 16px 0;
+    }
+    .audit-trigger-item {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 10px 14px;
+      font-size: 13px;
+      color: var(--text-mid);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .audit-trigger-item::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--b6);
+      flex-shrink: 0;
+    }
+
+    /* ── Sidebar on-page nav ── */
+    .sidebar-on-page-title {
+      font-size: 10.5px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      padding: 18px 16px 6px;
+    }
+    .sidebar-on-page { list-style: none; margin: 0; padding: 0 8px; }
+    .sidebar-on-page li a {
+      display: block;
+      padding: 5px 8px;
+      font-size: 12.5px;
+      color: var(--text-mid);
+      border-radius: 4px;
+      text-decoration: none;
+    }
+    .sidebar-on-page li a:hover { background: var(--bg); color: var(--text); }
+  </style>
+</head>
+<body>
+<header class="site-header">
+  <div class="header-inner">
+    <a href="../index.html" class="site-logo"><div class="logo-mark">R</div><span>Reap AI Platform</span></a>
+    <div class="header-divider"></div><span class="header-subtitle">KYB Review Copilot</span>
+    <nav class="header-nav"><a href="../index.html">Overview</a><a href="solution-architecture.html">Architecture</a><a href="reviewer-workflow.html">Workflow</a></nav>
+  </div>
+</header>
+<div class="page-layout">
+  <aside class="sidebar">
+    <a href="../index.html" class="sidebar-back"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M9 11L5 7l4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg> All Sections</a>
+    <div class="sidebar-section-title">Block 6 — Governance</div>
+    <ul class="sidebar-nav">
+      <li><a href="hitl-fallback.html" class="active">6.1 HITL &amp; Fallback</a></li>
+      <li><a href="audit-logging.html">6.2 Audit &amp; Logging</a></li>
+      <li><a href="compliance.html">6.3 Compliance</a></li>
+      <li><a href="risk-framework.html">6.4 Risk Framework</a></li>
+      <li><a href="data-privacy.html">6.5 Data Privacy</a></li>
+    </ul>
+    <div class="sidebar-on-page-title">On this page</div>
+    <ul class="sidebar-on-page">
+      <li><a href="#control-flow">Control Flow</a></li>
+      <li><a href="#control-points">Human Control Points</a></li>
+      <li><a href="#abstention">Abstention Logic</a></li>
+      <li><a href="#manual-requirements">Manual Review Requirements</a></li>
+      <li><a href="#override">Override &amp; Escalation</a></li>
+      <li><a href="#boundaries">Safe Automation Boundaries</a></li>
+      <li><a href="#fallback">Fallback &amp; Audit Controls</a></li>
+    </ul>
+  </aside>
+  <main class="content">
+    <nav class="breadcrumb"><a href="../index.html">Home</a><span class="breadcrumb-sep">›</span><span>Block 6 — Governance</span><span class="breadcrumb-sep">›</span><span class="breadcrumb-current">6.1 HITL &amp; Fallback Control Model</span></nav>
+    <div class="section-header">
+      <div class="section-block-tag" style="background:var(--b6)">Block 6 — Governance</div>
+      <h1>HITL &amp; Fallback Control Model</h1>
+      <p class="section-intro">AI prepares. Humans decide. This page defines where human control points sit, when AI abstains, how overrides and escalations are structured, and what fallback paths guarantee compliance continuity if AI services degrade.</p>
+    </div>
+
+    <div class="callout callout-info">
+      <div class="callout-icon">&#9888;</div>
+      <div class="callout-body"><strong>Design rule:</strong> No KYB case may be finalised without an explicit human reviewer action — regardless of AI confidence, automation level, or system state. The system supports decisions; it does not make them.</div>
+    </div>
+
+    <!-- DIAGRAM -->
+    <h2 id="control-flow">Control Flow</h2>
+    <div class="diagram-section">
+      <div class="diagram-label">
+        <h3>HITL &amp; Fallback Control Model — End-to-End Flow</h3>
+      </div>
+      <div class="diagram-wrap">
+        <div class="mermaid">
+flowchart TD
+    A([Case Enters Workflow]) --> B[Automated Ingestion\nExtraction · Retrieval · Policy Match]
+    B --> C{Confidence &amp;\nGrounding Sufficient?}
+
+    C -->|Yes| D[Prepare Review Assist Output\nSummary · Checklist · Drafts · Recommendations]
+    C -->|No| E[Abstain / Low-Confidence Mode\nFlag gaps · Surface uncertainty · Create open items]
+
+    D --> F{Within Safe\nAutomation Boundary?}
+    E --> F
+
+    F -->|Yes — permitted actions| G[Auto-route · Pre-fill · Checklist · Draft]
+    F -->|No — human required| H[Human Review Required]
+    G --> H
+
+    H --> I{Reviewer Action}
+
+    I -->|Approve| J([Approved — Decision Recorded])
+    I -->|Reject| K([Rejected — Decision Recorded])
+    I -->|Request Follow-up| L[Awaiting Response]
+    I -->|Override AI Output| M[Override Logged\nReason Code + Annotation Required]
+    I -->|Escalate| N[Escalated]
+
+    M --> H
+    L --> O[New Documents / Info Received]
+    O --> P[Re-review — Delta Analysis Applied]
+    P --> H
+
+    N --> Q[Compliance / Risk / Fraud Specialist]
+    Q --> R{Specialist Decision}
+    R -->|Approve| J
+    R -->|Reject| K
+    R -->|Return to Analyst| H
+
+    B --> AE1([Audit Event])
+    D --> AE2([Audit Event])
+    E --> AE3([Audit Event])
+    H --> AE4([Audit Event])
+    I --> AE5([Audit Event])
+    M --> AE6([Audit Event])
+    N --> AE7([Audit Event])
+    R --> AE8([Audit Event])
+
+    style E fill:#FEF9C3,stroke:#FDE047
+    style H fill:#EFF6FF,stroke:#93C5FD
+    style M fill:#FEF2F2,stroke:#FECACA
+    style N fill:#FFF7ED,stroke:#FED7AA
+    style AE1 fill:#F5F3FF,stroke:#C4B5FD
+    style AE2 fill:#F5F3FF,stroke:#C4B5FD
+    style AE3 fill:#F5F3FF,stroke:#C4B5FD
+    style AE4 fill:#F5F3FF,stroke:#C4B5FD
+    style AE5 fill:#F5F3FF,stroke:#C4B5FD
+    style AE6 fill:#F5F3FF,stroke:#C4B5FD
+    style AE7 fill:#F5F3FF,stroke:#C4B5FD
+    style AE8 fill:#F5F3FF,stroke:#C4B5FD
+        </div>
+      </div>
+    </div>
+
+    <!-- HUMAN CONTROL POINTS -->
+    <h2 id="control-points">Human Control Points</h2>
+    <p>Six named control points define where human authority is exercised. Each is non-delegable — the system cannot bypass or auto-complete any of them.</p>
+
+    <div class="cp-grid">
+      <div class="cp-card">
+        <div class="cp-card-letter">A</div>
+        <h4>Case Assignment &amp; Triage</h4>
+        <p>A reviewer must be explicitly assigned before work begins. Cases may be auto-routed to queues, but no AI action proceeds without a named reviewer on record.</p>
+        <div class="cp-trigger"><strong>Trigger:</strong> Case enters Review Ready state</div>
+      </div>
+      <div class="cp-card">
+        <div class="cp-card-letter">B</div>
+        <h4>AI Output Validation</h4>
+        <p>Reviewers confirm, edit, or reject every AI-generated output before it attaches to the case record. Summaries, checklist states, and recommendations are proposals until a human acts.</p>
+        <div class="cp-trigger"><strong>Trigger:</strong> Case enters In Review state</div>
+      </div>
+      <div class="cp-card">
+        <div class="cp-card-letter">C</div>
+        <h4>Override Decision</h4>
+        <p>Any reviewer can override an AI output at any point. Overrides require a reason code and free-text annotation — not optional. Override data feeds the quality loop.</p>
+        <div class="cp-trigger"><strong>Trigger:</strong> Reviewer disagrees with AI suggestion</div>
+      </div>
+      <div class="cp-card">
+        <div class="cp-card-letter">D</div>
+        <h4>Final Decision</h4>
+        <p>Approve, Reject, or Request Follow-up must be an explicit human action. No state machine transition may produce a final decision automatically.</p>
+        <div class="cp-trigger"><strong>Trigger:</strong> Reviewer completes review</div>
+      </div>
+      <div class="cp-card">
+        <div class="cp-card-letter">E</div>
+        <h4>Escalation Authorisation</h4>
+        <p>Escalating a case to a Compliance, Risk, or Fraud specialist is a deliberate human action with a mandatory reason. Specialists must also explicitly record their decision.</p>
+        <div class="cp-trigger"><strong>Trigger:</strong> Complexity, policy trigger, or risk threshold</div>
+      </div>
+      <div class="cp-card">
+        <div class="cp-card-letter">F</div>
+        <h4>Re-review After Follow-up</h4>
+        <p>When new information arrives after a Follow-up request, the reviewer re-opens the case. Delta analysis highlights what changed — but the reviewer must re-examine and re-decide.</p>
+        <div class="cp-trigger"><strong>Trigger:</strong> Awaiting Response → Re-review state transition</div>
+      </div>
+    </div>
+
+    <!-- ABSTENTION LOGIC -->
+    <h2 id="abstention">Low-Confidence &amp; Abstention Logic</h2>
+    <p>When the AI pipeline cannot produce a grounded, reliable output, it abstains rather than generates. Abstention is surfaced as a structured signal — not a silent failure.</p>
+
+    <div class="abstention-banner">
+      <div class="ab-col">
+        <h5>When Abstention Triggers</h5>
+        <ul>
+          <li>Extraction confidence below threshold</li>
+          <li>No matching policy clause retrieved</li>
+          <li>Document parsing failure or OCR quality too low</li>
+          <li>Contradictory evidence across sources</li>
+          <li>Missing mandatory document type</li>
+        </ul>
+      </div>
+      <div class="ab-col">
+        <h5>What the System Does</h5>
+        <ul>
+          <li>Flags the specific field or section as low-confidence</li>
+          <li>Creates an open item for the reviewer</li>
+          <li>Surfaces the uncertainty clearly in the workspace</li>
+          <li>Does not generate a recommendation for that element</li>
+          <li>Logs the abstention reason in the audit trail</li>
+        </ul>
+      </div>
+      <div class="ab-col">
+        <h5>What the Reviewer Sees</h5>
+        <ul>
+          <li>Highlighted uncertainty indicator on affected fields</li>
+          <li>Open item with abstention reason and suggested action</li>
+          <li>Source document links for manual verification</li>
+          <li>Checklist item marked as requiring manual confirmation</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="callout callout-warning">
+      <div class="callout-icon">&#128683;</div>
+      <div class="callout-body"><strong>No silent abstention.</strong> Every abstention event is logged as an audit event with the triggering reason. Abstention rates by document type and policy category are tracked as platform quality metrics.</div>
+    </div>
+
+    <!-- MANUAL REVIEW REQUIREMENTS -->
+    <h2 id="manual-requirements">Manual Review Requirements</h2>
+    <p>Certain case characteristics mandate full human review, bypassing any automation shortcut — regardless of confidence score.</p>
+
+    <div class="table-wrap"><table>
+      <thead><tr><th>Condition</th><th>Trigger</th><th>Review Type</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>High-risk jurisdiction</td>
+          <td>Business registered in FATF grey/black-listed country</td>
+          <td><span class="status-pill pill-required">Compliance Lead</span></td>
+        </tr>
+        <tr>
+          <td>PEP or sanctions match</td>
+          <td>UBO or director matched against sanctions/PEP screening</td>
+          <td><span class="status-pill pill-required">Compliance Lead</span></td>
+        </tr>
+        <tr>
+          <td>Adverse media flag</td>
+          <td>External screening returns adverse media hits</td>
+          <td><span class="status-pill pill-required">Risk Specialist</span></td>
+        </tr>
+        <tr>
+          <td>Ownership opacity</td>
+          <td>UBO chain cannot be resolved below 25% threshold</td>
+          <td><span class="status-pill pill-required">Compliance Lead</span></td>
+        </tr>
+        <tr>
+          <td>Document authenticity doubt</td>
+          <td>OCR or validation flags suspected tampering or inconsistency</td>
+          <td><span class="status-pill pill-required">Fraud Specialist</span></td>
+        </tr>
+        <tr>
+          <td>Repeated follow-up failure</td>
+          <td>Applicant non-responsive after two follow-up cycles</td>
+          <td><span class="status-pill pill-required">Senior Reviewer</span></td>
+        </tr>
+        <tr>
+          <td>Low overall confidence</td>
+          <td>Aggregate extraction confidence below floor threshold</td>
+          <td><span class="status-pill pill-required">Senior Reviewer</span></td>
+        </tr>
+      </tbody>
+    </table></div>
+
+    <!-- OVERRIDE & ESCALATION -->
+    <h2 id="override">Override &amp; Escalation Design</h2>
+
+    <h3>Override Flow</h3>
+    <p>Overriding an AI output is a structured action, not a workaround. The system treats every override as a quality signal.</p>
+
+    <div class="override-steps">
+      <div class="ov-step">
+        <div class="ov-num">1</div>
+        <div class="ov-body">
+          <h5>Reviewer identifies disagreement</h5>
+          <p>The reviewer marks a specific AI output — a field value, a checklist state, a recommendation, or a summary claim — as incorrect or incomplete.</p>
+        </div>
+      </div>
+      <div class="ov-step">
+        <div class="ov-num">2</div>
+        <div class="ov-body">
+          <h5>Reason code selected</h5>
+          <p>A structured reason code is required: e.g. <em>Evidence Misinterpreted</em>, <em>Policy Not Applied</em>, <em>Missing Context</em>, <em>Document Parsing Error</em>, <em>Other</em>.</p>
+        </div>
+      </div>
+      <div class="ov-step">
+        <div class="ov-num">3</div>
+        <div class="ov-body">
+          <h5>Free-text annotation added</h5>
+          <p>Mandatory narrative explaining the reviewer's reasoning. Becomes part of the immutable audit record alongside the original AI output and the corrected value.</p>
+        </div>
+      </div>
+      <div class="ov-step">
+        <div class="ov-num">4</div>
+        <div class="ov-body">
+          <h5>Override logged and case continues</h5>
+          <p>The override event fires an audit event. The reviewer continues with the corrected state. Override rate, reason distribution, and affected output types feed the quality dashboard.</p>
+        </div>
+      </div>
+    </div>
+
+    <h3>Escalation Paths</h3>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Escalation Path</th><th>Who Escalates</th><th>Who Receives</th><th>Resolution</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>Analyst → Senior Reviewer</td>
+          <td>Analyst</td>
+          <td>Senior Reviewer</td>
+          <td>Senior decides or re-escalates</td>
+        </tr>
+        <tr>
+          <td>Analyst / Senior → Compliance Lead</td>
+          <td>Analyst or Senior</td>
+          <td>Compliance Lead</td>
+          <td>Approve, Reject, or Return to Analyst</td>
+        </tr>
+        <tr>
+          <td>Any → Risk Specialist</td>
+          <td>Analyst, Senior, or Compliance</td>
+          <td>Risk Specialist</td>
+          <td>Risk assessment recorded; case continues</td>
+        </tr>
+        <tr>
+          <td>Any → Fraud Specialist</td>
+          <td>Analyst, Senior, or Compliance</td>
+          <td>Fraud Specialist</td>
+          <td>Investigation note recorded; case may be suspended</td>
+        </tr>
+      </tbody>
+    </table></div>
+
+    <!-- SAFE AUTOMATION BOUNDARIES -->
+    <h2 id="boundaries">Safe Automation Boundaries</h2>
+    <p>The platform distinguishes between what automation may do unilaterally and what requires human confirmation. This boundary is fixed — it is not adjusted by confidence score.</p>
+
+    <div class="table-wrap boundary-table"><table>
+      <thead><tr><th>Action</th><th>Automated?</th><th>Condition</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>Route case to review queue</td>
+          <td><span class="allowed-tag">Allowed</span></td>
+          <td>Always — no human needed</td>
+        </tr>
+        <tr>
+          <td>Pre-fill extracted fields in workspace</td>
+          <td><span class="allowed-tag">Allowed</span></td>
+          <td>Shown as proposals; reviewer confirms</td>
+        </tr>
+        <tr>
+          <td>Generate checklist from policy</td>
+          <td><span class="allowed-tag">Allowed</span></td>
+          <td>States are suggestions; reviewer confirms each</td>
+        </tr>
+        <tr>
+          <td>Draft follow-up communication</td>
+          <td><span class="allowed-tag">Allowed</span></td>
+          <td>Reviewer reviews and sends — not auto-sent</td>
+        </tr>
+        <tr>
+          <td>Generate case summary</td>
+          <td><span class="allowed-tag">Allowed</span></td>
+          <td>Reviewer validates before relying on it</td>
+        </tr>
+        <tr>
+          <td>Surface risk signals and flags</td>
+          <td><span class="allowed-tag">Allowed</span></td>
+          <td>Informational only — no auto-action</td>
+        </tr>
+        <tr>
+          <td>Send follow-up to applicant</td>
+          <td><span class="blocked-tag">Blocked</span></td>
+          <td>Reviewer must explicitly send</td>
+        </tr>
+        <tr>
+          <td>Approve or reject a KYB application</td>
+          <td><span class="blocked-tag">Blocked</span></td>
+          <td>Human decision always required — Phase 1–3</td>
+        </tr>
+        <tr>
+          <td>Mark a checklist item as complete</td>
+          <td><span class="blocked-tag">Blocked</span></td>
+          <td>Reviewer must confirm each item</td>
+        </tr>
+        <tr>
+          <td>Escalate a case</td>
+          <td><span class="blocked-tag">Blocked</span></td>
+          <td>Human must initiate with reason</td>
+        </tr>
+        <tr>
+          <td>Close or archive a case</td>
+          <td><span class="blocked-tag">Blocked</span></td>
+          <td>Post-decision human action required</td>
+        </tr>
+      </tbody>
+    </table></div>
+
+    <!-- FALLBACK & AUDIT CONTROLS -->
+    <h2 id="fallback">Fallback &amp; Audit Controls</h2>
+
+    <h3>Fallback Modes</h3>
+    <p>If AI pipeline components become unavailable, the platform degrades gracefully — maintaining compliance process integrity at all times.</p>
+
+    <div class="fallback-modes">
+      <div class="fallback-mode-card mode-normal">
+        <h5 style="color:#166534">Normal Mode</h5>
+        <ul>
+          <li>Full AI assistance active</li>
+          <li>All outputs generated and presented</li>
+          <li>Reviewer confirms, edits, decides</li>
+        </ul>
+      </div>
+      <div class="fallback-mode-card mode-degraded">
+        <h5 style="color:#92400e">Degraded Mode — Partial AI</h5>
+        <ul>
+          <li>One or more pipeline components unavailable</li>
+          <li>Affected outputs suppressed or flagged as unavailable</li>
+          <li>Remaining outputs still presented; reviewer informed</li>
+          <li>Open items created for unavailable extractions</li>
+        </ul>
+      </div>
+      <div class="fallback-mode-card mode-full-fallback" style="grid-column: 1 / -1;">
+        <h5 style="color:#991b1b">Full Fallback Mode — AI Unavailable</h5>
+        <ul>
+          <li>All AI assistance suspended; all cases route to manual queue</li>
+          <li>Reviewer workspace remains fully functional as a structured review tool</li>
+          <li>Checklists, audit logging, decision recording, and escalation paths all intact</li>
+          <li>No degradation in compliance process — only in analyst throughput efficiency</li>
+          <li>Banner displayed to all reviewers; product team alerted automatically</li>
+        </ul>
+      </div>
+    </div>
+
+    <h3>Audit Event Triggers</h3>
+    <p>Every action across the HITL lifecycle fires an immutable audit event. Key triggers:</p>
+
+    <div class="audit-triggers">
+      <div class="audit-trigger-item">Case assigned to reviewer</div>
+      <div class="audit-trigger-item">AI output generated</div>
+      <div class="audit-trigger-item">Abstention event fired</div>
+      <div class="audit-trigger-item">Reviewer opens case</div>
+      <div class="audit-trigger-item">AI output accepted</div>
+      <div class="audit-trigger-item">AI output overridden</div>
+      <div class="audit-trigger-item">Checklist item confirmed</div>
+      <div class="audit-trigger-item">Follow-up sent</div>
+      <div class="audit-trigger-item">New document received</div>
+      <div class="audit-trigger-item">Re-review initiated</div>
+      <div class="audit-trigger-item">Case escalated</div>
+      <div class="audit-trigger-item">Specialist decision recorded</div>
+      <div class="audit-trigger-item">Final decision recorded</div>
+      <div class="audit-trigger-item">Fallback mode activated</div>
+    </div>
+
+    <div class="callout callout-info">
+      <div class="callout-icon">&#128279;</div>
+      <div class="callout-body">Audit event schema, retention policy, and WORM storage configuration are defined in <a href="audit-logging.html">Section 6.2 — Audit &amp; Logging Architecture</a>. Override rate monitoring and quality thresholds are covered in <a href="risk-framework.html">Section 6.4 — Risk Framework</a>.</div>
+    </div>
+
+    <nav class="section-nav">
+      <a href="confidence-scoring.html" class="nav-btn"><span class="nav-btn-dir">← Previous</span><span class="nav-btn-title">Confidence Scoring</span></a>
+      <span class="nav-center">26 of 39</span>
+      <a href="audit-logging.html" class="nav-btn next"><span class="nav-btn-dir">Next →</span><span class="nav-btn-title">Audit &amp; Logging Architecture</span></a>
+    </nav>
+  </main>
+</div>
+<footer class="site-footer">Reap AI Platform — KYB Review Copilot &nbsp;·&nbsp; Technical PRD</footer>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script src="../js/main.js"></script>
+</body></html>

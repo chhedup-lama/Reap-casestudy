@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>5.7 Confidence Scoring &amp; Uncertainty — Reap KYB PRD</title>
+  <link rel="stylesheet" href="../css/styles.css" />
+  <style>
+    /* ── Design principle bar ── */
+    .dp-flow {
+      background:var(--navy); border-radius:10px; padding:.9rem 1.3rem;
+      display:flex; align-items:center; gap:.6rem; flex-wrap:wrap;
+      margin-bottom:2rem; font-size:.82rem;
+    }
+    .dp-step  { color:#c7d2fe; font-weight:500; }
+    .dp-arrow { color:#6366f1; font-weight:700; font-size:1rem; }
+
+    /* ── Section number ── */
+    .sec-num {
+      display:inline-flex; align-items:center; justify-content:center;
+      width:24px; height:24px; border-radius:50%; font-size:.68rem; font-weight:800;
+      background:#dbeafe; color:#1e40af; flex-shrink:0; margin-right:.4rem;
+    }
+    h2.numbered { display:flex; align-items:center; margin-top:1.75rem; }
+
+    /* ── Phase modules ── */
+    .phase-modules { display:grid; grid-template-columns:repeat(4,1fr); gap:.65rem; margin-bottom:1.75rem; }
+    .pm-card {
+      background:var(--surface); border:1px solid var(--border); border-radius:9px;
+      padding:.8rem .9rem; text-align:center; border-top:3px solid var(--b5);
+    }
+    .pm-icon { width:32px; height:32px; border-radius:7px; margin:0 auto .45rem;
+      display:flex; align-items:center; justify-content:center; }
+    .pm-name { font-size:.78rem; font-weight:700; color:var(--text); }
+    .pm-sub  { font-size:.69rem; color:var(--text-dim); margin-top:.25rem; line-height:1.35; }
+
+    /* ── Role 2col ── */
+    .role-2col { display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-bottom:1.75rem; }
+    .role-block { background:var(--surface); border:1px solid var(--border); border-radius:9px; padding:.9rem 1rem; }
+    .role-block-title { font-size:.7rem; font-weight:700; text-transform:uppercase; letter-spacing:.08em; margin-bottom:.55rem; }
+    .rl { list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:.3rem; }
+    .rl li { display:flex; align-items:flex-start; gap:.45rem; font-size:.79rem; line-height:1.4; }
+    .rl-dot { width:6px; height:6px; border-radius:50%; flex-shrink:0; margin-top:5px; }
+
+    /* ── Score band table ── */
+    .band-table { width:100%; border-collapse:collapse; margin-bottom:1.75rem; font-size:.8rem; }
+    .band-table thead th {
+      font-size:.69rem; font-weight:700; text-transform:uppercase; letter-spacing:.07em;
+      color:var(--text-dim); padding:.6rem .85rem; background:var(--surface);
+      border:1px solid var(--border); text-align:left;
+    }
+    .band-table tbody tr { border-bottom:1px solid var(--border); }
+    .band-table tbody td { padding:.65rem .85rem; border:1px solid var(--border); vertical-align:middle; line-height:1.4; }
+    .band-table tbody tr:last-child { border-bottom:none; }
+    .band-dot {
+      display:inline-flex; align-items:center; gap:.5rem; font-weight:700;
+    }
+    .bd { width:10px; height:10px; border-radius:50%; display:inline-block; flex-shrink:0; }
+    .bd-high   { background:#16a34a; }
+    .bd-med    { background:#2563eb; }
+    .bd-low    { background:#d97706; }
+    .bd-vlow   { background:#dc2626; }
+    .bd-policy { background:#7c3aed; }
+
+    .score-pill {
+      display:inline-block; font-size:.72rem; font-weight:700; border-radius:4px;
+      padding:.15rem .5rem; font-family:var(--mono, monospace);
+    }
+    .sp-high   { background:#dcfce7; color:#15803d; }
+    .sp-med    { background:#dbeafe; color:#1e40af; }
+    .sp-low    { background:#fef3c7; color:#92400e; }
+    .sp-vlow   { background:#fee2e2; color:#b91c1c; }
+    .sp-policy { background:#f5f3ff; color:#5b21b6; }
+
+    .route-tag {
+      display:inline-block; font-size:.7rem; border-radius:4px; padding:.12rem .42rem;
+      border:1px solid; font-weight:500;
+    }
+    .rt-auto { background:#f0fdf4; color:#15803d; border-color:#bbf7d0; }
+    .rt-std  { background:#eff6ff; color:#1d4ed8; border-color:#bfdbfe; }
+    .rt-sr   { background:#fffbeb; color:#92400e; border-color:#fde68a; }
+    .rt-esc  { background:#fff5f5; color:#b91c1c; border-color:#fecaca; }
+    .rt-comp { background:#f5f3ff; color:#5b21b6; border-color:#ddd6fe; }
+
+    /* ── Composite score visual ── */
+    .score-factors { display:grid; grid-template-columns:repeat(4,1fr); gap:.6rem; margin-bottom:1.75rem; }
+    .sf-card {
+      background:var(--surface); border:1px solid var(--border); border-radius:9px;
+      padding:.75rem .9rem; text-align:center;
+    }
+    .sf-weight {
+      font-size:1.5rem; font-weight:800; color:#1e40af; line-height:1; margin-bottom:.3rem;
+    }
+    .sf-label { font-size:.74rem; font-weight:700; color:var(--text); margin-bottom:.2rem; }
+    .sf-sub   { font-size:.68rem; color:var(--text-dim); line-height:1.35; }
+    .sf-plus  {
+      display:flex; align-items:center; justify-content:center;
+      font-size:1.5rem; color:#94a3b8; font-weight:300;
+    }
+    .score-eq {
+      background:var(--navy); border-radius:9px; padding:.8rem 1.2rem;
+      display:flex; align-items:center; justify-content:center; gap:.8rem;
+      margin-bottom:1.75rem; flex-wrap:wrap;
+    }
+    .seq-part { font-size:.79rem; color:#c7d2fe; font-weight:500; }
+    .seq-op   { color:#6366f1; font-weight:700; font-size:1.1rem; }
+    .seq-result {
+      background:#4338ca; color:#fff; font-size:.82rem; font-weight:800;
+      border-radius:6px; padding:.3rem .75rem;
+    }
+
+    /* ── Uncertainty signals ── */
+    .sig-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:.55rem; margin-bottom:1.75rem; }
+    .sig-item {
+      display:flex; align-items:flex-start; gap:.55rem; background:var(--surface);
+      border:1px solid var(--border); border-radius:8px; padding:.6rem .85rem;
+    }
+    .sig-icon { width:28px; height:28px; border-radius:6px; background:#fff5f5; border:1px solid #fecaca;
+      display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+    .sig-label { font-size:.79rem; font-weight:700; color:var(--text); }
+    .sig-sub   { font-size:.69rem; color:var(--text-dim); margin-top:2px; line-height:1.35; }
+    .sig-penalty {
+      display:inline-block; font-size:.67rem; font-weight:700;
+      background:#fee2e2; color:#b91c1c; border-radius:3px; padding:.08rem .35rem;
+      margin-top:.3rem;
+    }
+
+    /* ── Calibration / thresholds ── */
+    .cal-2col { display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-bottom:1.75rem; }
+    .cal-block { background:var(--surface); border:1px solid var(--border); border-radius:9px; padding:.9rem 1rem; }
+    .cal-title { font-size:.7rem; font-weight:700; text-transform:uppercase; letter-spacing:.07em; color:var(--text-dim); margin-bottom:.55rem; }
+
+    /* ── Policy flag rules ── */
+    .pf-grid { display:grid; grid-template-columns:1fr 1fr; gap:.55rem; margin-bottom:1.75rem; }
+    .pf-item {
+      display:flex; align-items:flex-start; gap:.5rem; background:#f5f3ff;
+      border:1px solid #ddd6fe; border-radius:8px; padding:.6rem .85rem;
+    }
+    .pf-num {
+      width:20px; height:20px; border-radius:50%; background:#7c3aed; color:#fff;
+      font-size:.65rem; font-weight:800; display:flex; align-items:center;
+      justify-content:center; flex-shrink:0; margin-top:1px;
+    }
+    .pf-label { font-size:.79rem; font-weight:600; color:#3b0764; line-height:1.4; }
+
+    /* ── Principle note ── */
+    .dp-note {
+      font-size:.78rem; color:#3730a3; background:#eef2ff; border:1px solid #c7d2fe;
+      border-left:3px solid #4338ca; border-radius:0 7px 7px 0;
+      padding:.6rem .9rem; margin-bottom:1.25rem; line-height:1.5;
+    }
+    .dp-note strong { color:#1e40af; }
+
+    /* ── Fail / safe-fail ── */
+    .fail-2col { display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-bottom:1.75rem; }
+    .fail-block { border-radius:10px; padding:.9rem 1rem; border:1px solid var(--border); }
+    .fail-risks { background:#fff5f5; border-color:#fecaca; }
+    .fail-safe  { background:#f0fdf4; border-color:#bbf7d0; }
+    .fail-title { font-size:.7rem; font-weight:700; text-transform:uppercase; letter-spacing:.08em; margin-bottom:.5rem; }
+    .fail-risks .fail-title { color:#b91c1c; }
+    .fail-safe  .fail-title { color:#15803d; }
+
+    /* ── Output tiles ── */
+    .output-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:.6rem; margin-bottom:1rem; }
+    .out-item {
+      background:var(--navy); border-radius:8px; padding:.7rem .9rem;
+      display:flex; align-items:flex-start; gap:.55rem;
+    }
+    .out-dot  { width:8px; height:8px; border-radius:50%; background:#6366f1; flex-shrink:0; margin-top:4px; }
+    .out-label { font-size:.79rem; font-weight:700; color:#fff; }
+    .out-sub   { font-size:.69rem; color:#94a3b8; margin-top:1px; }
+    .next-layer {
+      background:#1e1b4b; border:1px solid #4338ca; border-radius:9px;
+      padding:.8rem 1.1rem; text-align:center; font-size:.82rem;
+      color:#c7d2fe; margin-bottom:1.75rem;
+    }
+    .next-layer strong { color:#fff; }
+
+    /* ── Design goals ── */
+    .goals-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:.55rem; margin-bottom:2rem; }
+    .goal-item {
+      display:flex; align-items:flex-start; gap:.5rem; background:#f0fdf4;
+      border:1px solid #bbf7d0; border-radius:7px; padding:.5rem .7rem;
+      font-size:.78rem; color:#15803d; line-height:1.4;
+    }
+    .goal-item svg { flex-shrink:0; margin-top:1px; }
+
+    /* ── Flow steps ── */
+    .flow-steps { display:flex; flex-direction:column; gap:.5rem; margin-bottom:1.75rem; }
+    .flow-step {
+      display:flex; align-items:flex-start; gap:.85rem; background:var(--surface);
+      border:1px solid var(--border); border-radius:9px; padding:.65rem .9rem;
+    }
+    .flow-num {
+      width:26px; height:26px; border-radius:50%; display:flex; align-items:center;
+      justify-content:center; font-size:.7rem; font-weight:800; flex-shrink:0; margin-top:1px;
+    }
+    .flow-title { font-size:.82rem; font-weight:700; color:var(--text); }
+    .flow-sub   { font-size:.73rem; color:var(--text-dim); margin-top:2px; line-height:1.45; }
+    .flow-chips { display:flex; flex-wrap:wrap; gap:.3rem; margin-top:.4rem; }
+    .flow-chip  { font-size:.67rem; background:#f1f5f9; color:var(--text-dim); border:1px solid var(--border); border-radius:3px; padding:.1rem .38rem; }
+
+    @media(max-width:960px){
+      .phase-modules,.score-factors { grid-template-columns:repeat(2,1fr); }
+      .role-2col,.cal-2col,.fail-2col,.pf-grid { grid-template-columns:1fr; }
+      .sig-grid { grid-template-columns:1fr 1fr; }
+      .output-grid { grid-template-columns:repeat(2,1fr); }
+      .goals-grid { grid-template-columns:repeat(2,1fr); }
+      .band-table { font-size:.74rem; }
+    }
+    @media(max-width:540px){
+      .sig-grid,.score-factors,.output-grid,.goals-grid { grid-template-columns:1fr; }
+    }
+  </style>
+</head>
+<body>
+<header class="site-header">
+  <div class="header-inner">
+    <a href="../index.html" class="site-logo"><div class="logo-mark">R</div><span>Reap AI Platform</span></a>
+    <div class="header-divider"></div><span class="header-subtitle">KYB Review Copilot</span>
+    <nav class="header-nav"><a href="../index.html">Overview</a><a href="solution-architecture.html">Architecture</a><a href="reviewer-workflow.html">Workflow</a></nav>
+  </div>
+</header>
+<div class="page-layout">
+  <aside class="sidebar">
+    <a href="../index.html" class="sidebar-back"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M9 11L5 7l4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg> All Sections</a>
+    <div class="sidebar-section-title">Block 5 — End to End Platform Components enabling KYB</div>
+    <ul class="sidebar-nav">
+      <li><a href="rag-overview.html">5.1 RAG Overview</a></li>
+      <li><a href="ingestion-pipeline.html">5.2 Input &amp; Intake Layer</a></li>
+      <li><a href="retrieval-policy.html">5.3 Document Intelligence</a></li>
+      <li><a href="llm-reasoning.html">5.4 Knowledge, Retrieval &amp; Policy Grounding</a></li>
+      <li><a href="reviewer-assist.html">5.5 Reviewer Assist</a></li>
+      <li><a href="workflow-orchestration.html">5.6 Workflow Orchestration</a></li>
+      <li><a href="confidence-scoring.html" class="active">5.7 Confidence Scoring</a></li>
+    </ul>
+  </aside>
+  <main class="content">
+    <nav class="breadcrumb"><a href="../index.html">Home</a><span class="breadcrumb-sep">›</span><span>Block 5 — End to End Platform Components enabling KYB</span><span class="breadcrumb-sep">›</span><span class="breadcrumb-current">5.7 Confidence Scoring &amp; Uncertainty</span></nav>
+    <div class="section-header">
+      <div class="section-block-tag" style="background:var(--b5)">Block 5 — End to End Platform Components enabling KYB</div>
+      <h1>Confidence Scoring &amp; Uncertainty Handling</h1>
+      <p class="section-intro">How the platform quantifies AI certainty, maps every score to a routing decision, and ensures no case reaches a reviewer with an inflated confidence signal.</p>
+    </div>
+
+    <!-- Design principle -->
+    <div class="dp-flow">
+      <span class="dp-step">Score every signal</span>
+      <span class="dp-arrow">→</span>
+      <span class="dp-step">Compose a weighted confidence</span>
+      <span class="dp-arrow">→</span>
+      <span class="dp-step">Map to routing band</span>
+      <span class="dp-arrow">→</span>
+      <span class="dp-step">Surface uncertainty to reviewer</span>
+      <span class="dp-arrow">→</span>
+      <span class="dp-step">Calibrate continuously</span>
+    </div>
+
+    <!-- Phase 1 modules -->
+    <div class="phase-modules">
+      <div class="pm-card">
+        <div class="pm-icon" style="background:#dbeafe;">
+          <svg width="16" height="16" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="7" stroke="#1d4ed8" stroke-width="1.5"/><path d="M9 5v4l3 2" stroke="#1d4ed8" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </div>
+        <div class="pm-name">Score Composition</div>
+        <div class="pm-sub">Weighted composite of 4 signal dimensions</div>
+      </div>
+      <div class="pm-card">
+        <div class="pm-icon" style="background:#ede9fe;">
+          <svg width="16" height="16" viewBox="0 0 18 18" fill="none"><rect x="2" y="4" width="14" height="11" rx="2" stroke="#6d28d9" stroke-width="1.5"/><path d="M6 4V3M12 4V3M2 8h14" stroke="#6d28d9" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </div>
+        <div class="pm-name">Band Routing</div>
+        <div class="pm-sub">5 score bands → queue assignment</div>
+      </div>
+      <div class="pm-card">
+        <div class="pm-icon" style="background:#fef3c7;">
+          <svg width="16" height="16" viewBox="0 0 18 18" fill="none"><path d="M9 2L2 15h14L9 2z" stroke="#b45309" stroke-width="1.5" stroke-linejoin="round"/><path d="M9 7v4M9 13v.5" stroke="#b45309" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </div>
+        <div class="pm-name">Uncertainty Signals</div>
+        <div class="pm-sub">6 explicit penalty conditions</div>
+      </div>
+      <div class="pm-card">
+        <div class="pm-icon" style="background:#dcfce7;">
+          <svg width="16" height="16" viewBox="0 0 18 18" fill="none"><path d="M3 9l4 4 8-8" stroke="#16a34a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div class="pm-name">Calibration</div>
+        <div class="pm-sub">Threshold tuning from reviewer feedback data</div>
+      </div>
+    </div>
+
+    <!-- Section 1: What this layer does -->
+    <h2 class="numbered"><span class="sec-num">1</span> Responsibilities &amp; Scope</h2>
+    <div class="role-2col">
+      <div class="role-block">
+        <div class="role-block-title" style="color:#15803d;">This Layer Does</div>
+        <ul class="rl">
+          <li><span class="rl-dot" style="background:#16a34a;"></span>Compose a unified confidence score from four sub-signals</li>
+          <li><span class="rl-dot" style="background:#16a34a;"></span>Assign every AI output to a routing band (High → Policy Flag)</li>
+          <li><span class="rl-dot" style="background:#16a34a;"></span>Detect and penalise explicit uncertainty conditions</li>
+          <li><span class="rl-dot" style="background:#16a34a;"></span>Override band routing when policy flag conditions are met</li>
+          <li><span class="rl-dot" style="background:#16a34a;"></span>Surface uncertainty reasons to reviewers in plain language</li>
+          <li><span class="rl-dot" style="background:#16a34a;"></span>Log score breakdown for calibration and audit</li>
+        </ul>
+      </div>
+      <div class="role-block">
+        <div class="role-block-title" style="color:#b91c1c;">Not in Scope</div>
+        <ul class="rl">
+          <li><span class="rl-dot" style="background:#dc2626;"></span>Does not produce the decision — only routes it</li>
+          <li><span class="rl-dot" style="background:#dc2626;"></span>Does not override reviewer judgement</li>
+          <li><span class="rl-dot" style="background:#dc2626;"></span>Does not synthesise evidence (handled by Layer 5.4)</li>
+          <li><span class="rl-dot" style="background:#dc2626;"></span>Does not manage queue SLAs or capacity (Reviewer Assist layer)</li>
+          <li><span class="rl-dot" style="background:#dc2626;"></span>Does not store historical reviewer decisions</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Section 2: Score composition -->
+    <h2 class="numbered"><span class="sec-num">2</span> Score Composition — Four Sub-Signals</h2>
+    <p style="font-size:.82rem;color:var(--text-dim);margin-bottom:1rem;">The confidence score is a weighted average of four independently computed signals. Each signal is normalised to 0–1 before weighting.</p>
+    <div class="score-factors">
+      <div class="sf-card">
+        <div class="sf-weight">35%</div>
+        <div class="sf-label">Extraction Completeness</div>
+        <div class="sf-sub">How many required fields were successfully extracted vs expected per document type</div>
+      </div>
+      <div class="sf-card">
+        <div class="sf-weight">30%</div>
+        <div class="sf-label">Retrieval Relevance</div>
+        <div class="sf-sub">Average semantic similarity score across all retrieved chunks used in the synthesis</div>
+      </div>
+      <div class="sf-card">
+        <div class="sf-weight">25%</div>
+        <div class="sf-label">Finding Clarity</div>
+        <div class="sf-sub">Per-criterion clarity: whether the LLM found unambiguous, citation-backed evidence for each criterion</div>
+      </div>
+      <div class="sf-card">
+        <div class="sf-weight">10%</div>
+        <div class="sf-label">LLM Self-Certainty</div>
+        <div class="sf-sub">Model-reported confidence token probability aggregated across generated claims</div>
+      </div>
+    </div>
+    <div class="score-eq">
+      <span class="seq-part">0.35 × Extraction</span>
+      <span class="seq-op">+</span>
+      <span class="seq-part">0.30 × Retrieval</span>
+      <span class="seq-op">+</span>
+      <span class="seq-part">0.25 × Clarity</span>
+      <span class="seq-op">+</span>
+      <span class="seq-part">0.10 × LLM Self-Cert.</span>
+      <span class="seq-op">=</span>
+      <span class="seq-result">Confidence Score [0–1]</span>
+    </div>
+
+    <div class="dp-note">
+      <strong>Penalty override:</strong> Any active uncertainty signal (Section 4) applies a fixed penalty on top of the weighted score. If a policy flag rule triggers, routing is escalated to Compliance Lead regardless of the numeric score.
+    </div>
+
+    <!-- Section 3: Score bands & routing -->
+    <h2 class="numbered"><span class="sec-num">3</span> Score Bands &amp; Routing</h2>
+    <table class="band-table">
+      <thead>
+        <tr>
+          <th>Band</th>
+          <th>Score Range</th>
+          <th>Queue Routing</th>
+          <th>Reviewer Experience</th>
+          <th>AI Decision Shown?</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="band-dot"><span class="bd bd-high"></span> High</span></td>
+          <td><span class="score-pill sp-high">≥ 0.85</span></td>
+          <td><span class="route-tag rt-std">Standard queue</span></td>
+          <td>AI-suggested decision pre-selected; one-click confirm or override</td>
+          <td><strong style="color:#15803d;">Yes — pre-selected</strong></td>
+        </tr>
+        <tr>
+          <td><span class="band-dot"><span class="bd bd-med"></span> Medium</span></td>
+          <td><span class="score-pill sp-med">0.65 – 0.84</span></td>
+          <td><span class="route-tag rt-std">Standard queue</span></td>
+          <td>AI summary shown, no decision pre-selected; full review required</td>
+          <td><strong style="color:#1d4ed8;">Summary only</strong></td>
+        </tr>
+        <tr>
+          <td><span class="band-dot"><span class="bd bd-low"></span> Low</span></td>
+          <td><span class="score-pill sp-low">0.40 – 0.64</span></td>
+          <td><span class="route-tag rt-sr">Senior reviewer queue</span></td>
+          <td>Full review + mandatory annotation explaining final decision</td>
+          <td>No</td>
+        </tr>
+        <tr>
+          <td><span class="band-dot"><span class="bd bd-vlow"></span> Very Low</span></td>
+          <td><span class="score-pill sp-vlow">&lt; 0.40</span></td>
+          <td><span class="route-tag rt-esc">Escalate → Compliance Lead</span></td>
+          <td>Human-only decision; AI output flagged as insufficient</td>
+          <td>No — flagged insufficient</td>
+        </tr>
+        <tr>
+          <td><span class="band-dot"><span class="bd bd-policy"></span> Policy Flag</span></td>
+          <td><span class="score-pill sp-policy">Any score</span></td>
+          <td><span class="route-tag rt-comp">Compliance Lead mandatory</span></td>
+          <td>Policy override rules triggered; mandatory compliance review</td>
+          <td>No — policy override</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- Section 4: Uncertainty signals -->
+    <h2 class="numbered"><span class="sec-num">4</span> Uncertainty Signals &amp; Penalties</h2>
+    <p style="font-size:.82rem;color:var(--text-dim);margin-bottom:1rem;">When any signal below is detected, a fixed penalty is subtracted from the composite score before band assignment. Multiple signals stack.</p>
+    <div class="sig-grid">
+      <div class="sig-item">
+        <div class="sig-icon">
+          <svg width="14" height="14" viewBox="0 0 18 18" fill="none"><rect x="3" y="3" width="12" height="14" rx="2" stroke="#dc2626" stroke-width="1.5"/><path d="M6 7h6M6 10h4" stroke="#dc2626" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </div>
+        <div>
+          <div class="sig-label">Missing Required Documents</div>
+          <div class="sig-sub">One or more mandatory document types absent for this entity/jurisdiction</div>
+          <span class="sig-penalty">−0.20 penalty</span>
+        </div>
+      </div>
+      <div class="sig-item">
+        <div class="sig-icon">
+          <svg width="14" height="14" viewBox="0 0 18 18" fill="none"><path d="M9 2L2 15h14L9 2z" stroke="#dc2626" stroke-width="1.5" stroke-linejoin="round"/><path d="M9 7v4M9 13v.5" stroke="#dc2626" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </div>
+        <div>
+          <div class="sig-label">OCR Quality Below Threshold</div>
+          <div class="sig-sub">Document confidence score from OCR engine falls below 0.75 minimum</div>
+          <span class="sig-penalty">−0.15 penalty</span>
+        </div>
+      </div>
+      <div class="sig-item">
+        <div class="sig-icon">
+          <svg width="14" height="14" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="7" stroke="#dc2626" stroke-width="1.5"/><path d="M6 6l6 6M12 6l-6 6" stroke="#dc2626" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </div>
+        <div>
+          <div class="sig-label">Jurisdiction Not in Policy Store</div>
+          <div class="sig-sub">Entity's operating jurisdiction has no matching policy or regulation chunk</div>
+          <span class="sig-penalty">−0.20 penalty</span>
+        </div>
+      </div>
+      <div class="sig-item">
+        <div class="sig-icon">
+          <svg width="14" height="14" viewBox="0 0 18 18" fill="none"><path d="M3 9h12M9 3v12" stroke="#dc2626" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </div>
+        <div>
+          <div class="sig-label">Contradictory Evidence</div>
+          <div class="sig-sub">Two or more documents surface conflicting facts for the same criterion</div>
+          <span class="sig-penalty">−0.25 penalty</span>
+        </div>
+      </div>
+      <div class="sig-item">
+        <div class="sig-icon">
+          <svg width="14" height="14" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="7" r="4" stroke="#dc2626" stroke-width="1.5"/><path d="M3 15c0-3.314 2.686-5 6-5s6 1.686 6 5" stroke="#dc2626" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </div>
+        <div>
+          <div class="sig-label">Sanctions / Watchlist Match</div>
+          <div class="sig-sub">Entity name or UBO matches a sanctioned entity name with ≥ 0.85 similarity</div>
+          <span class="sig-penalty">→ Policy Flag override</span>
+        </div>
+      </div>
+      <div class="sig-item">
+        <div class="sig-icon">
+          <svg width="14" height="14" viewBox="0 0 18 18" fill="none"><rect x="3" y="8" width="12" height="7" rx="2" stroke="#dc2626" stroke-width="1.5"/><path d="M6 8V6a3 3 0 016 0v2" stroke="#dc2626" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </div>
+        <div>
+          <div class="sig-label">High-Risk Jurisdiction Flag</div>
+          <div class="sig-sub">Entity incorporated or operating in a FATF grey-list / black-list country</div>
+          <span class="sig-penalty">→ Policy Flag override</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 5: Policy flag rules -->
+    <h2 class="numbered"><span class="sec-num">5</span> Policy Flag Override Rules</h2>
+    <p style="font-size:.82rem;color:var(--text-dim);margin-bottom:.9rem;">Regardless of composite score, any of the following conditions immediately routes the case to the Compliance Lead queue and suppresses AI decision display.</p>
+    <div class="pf-grid">
+      <div class="pf-item"><div class="pf-num">1</div><div class="pf-label">Sanctions or watchlist name match (≥ 0.85 similarity)</div></div>
+      <div class="pf-item"><div class="pf-num">2</div><div class="pf-label">Entity in FATF grey-list or black-list jurisdiction</div></div>
+      <div class="pf-item"><div class="pf-num">3</div><div class="pf-label">UBO ownership ≥ 25% by a PEP (politically exposed person)</div></div>
+      <div class="pf-item"><div class="pf-num">4</div><div class="pf-label">Shell company pattern detected (zero employees, nominee directors)</div></div>
+      <div class="pf-item"><div class="pf-num">5</div><div class="pf-label">Adverse media hit above configurable relevance threshold</div></div>
+      <div class="pf-item"><div class="pf-num">6</div><div class="pf-label">Manual compliance team escalation flag set on entity</div></div>
+    </div>
+
+    <!-- Section 6: Scoring flow -->
+    <h2 class="numbered"><span class="sec-num">6</span> Scoring Flow</h2>
+    <div class="flow-steps">
+      <div class="flow-step">
+        <div class="flow-num" style="background:#dbeafe;color:#1e40af;">1</div>
+        <div>
+          <div class="flow-title">Receive synthesis output from Layer 5.4</div>
+          <div class="flow-sub">Inputs: per-criterion findings, citation map, retrieval relevance scores, extraction completeness report</div>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num" style="background:#dbeafe;color:#1e40af;">2</div>
+        <div>
+          <div class="flow-title">Compute four sub-signals independently</div>
+          <div class="flow-sub">Each signal normalised 0–1; logged separately for audit</div>
+          <div class="flow-chips">
+            <span class="flow-chip">extraction_completeness</span>
+            <span class="flow-chip">retrieval_relevance_avg</span>
+            <span class="flow-chip">finding_clarity</span>
+            <span class="flow-chip">llm_self_certainty</span>
+          </div>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num" style="background:#dbeafe;color:#1e40af;">3</div>
+        <div>
+          <div class="flow-title">Apply weighted formula → raw composite score</div>
+          <div class="flow-sub">35% Extraction + 30% Retrieval + 25% Clarity + 10% LLM Self-Cert</div>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num" style="background:#fef3c7;color:#92400e;">4</div>
+        <div>
+          <div class="flow-title">Detect uncertainty signals and apply penalties</div>
+          <div class="flow-sub">Each active signal subtracts its fixed penalty; penalties stack; result floored at 0.0</div>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num" style="background:#f5f3ff;color:#5b21b6;">5</div>
+        <div>
+          <div class="flow-title">Check policy flag override rules</div>
+          <div class="flow-sub">If any flag rule triggers: skip band assignment, set routing = Compliance Lead</div>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num" style="background:#dbeafe;color:#1e40af;">6</div>
+        <div>
+          <div class="flow-title">Assign final band and queue routing</div>
+          <div class="flow-sub">Score mapped to High / Medium / Low / Very Low band; queue assignment written to case record</div>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num" style="background:#dcfce7;color:#15803d;">7</div>
+        <div>
+          <div class="flow-title">Write confidence payload to case record and emit to Reviewer Assist</div>
+          <div class="flow-sub">Payload includes: composite score, sub-signal breakdown, active penalties, band, routing decision, uncertainty reasons for reviewer display</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 7: Calibration -->
+    <h2 class="numbered"><span class="sec-num">7</span> Calibration Strategy</h2>
+    <div class="cal-2col">
+      <div class="cal-block">
+        <div class="cal-title">Initial Thresholds (P1 Launch)</div>
+        <ul class="rl">
+          <li><span class="rl-dot" style="background:#1d4ed8;"></span>Conservative defaults: High band starts at 0.85 to minimise false positive auto-routing</li>
+          <li><span class="rl-dot" style="background:#1d4ed8;"></span>All bands configurable via admin settings — no hardcoded values in runtime code</li>
+          <li><span class="rl-dot" style="background:#1d4ed8;"></span>Sub-signal weights are environment variables, not model weights — no retraining required to tune</li>
+          <li><span class="rl-dot" style="background:#1d4ed8;"></span>Penalty magnitudes set conservatively; loosened once acceptance rate data is available</li>
+        </ul>
+      </div>
+      <div class="cal-block">
+        <div class="cal-title">Ongoing Calibration (P2+)</div>
+        <ul class="rl">
+          <li><span class="rl-dot" style="background:#16a34a;"></span>Track reviewer override rate per band — target &lt; 15% override on High band</li>
+          <li><span class="rl-dot" style="background:#16a34a;"></span>Track false positive rate: cases where High score was given but reviewer changed decision</li>
+          <li><span class="rl-dot" style="background:#16a34a;"></span>Bi-weekly calibration review; threshold changes require Compliance Lead sign-off</li>
+          <li><span class="rl-dot" style="background:#16a34a;"></span>Calibration history versioned and auditable — each threshold change logged with rationale</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Section 8: What reviewers see -->
+    <h2 class="numbered"><span class="sec-num">8</span> Reviewer-Facing Uncertainty Display</h2>
+    <div class="dp-note">
+      <strong>Principle:</strong> Reviewers are never shown a raw numeric score. They see a band label (e.g. <em>Medium Confidence</em>), the top uncertainty reasons in plain English, and a confidence indicator bar. Score arithmetic stays internal.
+    </div>
+    <div class="fail-2col">
+      <div class="fail-block fail-safe">
+        <div class="fail-title">What is Shown to Reviewer</div>
+        <ul class="rl">
+          <li><span class="rl-dot" style="background:#16a34a;"></span>Confidence band label + colour indicator</li>
+          <li><span class="rl-dot" style="background:#16a34a;"></span>Plain-language uncertainty reasons (e.g. "OCR quality low on Certificate of Incorporation")</li>
+          <li><span class="rl-dot" style="background:#16a34a;"></span>Which criteria had low-confidence findings highlighted in the summary</li>
+          <li><span class="rl-dot" style="background:#16a34a;"></span>Policy flag reasons if applicable (e.g. "Jurisdiction flagged: Iran")</li>
+        </ul>
+      </div>
+      <div class="fail-block fail-risks">
+        <div class="fail-title">What is Hidden from Reviewer</div>
+        <ul class="rl">
+          <li><span class="rl-dot" style="background:#dc2626;"></span>Raw composite score (avoids anchoring bias)</li>
+          <li><span class="rl-dot" style="background:#dc2626;"></span>Sub-signal breakdown and individual weights</li>
+          <li><span class="rl-dot" style="background:#dc2626;"></span>LLM token probability values</li>
+          <li><span class="rl-dot" style="background:#dc2626;"></span>Penalty arithmetic and configuration parameters</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Section 9: Failure modes -->
+    <h2 class="numbered"><span class="sec-num">9</span> Failure Modes &amp; Safe Defaults</h2>
+    <div class="fail-2col">
+      <div class="fail-block fail-risks">
+        <div class="fail-title">Failure Risks to Mitigate</div>
+        <ul class="rl">
+          <li><span class="rl-dot" style="background:#dc2626;"></span><strong>Score inflation:</strong> High score on incomplete evidence due to poorly tuned weights</li>
+          <li><span class="rl-dot" style="background:#dc2626;"></span><strong>Anchoring effect:</strong> Reviewer over-trusts AI band and rubber-stamps decisions</li>
+          <li><span class="rl-dot" style="background:#dc2626;"></span><strong>Calibration drift:</strong> Thresholds not updated as model or retrieval quality changes</li>
+          <li><span class="rl-dot" style="background:#dc2626;"></span><strong>Penalty evasion:</strong> Edge cases that don't trigger signals despite poor evidence</li>
+        </ul>
+      </div>
+      <div class="fail-block fail-safe">
+        <div class="fail-title">Safe-Fail Defaults</div>
+        <ul class="rl">
+          <li><span class="rl-dot" style="background:#16a34a;"></span>Any scoring error routes to Very Low band, never silently passes</li>
+          <li><span class="rl-dot" style="background:#16a34a;"></span>Missing sub-signal defaults to 0.0, not skipped in calculation</li>
+          <li><span class="rl-dot" style="background:#16a34a;"></span>Score payload always logged regardless of routing outcome</li>
+          <li><span class="rl-dot" style="background:#16a34a;"></span>Override rate alerts trigger at 20% threshold for immediate calibration review</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Section 10: What this layer produces -->
+    <h2 class="numbered"><span class="sec-num">10</span> What This Layer Produces</h2>
+    <div class="output-grid">
+      <div class="out-item">
+        <div class="out-dot"></div>
+        <div>
+          <div class="out-label">Confidence Score</div>
+          <div class="out-sub">Weighted composite [0–1], post-penalty</div>
+        </div>
+      </div>
+      <div class="out-item">
+        <div class="out-dot"></div>
+        <div>
+          <div class="out-label">Band Assignment</div>
+          <div class="out-sub">High / Medium / Low / Very Low / Policy Flag</div>
+        </div>
+      </div>
+      <div class="out-item">
+        <div class="out-dot"></div>
+        <div>
+          <div class="out-label">Queue Routing Decision</div>
+          <div class="out-sub">Standard / Senior / Compliance Lead queue</div>
+        </div>
+      </div>
+      <div class="out-item">
+        <div class="out-dot"></div>
+        <div>
+          <div class="out-label">Sub-Signal Breakdown</div>
+          <div class="out-sub">All 4 signal scores for audit logging</div>
+        </div>
+      </div>
+      <div class="out-item">
+        <div class="out-dot"></div>
+        <div>
+          <div class="out-label">Active Uncertainty Reasons</div>
+          <div class="out-sub">Human-readable list for reviewer display</div>
+        </div>
+      </div>
+      <div class="out-item">
+        <div class="out-dot"></div>
+        <div>
+          <div class="out-label">Policy Flag Status</div>
+          <div class="out-sub">Flag triggered Y/N + rule reference</div>
+        </div>
+      </div>
+      <div class="out-item">
+        <div class="out-dot"></div>
+        <div>
+          <div class="out-label">AI Decision Visibility Flag</div>
+          <div class="out-sub">Whether pre-selected decision is shown to reviewer</div>
+        </div>
+      </div>
+      <div class="out-item">
+        <div class="out-dot"></div>
+        <div>
+          <div class="out-label">Calibration Log Entry</div>
+          <div class="out-sub">Score snapshot for threshold tuning pipeline</div>
+        </div>
+      </div>
+    </div>
+    <div class="next-layer">
+      Outputs consumed by <strong>Reviewer Assist &amp; Case Intelligence (Block 6)</strong> — confidence band drives reviewer UI state, queue placement, and override prompts.
+    </div>
+
+    <!-- Section 11: Design goals -->
+    <h2 class="numbered"><span class="sec-num">11</span> Design Goals</h2>
+    <div class="goals-grid">
+      <div class="goal-item"><svg width="14" height="14" viewBox="0 0 18 18" fill="none"><path d="M3 9l4 4 8-8" stroke="#16a34a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>No case is auto-routed to High band with incomplete or contradictory evidence</div>
+      <div class="goal-item"><svg width="14" height="14" viewBox="0 0 18 18" fill="none"><path d="M3 9l4 4 8-8" stroke="#16a34a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>All scoring logic is auditable; every score can be reconstructed from the log</div>
+      <div class="goal-item"><svg width="14" height="14" viewBox="0 0 18 18" fill="none"><path d="M3 9l4 4 8-8" stroke="#16a34a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Thresholds are configuration, not code — tunable without deployment</div>
+      <div class="goal-item"><svg width="14" height="14" viewBox="0 0 18 18" fill="none"><path d="M3 9l4 4 8-8" stroke="#16a34a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Reviewers receive actionable uncertainty context, not raw numbers</div>
+      <div class="goal-item"><svg width="14" height="14" viewBox="0 0 18 18" fill="none"><path d="M3 9l4 4 8-8" stroke="#16a34a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Policy flag overrides are deterministic and never depend on score arithmetic</div>
+      <div class="goal-item"><svg width="14" height="14" viewBox="0 0 18 18" fill="none"><path d="M3 9l4 4 8-8" stroke="#16a34a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Calibration loop closes within two weeks of new reviewer feedback data</div>
+      <div class="goal-item"><svg width="14" height="14" viewBox="0 0 18 18" fill="none"><path d="M3 9l4 4 8-8" stroke="#16a34a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Scoring failures default to lowest band — never inflate confidence silently</div>
+      <div class="goal-item"><svg width="14" height="14" viewBox="0 0 18 18" fill="none"><path d="M3 9l4 4 8-8" stroke="#16a34a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Compliance oversight is mandatory for all sanctioned-entity and jurisdiction flags</div>
+    </div>
+
+    <nav class="section-nav">
+      <a href="workflow-orchestration.html" class="nav-btn"><span class="nav-btn-dir">← Previous</span><span class="nav-btn-title">Workflow Orchestration &amp; Human Review</span></a>
+      <span class="nav-center">25 of 39</span>
+      <a href="hitl-fallback.html" class="nav-btn next"><span class="nav-btn-dir">Next →</span><span class="nav-btn-title">HITL &amp; Fallback Control</span></a>
+    </nav>
+  </main>
+</div>
+<footer class="site-footer">Reap AI Platform — KYB Review Copilot &nbsp;·&nbsp; Technical PRD</footer>
+<script src="../js/main.js"></script>
+</body>
+</html>

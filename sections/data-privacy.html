@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>6.5 Data Privacy &amp; Security — Reap KYB PRD</title>
+  <link rel="stylesheet" href="../css/styles.css" />
+</head>
+<body>
+<header class="site-header">
+  <div class="header-inner">
+    <a href="../index.html" class="site-logo"><div class="logo-mark">R</div><span>Reap AI Platform</span></a>
+    <div class="header-divider"></div><span class="header-subtitle">KYB Review Copilot</span>
+    <nav class="header-nav"><a href="../index.html">Overview</a><a href="solution-architecture.html">Architecture</a><a href="reviewer-workflow.html">Workflow</a></nav>
+  </div>
+</header>
+<div class="page-layout">
+  <aside class="sidebar">
+    <a href="../index.html" class="sidebar-back"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M9 11L5 7l4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg> All Sections</a>
+    <div class="sidebar-section-title">Block 6 — Governance</div>
+    <ul class="sidebar-nav">
+      <li><a href="hitl-fallback.html">6.1 HITL &amp; Fallback</a></li>
+      <li><a href="audit-logging.html">6.2 Audit &amp; Logging</a></li>
+      <li><a href="compliance.html">6.3 Compliance</a></li>
+      <li><a href="risk-framework.html">6.4 Risk Framework</a></li>
+      <li><a href="data-privacy.html" class="active">6.5 Data Privacy</a></li>
+    </ul>
+  </aside>
+  <main class="content">
+    <nav class="breadcrumb"><a href="../index.html">Home</a><span class="breadcrumb-sep">›</span><span>Block 6 — Governance</span><span class="breadcrumb-sep">›</span><span class="breadcrumb-current">6.5 Data Privacy &amp; Security</span></nav>
+    <div class="section-header">
+      <div class="section-block-tag" style="background:var(--b6)">Block 6 — Governance</div>
+      <h1>Data Privacy &amp; Security</h1>
+      <p class="section-intro">PII handling, data retention policies, PDPA/GDPR alignment, access controls, and the principle of data minimisation applied to AI-assisted KYB processing.</p>
+    </div>
+    <div class="stub-banner">&#9998; Content coming soon — this section is a structured stub awaiting full copy.</div>
+
+    <h2>PII Classification</h2>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Data Type</th><th>PII Class</th><th>Storage Treatment</th><th>LLM Exposure</th></tr></thead>
+      <tbody>
+        <tr><td>Director names / IDs</td><td>High PII</td><td>Encrypted field-level</td><td>Restricted — anonymised where possible</td></tr>
+        <tr><td>UBO details</td><td>High PII</td><td>Encrypted field-level</td><td>Restricted</td></tr>
+        <tr><td>Bank statements</td><td>High PII + Financial</td><td>Encrypted at rest</td><td>No — not sent to LLM</td></tr>
+        <tr><td>Business registration</td><td>Medium — often public</td><td>Standard encryption</td><td>Yes — included in context</td></tr>
+        <tr><td>AI reasoning output</td><td>Derived — no PII</td><td>Standard</td><td>Output only — no PII in LLM response</td></tr>
+      </tbody>
+    </table></div>
+
+    <h2>Data Retention Policy</h2>
+    <p>[ Application documents: 7 years post-decision. AI summaries: 7 years. Audit log: 7 years (WORM). Raw uploads: deleted after extraction confirmed. ]</p>
+
+    <h2>Regulatory Alignment</h2>
+    <p>[ PDPA (Thailand/Singapore), GDPR principles, Hong Kong PDPO, and relevant jurisdiction requirements. Right to erasure handling for non-regulatory data. ]</p>
+
+    <h2>Data Minimisation</h2>
+    <p>[ Only the fields necessary for the review are sent to the LLM. Full document content is not included unless a specific criteria requires it. ]</p>
+
+    <nav class="section-nav">
+      <a href="risk-framework.html" class="nav-btn"><span class="nav-btn-dir">← Previous</span><span class="nav-btn-title">Risk Framework</span></a>
+      <span class="nav-center">30 of 39</span>
+      <a href="workflow-state.html" class="nav-btn next"><span class="nav-btn-dir">Next →</span><span class="nav-btn-title">Workflow State Transitions</span></a>
+    </nav>
+  </main>
+</div>
+<footer class="site-footer">Reap AI Platform — KYB Review Copilot &nbsp;·&nbsp; Technical PRD</footer>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script src="../js/main.js"></script>
+</body></html>

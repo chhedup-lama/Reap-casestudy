@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>3.3 Build vs Buy Analysis — Reap KYB PRD</title>
+  <link rel="stylesheet" href="../css/styles.css" />
+<style>
+  /* ── Summary Strip ── */
+  .bvb-summary { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin:20px 0 28px; }
+  .bvb-stat { border-radius:10px; padding:14px 18px; text-align:center; border:1px solid; }
+  .bvbs-build { background:#EFF6FF; border-color:#BFDBFE; }
+  .bvbs-buy   { background:#ECFDF5; border-color:#A7F3D0; }
+  .bvbs-hyb   { background:#F5F3FF; border-color:#DDD6FE; }
+  .bvbs-num { font-size:26px; font-weight:800; letter-spacing:-.5px; margin-bottom:3px; }
+  .bvbs-build .bvbs-num { color:#1D4ED8; }
+  .bvbs-buy   .bvbs-num { color:#047857; }
+  .bvbs-hyb   .bvbs-num { color:#6D28D9; }
+  .bvbs-label { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.07em; }
+  .bvbs-build .bvbs-label { color:#3B82F6; }
+  .bvbs-buy   .bvbs-label { color:#10B981; }
+  .bvbs-hyb   .bvbs-label { color:#7C3AED; }
+  .bvbs-sub { font-size:11px; color:var(--text-dim); margin-top:3px; }
+
+  /* ── Matrix ── */
+  .bvb-phase-group { margin-bottom:20px; }
+  .bvb-phase-header { display:flex; align-items:center; gap:10px; padding:8px 16px; border-radius:8px 8px 0 0; border:1px solid; border-bottom:none; }
+  .bph-p1   { background:#EFF6FF; border-color:#BFDBFE; }
+  .bph-p2   { background:#F5F3FF; border-color:#DDD6FE; }
+  .bph-p3   { background:#FFFBEB; border-color:#FDE68A; }
+  .bph-label { font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:.08em; }
+  .bph-p1   .bph-label { color:#1D4ED8; }
+  .bph-p2   .bph-label { color:#6D28D9; }
+  .bph-p3   .bph-label { color:#B45309; }
+  .bph-name { font-size:12px; font-weight:700; color:var(--text); }
+  .bph-count { font-size:11px; color:var(--text-dim); margin-left:auto; }
+
+  .bvb-wrap { border:1px solid var(--border); border-radius:0 0 10px 10px; overflow:hidden; }
+  .bvb-col-head { display:grid; grid-template-columns:180px 90px 1fr 1fr 1fr; padding:8px 16px; background:var(--bg); border-bottom:2px solid var(--border); gap:12px; }
+  @media(max-width:800px){ .bvb-col-head { grid-template-columns:1fr 80px; } }
+  .bvbch { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.07em; color:var(--text-dim); }
+
+  .bvb-row { display:grid; grid-template-columns:180px 90px 1fr 1fr 1fr; padding:12px 16px; border-bottom:1px solid var(--border); gap:12px; align-items:start; }
+  .bvb-row:last-child { border-bottom:none; }
+  .bvb-row:hover { background:var(--bg); }
+  @media(max-width:800px){ .bvb-row { grid-template-columns:1fr 80px; } .bvb-build,.bvb-buy,.bvb-why { display:none; } }
+
+  .bvb-cap { font-size:12px; font-weight:700; color:var(--text); line-height:1.4; }
+
+  /* Decision badge with split bar */
+  .dec-badge { display:flex; flex-direction:column; gap:4px; }
+  .dec-bar { height:5px; border-radius:3px; display:flex; overflow:hidden; gap:1px; }
+  .db-build { background:#2563EB; border-radius:3px 0 0 3px; }
+  .db-buy   { background:#10B981; border-radius:0 3px 3px 0; }
+  .dec-label { font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:.06em; }
+  .dl-build { color:#1D4ED8; }
+  .dl-buy   { color:#047857; }
+  .dl-hyb   { color:#6D28D9; }
+
+  .bvb-build-cell { font-size:11px; color:#1D4ED8; line-height:1.45; }
+  .bvb-build-cell::before { content:'🔨 '; font-size:10px; }
+  .bvb-buy-cell   { font-size:11px; color:#047857; line-height:1.45; }
+  .bvb-buy-cell::before   { content:'🛒 '; font-size:10px; }
+  .bvb-why { font-size:11px; color:var(--text-dim); line-height:1.45; }
+
+  /* Vendor shortlist */
+  .vendor-stub { border:1px dashed var(--border); border-radius:10px; padding:18px 22px; background:var(--bg); color:var(--text-dim); font-size:13px; font-style:italic; margin-top:8px; }
+</style>
+</head>
+<body>
+<header class="site-header">
+  <div class="header-inner">
+    <a href="../index.html" class="site-logo"><div class="logo-mark">R</div><span>Reap AI Platform</span></a>
+    <div class="header-divider"></div><span class="header-subtitle">KYB Review Copilot</span>
+    <nav class="header-nav"><a href="../index.html">Overview</a><a href="solution-architecture.html">Architecture</a><a href="reviewer-workflow.html">Workflow</a></nav>
+  </div>
+</header>
+<div class="page-layout">
+  <aside class="sidebar">
+    <a href="../index.html" class="sidebar-back"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M9 11L5 7l4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg> All Sections</a>
+    <div class="sidebar-section-title">Block 3 — Product Scope</div>
+    <ul class="sidebar-nav">
+      <li><a href="feature-scope.html">3.1 Feature Scope</a></li>
+      <li><a href="out-of-scope.html">3.2 Out of Scope</a></li>
+      <li><a href="build-vs-buy.html" class="active">3.3 Build vs Buy</a></li>
+      <li><a href="phased-delivery.html">3.4 Phased Delivery</a></li>
+      <li><a href="dependencies.html">3.5 Dependencies</a></li>
+    </ul>
+  </aside>
+  <main class="content">
+    <nav class="breadcrumb"><a href="../index.html">Home</a><span class="breadcrumb-sep">›</span><span>Block 3 — Product Scope</span><span class="breadcrumb-sep">›</span><span class="breadcrumb-current">3.3 Build vs Buy Analysis</span></nav>
+    <div class="section-header">
+      <div class="section-block-tag" style="background:var(--b3)">Block 3 — Product Scope</div>
+      <h1>Build vs Buy Analysis</h1>
+      <p class="section-intro">Make/buy decision across every layer of the KYB AI stack — rationale anchored in differentiation, not cost alone.</p>
+    </div>
+
+    <!-- Decision Framework -->
+    <h2>Decision Framework</h2>
+    <div class="callout callout-info">
+      <div class="callout-icon">💡</div>
+      <div class="callout-body"><strong>Principle:</strong> Buy commodity infrastructure. Build differentiated workflow, policy enforcement, and HITL layers. Never outsource competitive moat.</div>
+    </div>
+
+    <!-- Summary -->
+    <div class="bvb-summary">
+      <div class="bvb-stat bvbs-build">
+        <div class="bvbs-num">11</div>
+        <div class="bvbs-label">Build Core</div>
+        <div class="bvbs-sub">Differentiating logic — keep internal</div>
+      </div>
+      <div class="bvb-stat bvbs-buy">
+        <div class="bvbs-num">7</div>
+        <div class="bvbs-label">Buy Infra</div>
+        <div class="bvbs-sub">Commodity — use best-in-class providers</div>
+      </div>
+      <div class="bvb-stat bvbs-hyb">
+        <div class="bvbs-num">3</div>
+        <div class="bvbs-label">Hybrid</div>
+        <div class="bvbs-sub">Buy rails, build control + grounding</div>
+      </div>
+    </div>
+
+    <!-- PHASE 1 -->
+    <div class="bvb-phase-group">
+      <div class="bvb-phase-header bph-p1">
+        <span class="bph-label">Phase 1</span>
+        <span class="bph-name">Foundation — 11 decisions</span>
+        <span class="bph-count">Core ingestion, extraction, storage, AI models, workflow</span>
+      </div>
+      <div class="bvb-wrap">
+        <div class="bvb-col-head">
+          <div class="bvbch">Capability</div>
+          <div class="bvbch">Decision</div>
+          <div class="bvbch">What to Build</div>
+          <div class="bvbch">What to Buy</div>
+          <div class="bvbch">Rationale</div>
+        </div>
+
+        <div class="bvb-row">
+          <div class="bvb-cap">LLMs</div>
+          <div class="dec-badge"><div class="dec-bar"><div class="db-buy" style="flex:4"></div><div class="db-build" style="flex:6"></div></div><div class="dec-label dl-hyb">Hybrid</div></div>
+          <div class="bvb-build-cell">Grounding, routing, and governance logic</div>
+          <div class="bvb-buy-cell">Foundation model APIs (flexible access)</div>
+          <div class="bvb-why">Your advantage is not the base model — it's how it's grounded, routed, and governed</div>
+        </div>
+
+        <div class="bvb-row">
+          <div class="bvb-cap">Embedding Models</div>
+          <div class="dec-badge"><div class="dec-bar"><div class="db-buy" style="flex:7"></div><div class="db-build" style="flex:3"></div></div><div class="dec-label dl-buy">Buy First</div></div>
+          <div class="bvb-build-cell">Domain-specific fine-tuning if benchmarks prove necessary</div>
+          <div class="bvb-buy-cell">Hosted / open embedding models</div>
+          <div class="bvb-why">Start with standard embeddings; customization only if retrieval quality benchmarks demand it</div>
+        </div>
+
+        <div class="bvb-row">
+          <div class="bvb-cap">OCR</div>
+          <div class="dec-badge"><div class="dec-bar"><div class="db-buy" style="flex:6"></div><div class="db-build" style="flex:4"></div></div><div class="dec-label dl-hyb">Hybrid</div></div>
+          <div class="bvb-build-cell">Quality controls, fallback handling, downstream doc processing</div>
+          <div class="bvb-buy-cell">Managed OCR provider</div>
+          <div class="bvb-why">OCR itself is commodity — differentiation is in post-processing and document handling</div>
+        </div>
+
+        <div class="bvb-row">
+          <div class="bvb-cap">Vector Store</div>
+          <div class="dec-badge"><div class="dec-bar"><div class="db-buy" style="flex:8"></div><div class="db-build" style="flex:2"></div></div><div class="dec-label dl-buy">Buy Infra</div></div>
+          <div class="bvb-build-cell">Retrieval logic, metadata filters, scoping rules</div>
+          <div class="bvb-buy-cell">Managed vector / search platform</div>
+          <div class="bvb-why">Infrastructure, not product differentiation — choose on security, latency, tenancy, metadata support</div>
+        </div>
+
+        <div class="bvb-row">
+          <div class="bvb-cap">Document Storage &amp; Object Management</div>
+          <div class="dec-badge"><div class="dec-bar"><div class="db-buy" style="flex:7"></div><div class="db-build" style="flex:3"></div></div><div class="dec-label dl-buy">Buy Infra</div></div>
+          <div class="bvb-build-cell">Abstraction layer — case linkage, retention, evidence accessibility</div>
+          <div class="bvb-buy-cell">Cloud object storage</div>
+          <div class="bvb-why">Raw storage is commodity; what matters is how documents are linked to cases and evidence</div>
+        </div>
+
+        <div class="bvb-row">
+          <div class="bvb-cap">Data Ingestion Layer</div>
+          <div class="dec-badge"><div class="dec-bar"><div class="db-build" style="flex:7"></div><div class="db-buy" style="flex:3"></div></div><div class="dec-label dl-build">Build Core</div></div>
+          <div class="bvb-build-cell">Ingestion normalization and case object creation</div>
+          <div class="bvb-buy-cell">ETL / ingestion connectors</div>
+          <div class="bvb-why">Connectors can be bought, but case assembly and workflow object mapping are core</div>
+        </div>
+
+        <div class="bvb-row">
+          <div class="bvb-cap">Document Parsing &amp; Chunking</div>
+          <div class="dec-badge"><div class="dec-bar"><div class="db-build" style="flex:7"></div><div class="db-buy" style="flex:3"></div></div><div class="dec-label dl-build">Build Core</div></div>
+          <div class="bvb-build-cell">Chunking strategy, evidence mapping, citation structure</div>
+          <div class="bvb-buy-cell">Parsing / document AI vendors to accelerate</div>
+          <div class="bvb-why">Chunking and evidence mapping must reflect KYB retrieval and citation needs — not generic</div>
+        </div>
+
+        <div class="bvb-row">
+          <div class="bvb-cap">Document Classification</div>
+          <div class="dec-badge"><div class="dec-bar"><div class="db-build" style="flex:6"></div><div class="db-buy" style="flex:4"></div></div><div class="dec-label dl-build">Build Core</div></div>
+          <div class="bvb-build-cell">Business-specific doc taxonomy, routing logic</div>
+          <div class="bvb-buy-cell">Document AI tools for base classification</div>
+          <div class="bvb-why">Base classification can be accelerated externally, but KYB taxonomy and routing must be yours</div>
+        </div>
+
+        <div class="bvb-row">
+          <div class="bvb-cap">Rules &amp; Decisioning Engine</div>
+          <div class="dec-badge"><div class="dec-bar"><div class="db-build" style="flex:7"></div><div class="db-buy" style="flex:3"></div></div><div class="dec-label dl-build">Build Core</div></div>
+          <div class="bvb-build-cell">Internal rules framework (lightweight, fast to build)</div>
+          <div class="bvb-buy-cell">BPM / rules engine if non-engineers must manage large rule sets</div>
+          <div class="bvb-why">Lightweight rules are fast to build; configurable tooling only if scale demands it</div>
+        </div>
+
+        <div class="bvb-row">
+          <div class="bvb-cap">Governance &amp; Access Control</div>
+          <div class="dec-badge"><div class="dec-bar"><div class="db-build" style="flex:7"></div><div class="db-buy" style="flex:3"></div></div><div class="dec-label dl-build">Build Core</div></div>
+          <div class="bvb-build-cell">App-level authorization model, reviewer permissions, tenant scoping</div>
+          <div class="bvb-buy-cell">IAM / RBAC providers for identity foundations</div>
+          <div class="bvb-why">Identity infra can be bought, but application-specific access and reviewer permissions must be internal</div>
+        </div>
+
+        <div class="bvb-row">
+          <div class="bvb-cap">Case Orchestration / Workflow Engine</div>
+          <div class="dec-badge"><div class="dec-bar"><div class="db-build" style="flex:8"></div><div class="db-buy" style="flex:2"></div></div><div class="dec-label dl-build">Build Core</div></div>
+          <div class="bvb-build-cell">Case-state model, exception logic, stage transitions</div>
+          <div class="bvb-buy-cell">BPM / workflow tools for execution layer</div>
+          <div class="bvb-why">Workflow engine can be bought, but case logic and state transitions are your product</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PHASE 2 -->
+    <div class="bvb-phase-group">
+      <div class="bvb-phase-header bph-p2">
+        <span class="bph-label">Phase 2</span>
+        <span class="bph-name">Intelligence — 3 decisions</span>
+        <span class="bph-count">Drafting, notifications, collaboration</span>
+      </div>
+      <div class="bvb-wrap">
+        <div class="bvb-col-head">
+          <div class="bvbch">Capability</div>
+          <div class="bvbch">Decision</div>
+          <div class="bvbch">What to Build</div>
+          <div class="bvbch">What to Buy</div>
+          <div class="bvbch">Rationale</div>
+        </div>
+
+        <div class="bvb-row">
+          <div class="bvb-cap">Drafting Service</div>
+          <div class="dec-badge"><div class="dec-bar"><div class="db-build" style="flex:6"></div><div class="db-buy" style="flex:4"></div></div><div class="dec-label dl-build">Build Core</div></div>
+          <div class="bvb-build-cell">Prompts, templates, approval flow, evidence grounding</div>
+          <div class="bvb-buy-cell">LLM APIs / communication tools for generation</div>
+          <div class="bvb-why">Generation uses external models, but grounding and approval controls must be internal</div>
+        </div>
+
+        <div class="bvb-row">
+          <div class="bvb-cap">Notification &amp; Communication Module</div>
+          <div class="dec-badge"><div class="dec-bar"><div class="db-buy" style="flex:5"></div><div class="db-build" style="flex:5"></div></div><div class="dec-label dl-hyb">Hybrid</div></div>
+          <div class="bvb-build-cell">State-based triggers, templates, approval controls</div>
+          <div class="bvb-buy-cell">Messaging delivery providers</div>
+          <div class="bvb-why">Buy the delivery rails; workflow triggers and approval controls belong internal</div>
+        </div>
+
+        <div class="bvb-row">
+          <div class="bvb-cap">Task &amp; Collaboration Layer</div>
+          <div class="dec-badge"><div class="dec-bar"><div class="db-buy" style="flex:5"></div><div class="db-build" style="flex:5"></div></div><div class="dec-label dl-hyb">Hybrid</div></div>
+          <div class="bvb-build-cell">Case-linked integration, context threading</div>
+          <div class="bvb-buy-cell">Task / case management tools for notes and assignments</div>
+          <div class="bvb-why">Notes and assignments can leverage existing tooling, but case-linked collaboration often needs tighter integration</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PHASE 3 -->
+    <div class="bvb-phase-group">
+      <div class="bvb-phase-header bph-p3">
+        <span class="bph-label">Phase 3</span>
+        <span class="bph-name">Reliability &amp; Scale — 7 decisions</span>
+        <span class="bph-count">Observability, verification, analytics, platform operations</span>
+      </div>
+      <div class="bvb-wrap">
+        <div class="bvb-col-head">
+          <div class="bvbch">Capability</div>
+          <div class="bvbch">Decision</div>
+          <div class="bvbch">What to Build</div>
+          <div class="bvbch">What to Buy</div>
+          <div class="bvbch">Rationale</div>
+        </div>
+
+        <div class="bvb-row">
+          <div class="bvb-cap">Sanctions / PEP / Adverse Media Screening</div>
+          <div class="dec-badge"><div class="dec-bar"><div class="db-buy" style="flex:8"></div><div class="db-build" style="flex:2"></div></div><div class="dec-label dl-buy">Buy Primary</div></div>
+          <div class="bvb-build-cell">Direct integrations, matching logic</div>
+          <div class="bvb-buy-cell">Established screening solution providers</div>
+          <div class="bvb-why">Specialized, regulated domain — better handled by established providers with regulatory coverage</div>
+        </div>
+
+        <div class="bvb-row">
+          <div class="bvb-cap">External Verification Connectors</div>
+          <div class="dec-badge"><div class="dec-bar"><div class="db-buy" style="flex:6"></div><div class="db-build" style="flex:4"></div></div><div class="dec-label dl-hyb">Hybrid</div></div>
+          <div class="bvb-build-cell">Abstraction layer to normalize and swap vendors</div>
+          <div class="bvb-buy-cell">Third-party registry, PEP, adverse media data access</div>
+          <div class="bvb-why">Buy data access, but build the abstraction layer so vendors can be swapped without core rewrites</div>
+        </div>
+
+        <div class="bvb-row">
+          <div class="bvb-cap">Observability &amp; Tracing</div>
+          <div class="dec-badge"><div class="dec-bar"><div class="db-buy" style="flex:6"></div><div class="db-build" style="flex:4"></div></div><div class="dec-label dl-buy">Buy Tooling</div></div>
+          <div class="bvb-build-cell">Workflow events and quality metrics definitions</div>
+          <div class="bvb-buy-cell">APM / LLM observability tools for dashboards and tracing</div>
+          <div class="bvb-why">Use tooling for tracing and dashboards; define your own workflow events and quality metrics</div>
+        </div>
+
+        <div class="bvb-row">
+          <div class="bvb-cap">Model &amp; Prompt Management</div>
+          <div class="dec-badge"><div class="dec-bar"><div class="db-build" style="flex:6"></div><div class="db-buy" style="flex:4"></div></div><div class="dec-label dl-build">Build Core</div></div>
+          <div class="bvb-build-cell">Prompt / model registry, governance semantics, release control</div>
+          <div class="bvb-buy-cell">MLOps / prompt tooling for versioning infrastructure</div>
+          <div class="bvb-why">External tooling helps versioning, but governance semantics must match your workflow lifecycle</div>
+        </div>
+
+        <div class="bvb-row">
+          <div class="bvb-cap">Analytics &amp; Reporting Layer</div>
+          <div class="dec-badge"><div class="dec-bar"><div class="db-build" style="flex:6"></div><div class="db-buy" style="flex:4"></div></div><div class="dec-label dl-build">Build Core</div></div>
+          <div class="bvb-build-cell">Semantic business layer — acceptance rate, review-time, automation metrics</div>
+          <div class="bvb-buy-cell">BI and dashboard tooling</div>
+          <div class="bvb-why">BI tooling is commodity, but business metric definitions must be yours</div>
+        </div>
+
+        <div class="bvb-row">
+          <div class="bvb-cap">Integration APIs &amp; Event Bus</div>
+          <div class="dec-badge"><div class="dec-bar"><div class="db-build" style="flex:7"></div><div class="db-buy" style="flex:3"></div></div><div class="dec-label dl-build">Build Core</div></div>
+          <div class="bvb-build-cell">Internal APIs and workflow event model (strategic contracts)</div>
+          <div class="bvb-buy-cell">Integration tooling / iPaaS for event infrastructure</div>
+          <div class="bvb-why">Event infra can be bought, but your platform contracts and workflow event model are strategic</div>
+        </div>
+
+        <div class="bvb-row">
+          <div class="bvb-cap">Configuration &amp; Admin Console</div>
+          <div class="dec-badge"><div class="dec-bar"><div class="db-build" style="flex:7"></div><div class="db-buy" style="flex:3"></div></div><div class="dec-label dl-build">Build Core</div></div>
+          <div class="bvb-build-cell">Domain-specific controls — rules, thresholds, policies, templates</div>
+          <div class="bvb-buy-cell">Back-office / admin tooling for generic UI shell</div>
+          <div class="bvb-why">Generic admin UI can help, but policy settings and thresholds are domain-specific</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Vendor Shortlist -->
+    <h2>Vendor Shortlist</h2>
+    <div class="vendor-stub">[ Evaluated vendors, selection criteria, and chosen approach ]</div>
+
+    <nav class="section-nav" style="margin-top:28px;">
+      <a href="out-of-scope.html" class="nav-btn"><span class="nav-btn-dir">← Previous</span><span class="nav-btn-title">Out of Scope</span></a>
+      <span class="nav-center">13 of 39</span>
+      <a href="phased-delivery.html" class="nav-btn next"><span class="nav-btn-dir">Next →</span><span class="nav-btn-title">Phased Delivery Plan</span></a>
+    </nav>
+  </main>
+</div>
+<footer class="site-footer">Reap AI Platform — KYB Review Copilot &nbsp;·&nbsp; Technical PRD</footer>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script src="../js/main.js"></script>
+</body></html>

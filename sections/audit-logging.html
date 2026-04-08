@@ -1,0 +1,837 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>6.2 Audit &amp; Logging Architecture — Reap KYB PRD</title>
+  <link rel="stylesheet" href="../css/styles.css" />
+  <style>
+    /* ── Six questions banner ── */
+    .six-q {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+      margin: 24px 0;
+    }
+    .six-q-item {
+      background: var(--surface);
+      padding: 16px 18px;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+    }
+    .six-q-num {
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--b6);
+      line-height: 1;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+    .six-q-body {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text);
+      line-height: 1.45;
+    }
+    .six-q-body span {
+      display: block;
+      font-size: 11.5px;
+      font-weight: 400;
+      color: var(--text-dim);
+      margin-top: 3px;
+    }
+    @media (max-width: 680px) { .six-q { grid-template-columns: 1fr 1fr; } }
+
+    /* ── Event category tabs ── */
+    .event-categories {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin: 20px 0;
+    }
+    .event-cat {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .event-cat-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+    }
+    .event-cat-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .dot-workflow  { background: #3B82F6; }
+    .dot-reviewer  { background: #10B981; }
+    .dot-model     { background: #8B5CF6; }
+    .dot-control   { background: #EF4444; }
+
+    .event-cat-header h4 {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+      margin: 0;
+      flex: 1;
+    }
+    .event-cat-header .event-count {
+      font-size: 11px;
+      font-weight: 600;
+      padding: 2px 7px;
+      border-radius: 20px;
+      background: var(--bg);
+      color: var(--text-dim);
+    }
+    .event-cat-list {
+      padding: 10px 16px 14px;
+      margin: 0;
+      list-style: none;
+      columns: 2;
+      column-gap: 12px;
+    }
+    .event-cat-list li {
+      font-size: 12.5px;
+      color: var(--text-mid);
+      padding: 3px 0;
+      break-inside: avoid;
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
+    }
+    .event-cat-list li::before {
+      content: '';
+      width: 4px; height: 4px;
+      border-radius: 50%;
+      background: var(--border-dim);
+      flex-shrink: 0;
+      margin-top: 5px;
+    }
+    @media (max-width: 680px) {
+      .event-categories { grid-template-columns: 1fr; }
+      .event-cat-list { columns: 1; }
+    }
+
+    /* ── Three-layer architecture blocks ── */
+    .arch-layers {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin: 20px 0;
+    }
+    .arch-layer {
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      overflow: hidden;
+    }
+    .arch-layer-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 18px;
+      border-bottom: 1px solid var(--border);
+    }
+    .arch-layer-letter {
+      width: 26px; height: 26px;
+      border-radius: 6px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px; font-weight: 700; color: #fff;
+      flex-shrink: 0;
+    }
+    .al-a .arch-layer-letter { background: #3B82F6; }
+    .al-b .arch-layer-letter { background: #8B5CF6; }
+    .al-c .arch-layer-letter { background: #EF4444; }
+    .al-a { border-left: 3px solid #3B82F6; }
+    .al-b { border-left: 3px solid #8B5CF6; }
+    .al-c { border-left: 3px solid #EF4444; }
+
+    .arch-layer-header h4 {
+      font-size: 14px; font-weight: 600; color: var(--text); margin: 0; flex: 1;
+    }
+    .arch-layer-header p {
+      font-size: 12.5px; color: var(--text-dim); margin: 0;
+    }
+    .arch-layer-body {
+      padding: 12px 18px 14px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .arch-tag {
+      display: inline-flex;
+      align-items: center;
+      padding: 4px 10px;
+      border-radius: 5px;
+      font-size: 12px;
+      font-weight: 500;
+      background: var(--bg);
+      color: var(--text-mid);
+      border: 1px solid var(--border);
+    }
+
+    /* ── Edit capture diff block ── */
+    .diff-block {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+      margin: 16px 0;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12.5px;
+    }
+    .diff-header {
+      background: #0f172a;
+      color: #94a3b8;
+      padding: 8px 16px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+    .diff-row {
+      display: flex;
+      gap: 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .diff-row:last-child { border-bottom: none; }
+    .diff-label {
+      width: 120px;
+      flex-shrink: 0;
+      padding: 8px 14px;
+      font-size: 11px;
+      font-weight: 600;
+      background: var(--bg);
+      color: var(--text-dim);
+      border-right: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+    }
+    .diff-val {
+      flex: 1;
+      padding: 8px 14px;
+      color: var(--text-mid);
+      font-size: 12.5px;
+    }
+    .diff-val.before { background: #FEF2F2; color: #991B1B; }
+    .diff-val.after  { background: #F0FDF4; color: #166534; }
+
+    /* ── Reconstruction views ── */
+    .recon-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin: 20px 0;
+    }
+    .recon-card {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 18px;
+    }
+    .recon-card-icon {
+      width: 32px; height: 32px;
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px;
+      margin-bottom: 10px;
+    }
+    .recon-card h4 {
+      font-size: 14px; font-weight: 600; color: var(--text); margin: 0 0 6px;
+    }
+    .recon-card p {
+      font-size: 12.5px; color: var(--text-mid); margin: 0; line-height: 1.55;
+    }
+    .recon-card ul {
+      margin: 8px 0 0; padding: 0 0 0 14px;
+      font-size: 12.5px; color: var(--text-mid); line-height: 1.7;
+    }
+    @media (max-width: 680px) { .recon-grid { grid-template-columns: 1fr; } }
+
+    /* ── Policy snapshot block ── */
+    .policy-snapshot {
+      background: #0f172a;
+      border-radius: 8px;
+      padding: 20px 24px;
+      margin: 16px 0;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+    .ps-col h5 {
+      font-size: 10.5px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #64748b;
+      margin: 0 0 10px;
+    }
+    .ps-col ul {
+      margin: 0; padding: 0 0 0 14px; list-style: disc;
+    }
+    .ps-col ul li {
+      font-size: 12.5px;
+      color: #cbd5e1;
+      line-height: 1.65;
+      margin-bottom: 2px;
+    }
+    @media (max-width: 680px) { .policy-snapshot { grid-template-columns: 1fr; } }
+
+    /* ── Governance feature pills ── */
+    .gov-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 10px;
+      margin: 16px 0;
+    }
+    .gov-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 14px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: var(--surface);
+      font-size: 13px;
+      color: var(--text-mid);
+    }
+    .gov-item svg { flex-shrink: 0; color: var(--b6); }
+
+    /* ── QA use-case tag list ── */
+    .qa-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 16px 0;
+    }
+    .qa-tag {
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-size: 12.5px;
+      font-weight: 500;
+      background: var(--bg);
+      color: var(--text-mid);
+      border: 1px solid var(--border);
+    }
+
+    /* ── Sidebar on-page ── */
+    .sidebar-on-page-title {
+      font-size: 10.5px; font-weight: 600; letter-spacing: 0.08em;
+      text-transform: uppercase; color: var(--text-dim); padding: 18px 16px 6px;
+    }
+    .sidebar-on-page { list-style: none; margin: 0; padding: 0 8px; }
+    .sidebar-on-page li a {
+      display: block; padding: 5px 8px; font-size: 12.5px;
+      color: var(--text-mid); border-radius: 4px; text-decoration: none;
+    }
+    .sidebar-on-page li a:hover { background: var(--bg); color: var(--text); }
+  </style>
+</head>
+<body>
+<header class="site-header">
+  <div class="header-inner">
+    <a href="../index.html" class="site-logo"><div class="logo-mark">R</div><span>Reap AI Platform</span></a>
+    <div class="header-divider"></div><span class="header-subtitle">KYB Review Copilot</span>
+    <nav class="header-nav"><a href="../index.html">Overview</a><a href="solution-architecture.html">Architecture</a><a href="reviewer-workflow.html">Workflow</a></nav>
+  </div>
+</header>
+<div class="page-layout">
+  <aside class="sidebar">
+    <a href="../index.html" class="sidebar-back"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M9 11L5 7l4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg> All Sections</a>
+    <div class="sidebar-section-title">Block 6 — Governance</div>
+    <ul class="sidebar-nav">
+      <li><a href="hitl-fallback.html">6.1 HITL &amp; Fallback</a></li>
+      <li><a href="audit-logging.html" class="active">6.2 Audit &amp; Logging</a></li>
+      <li><a href="compliance.html">6.3 Compliance</a></li>
+      <li><a href="risk-framework.html">6.4 Risk Framework</a></li>
+      <li><a href="data-privacy.html">6.5 Data Privacy</a></li>
+    </ul>
+    <div class="sidebar-on-page-title">On this page</div>
+    <ul class="sidebar-on-page">
+      <li><a href="#design-objective">Design Objective</a></li>
+      <li><a href="#audit-model">Audit &amp; Control Model</a></li>
+      <li><a href="#events">What Events Are Logged</a></li>
+      <li><a href="#evidence">Evidence &amp; Provenance</a></li>
+      <li><a href="#edits">Reviewer Edit Capture</a></li>
+      <li><a href="#model-outputs">Model Output Logging</a></li>
+      <li><a href="#reconstruction">Decision Reconstruction</a></li>
+      <li><a href="#policy-version">Policy Version Preservation</a></li>
+      <li><a href="#governance">Governance Controls</a></li>
+    </ul>
+  </aside>
+  <main class="content">
+    <nav class="breadcrumb"><a href="../index.html">Home</a><span class="breadcrumb-sep">›</span><span>Block 6 — Governance</span><span class="breadcrumb-sep">›</span><span class="breadcrumb-current">6.2 Audit &amp; Logging Architecture</span></nav>
+    <div class="section-header">
+      <div class="section-block-tag" style="background:var(--b6)">Block 6 — Governance</div>
+      <h1>Audit &amp; Logging Architecture</h1>
+      <p class="section-intro">Every material workflow action, evidence change, model output, reviewer edit, and final decision is captured in a complete, reconstructable record. The audit layer makes every case explainable months later — regardless of how documents, policies, or models have changed since.</p>
+    </div>
+
+    <!-- SIX QUESTIONS -->
+    <h2 id="design-objective">Design Objective</h2>
+    <p>The audit layer must enable replay of any case to answer six questions:</p>
+    <div class="six-q">
+      <div class="six-q-item">
+        <div class="six-q-num">1</div>
+        <div class="six-q-body">What happened?<span>Full event timeline</span></div>
+      </div>
+      <div class="six-q-item">
+        <div class="six-q-num">2</div>
+        <div class="six-q-body">Who or what did it?<span>Human + system attribution</span></div>
+      </div>
+      <div class="six-q-item">
+        <div class="six-q-num">3</div>
+        <div class="six-q-body">What information was available?<span>Evidence snapshot at decision time</span></div>
+      </div>
+      <div class="six-q-item">
+        <div class="six-q-num">4</div>
+        <div class="six-q-body">Which policy version applied?<span>Frozen clause set at decision time</span></div>
+      </div>
+      <div class="six-q-item">
+        <div class="six-q-num">5</div>
+        <div class="six-q-body">What changed during review?<span>Before/after edit history</span></div>
+      </div>
+      <div class="six-q-item">
+        <div class="six-q-num">6</div>
+        <div class="six-q-body">Why was the decision made?<span>Reason codes + override rationale</span></div>
+      </div>
+    </div>
+
+    <!-- DIAGRAM -->
+    <h2 id="audit-model">Audit &amp; Control Model</h2>
+    <div class="diagram-section">
+      <div class="diagram-label">
+        <h3>Audit Data Flow — Sources to Reconstruction</h3>
+      </div>
+      <div class="diagram-wrap">
+        <div class="mermaid">
+flowchart TD
+
+    A[Case Workflow Events]
+    B[Document Uploads and Versions]
+    C[Extraction, Retrieval, Model Outputs]
+    D[Reviewer Actions, Edits, Overrides]
+    E[Policy Repository Versions]
+    F[Decision Outcomes]
+    G[Escalations, Follow-ups, Re-review]
+
+    H[(Immutable Audit Event Log)]
+
+    I[(Versioned Evidence Store)]
+    J[(Versioned Model Output Store)]
+    K[(Policy Version Snapshot Store)]
+    L[(Decision Snapshot Store)]
+    M[(Reviewer Change History)]
+
+    N[Decision Reconstruction Layer]
+
+    O[Timeline View]
+    P[Decision Packet View]
+    Q[Audit and Compliance Review]
+    R[QA, Model Evaluation, Dispute Resolution]
+
+    A --> H
+    B --> H
+    C --> H
+    D --> H
+    E --> H
+    F --> H
+    G --> H
+
+    B --> I
+    C --> J
+    E --> K
+    F --> L
+    D --> M
+
+    I --> N
+    J --> N
+    K --> N
+    L --> N
+    M --> N
+    H --> N
+
+    N --> O
+    N --> P
+    N --> Q
+    N --> R
+
+    style H fill:#1e293b,stroke:#475569,color:#f1f5f9
+    style N fill:#1e293b,stroke:#475569,color:#f1f5f9
+    style I fill:#EDE9FE,stroke:#A78BFA,color:#3b0764
+    style J fill:#EDE9FE,stroke:#A78BFA,color:#3b0764
+    style K fill:#EDE9FE,stroke:#A78BFA,color:#3b0764
+    style L fill:#EDE9FE,stroke:#A78BFA,color:#3b0764
+    style M fill:#EDE9FE,stroke:#A78BFA,color:#3b0764
+    style O fill:#D1FAE5,stroke:#6EE7B7,color:#064e3b
+    style P fill:#D1FAE5,stroke:#6EE7B7,color:#064e3b
+    style Q fill:#D1FAE5,stroke:#6EE7B7,color:#064e3b
+    style R fill:#D1FAE5,stroke:#6EE7B7,color:#064e3b
+        </div>
+      </div>
+    </div>
+
+    <!-- THREE LAYERS -->
+    <h3>Three-Layer Architecture</h3>
+    <p>A flat log table is insufficient. The audit design requires three distinct layers.</p>
+    <div class="arch-layers">
+      <div class="arch-layer al-a">
+        <div class="arch-layer-header">
+          <div class="arch-layer-letter">A</div>
+          <h4>Immutable Event Log</h4>
+          <p>Time-ordered workflow and action events — append-only, tamper-evident</p>
+        </div>
+        <div class="arch-layer-body">
+          <span class="arch-tag">Workflow events</span>
+          <span class="arch-tag">Reviewer interactions</span>
+          <span class="arch-tag">Model and automation events</span>
+          <span class="arch-tag">Control and governance events</span>
+          <span class="arch-tag">Hash-chained integrity</span>
+          <span class="arch-tag">WORM storage</span>
+        </div>
+      </div>
+      <div class="arch-layer al-b">
+        <div class="arch-layer-header">
+          <div class="arch-layer-letter">B</div>
+          <h4>Versioned Domain Objects</h4>
+          <p>Changing business objects stored with full version history</p>
+        </div>
+        <div class="arch-layer-body">
+          <span class="arch-tag">Case record</span>
+          <span class="arch-tag">Document record</span>
+          <span class="arch-tag">Extraction result</span>
+          <span class="arch-tag">Evidence bundle</span>
+          <span class="arch-tag">Policy bundle</span>
+          <span class="arch-tag">Recommendation object</span>
+          <span class="arch-tag">Final decision object</span>
+        </div>
+      </div>
+      <div class="arch-layer al-c">
+        <div class="arch-layer-header">
+          <div class="arch-layer-letter">C</div>
+          <h4>Decision Snapshots</h4>
+          <p>Point-in-time bundles frozen at key milestones — used for reconstruction</p>
+        </div>
+        <div class="arch-layer-body">
+          <span class="arch-tag">Review-ready snapshot</span>
+          <span class="arch-tag">Pre-escalation snapshot</span>
+          <span class="arch-tag">Approval / rejection snapshot</span>
+          <span class="arch-tag">Monitoring handoff snapshot</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- EVENTS -->
+    <h2 id="events">What Events Are Logged</h2>
+    <p>Every event that materially affects case state, evidence, policy interpretation, model behavior, or decision outcome is logged. Only material events enter the durable audit trail — but with enough detail to reconstruct decision context.</p>
+
+    <div class="event-categories">
+      <div class="event-cat">
+        <div class="event-cat-header">
+          <div class="event-cat-dot dot-workflow"></div>
+          <h4>Workflow Events</h4>
+          <span class="event-count">16</span>
+        </div>
+        <ul class="event-cat-list">
+          <li>Case created</li>
+          <li>Intake completed</li>
+          <li>Document uploaded</li>
+          <li>Document superseded</li>
+          <li>Extraction started</li>
+          <li>Extraction completed</li>
+          <li>Review-ready created</li>
+          <li>Case assigned</li>
+          <li>Follow-up requested</li>
+          <li>Response received</li>
+          <li>Re-review triggered</li>
+          <li>Escalated</li>
+          <li>Approved</li>
+          <li>Rejected</li>
+          <li>Monitoring enrolled</li>
+          <li>Case closed</li>
+        </ul>
+      </div>
+      <div class="event-cat">
+        <div class="event-cat-header">
+          <div class="event-cat-dot dot-reviewer"></div>
+          <h4>Reviewer Interaction Events</h4>
+          <span class="event-count">11</span>
+        </div>
+        <ul class="event-cat-list">
+          <li>Field confirmed</li>
+          <li>Field edited</li>
+          <li>Evidence viewed</li>
+          <li>Document opened</li>
+          <li>Flag accepted or dismissed</li>
+          <li>Recommendation accepted / overridden</li>
+          <li>Reason code selected</li>
+          <li>Note added</li>
+          <li>Follow-up text edited</li>
+          <li>Escalation initiated</li>
+          <li>Approval / rejection submitted</li>
+        </ul>
+      </div>
+      <div class="event-cat">
+        <div class="event-cat-header">
+          <div class="event-cat-dot dot-model"></div>
+          <h4>Model &amp; Automation Events</h4>
+          <span class="event-count">10</span>
+        </div>
+        <ul class="event-cat-list">
+          <li>Extraction output generated</li>
+          <li>Classification result generated</li>
+          <li>Policy retrieval completed</li>
+          <li>Evidence bundle assembled</li>
+          <li>Recommendation generated</li>
+          <li>Abstention triggered</li>
+          <li>Low-confidence flag raised</li>
+          <li>Missing-document detected</li>
+          <li>Auto-routing executed</li>
+          <li>Fallback invoked</li>
+        </ul>
+      </div>
+      <div class="event-cat">
+        <div class="event-cat-header">
+          <div class="event-cat-dot dot-control"></div>
+          <h4>Control &amp; Governance Events</h4>
+          <span class="event-count">7</span>
+        </div>
+        <ul class="event-cat-list">
+          <li>Policy version updated</li>
+          <li>Retrieval index refreshed</li>
+          <li>Model version changed</li>
+          <li>Prompt / template version changed</li>
+          <li>Rule threshold changed</li>
+          <li>Manual override of auto-routing</li>
+          <li>SLA breach / timeout event</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- EVIDENCE -->
+    <h2 id="evidence">Evidence &amp; Provenance Linking</h2>
+    <p>Every material recommendation and final decision links to the evidence available and used at that time. Crucially, the platform links <strong>all four evidence states</strong> — not just supporting evidence.</p>
+
+    <div class="table-wrap"><table>
+      <thead><tr><th>Evidence State</th><th>Why it must be linked</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Supporting evidence</strong></td><td>The basis for the decision — what the system and reviewer relied on</td></tr>
+        <tr><td><strong>Missing evidence</strong></td><td>Documents or fields not present at decision time — context for follow-up or risk</td></tr>
+        <tr><td><strong>Conflicting evidence</strong></td><td>Inconsistencies across sources — shows the reviewer was aware of them</td></tr>
+        <tr><td><strong>Overridden evidence</strong></td><td>Evidence present but dismissed or deprioritised — prevents selective reconstruction</td></tr>
+      </tbody>
+    </table></div>
+
+    <h3>Evidence Link Fields</h3>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Field</th><th>Purpose</th></tr></thead>
+      <tbody>
+        <tr><td>Source document ID + version</td><td>Pin evidence to an exact document state</td></tr>
+        <tr><td>Document type</td><td>Enable filtering by evidence category</td></tr>
+        <tr><td>Extracted field reference</td><td>Link to the specific field, not just the document</td></tr>
+        <tr><td>Snippet / citation location</td><td>Page and position for human verification</td></tr>
+        <tr><td>Evidence timestamp</td><td>When this evidence was captured</td></tr>
+        <tr><td>Confidence score / band</td><td>System confidence at time of use</td></tr>
+        <tr><td>Reviewer-corrected status</td><td>Flags whether a human overrode the extracted value</td></tr>
+        <tr><td>Conflict indicator</td><td>Marks inconsistency with another source</td></tr>
+      </tbody>
+    </table></div>
+
+    <!-- REVIEWER EDITS -->
+    <h2 id="edits">Reviewer Edit &amp; Override Capture</h2>
+    <p>Reviewer edits are never silent replacements. Every change is stored as an immutable event with full before/after history — not just the latest state.</p>
+
+    <div class="diff-block">
+      <div class="diff-header">Example — Reviewer Edit Event</div>
+      <div class="diff-row"><div class="diff-label">Object</div><div class="diff-val">Extracted Field — company_name</div></div>
+      <div class="diff-row"><div class="diff-label">Prior value</div><div class="diff-val before">Reap Fintech HK Ltd</div></div>
+      <div class="diff-row"><div class="diff-label">New value</div><div class="diff-val after">Reap Financial Technology Ltd</div></div>
+      <div class="diff-row"><div class="diff-label">Prior source</div><div class="diff-val">Model extraction — incorporation certificate</div></div>
+      <div class="diff-row"><div class="diff-label">Reason code</div><div class="diff-val">Evidence Misinterpreted</div></div>
+      <div class="diff-row"><div class="diff-label">Note</div><div class="diff-val">Certificate uses abbreviated trade name; legal name confirmed from CR register</div></div>
+      <div class="diff-row"><div class="diff-label">Reviewer</div><div class="diff-val">analyst_id: usr_42a1 · 2025-04-06T09:14:22Z</div></div>
+    </div>
+
+    <div class="callout callout-info">
+      <div class="callout-icon">&#9432;</div>
+      <div class="callout-body"><strong>Why this matters beyond audit.</strong> Edit history is the training signal for model improvement, the evidence for second-line compliance review, and the mechanism for distinguishing system output from human judgment. Without structured before/after capture, override data is lost.</div>
+    </div>
+
+    <!-- MODEL OUTPUTS -->
+    <h2 id="model-outputs">Model Output Logging</h2>
+    <p>Model outputs are stored as versioned, attributable artifacts — not transient UI text. The key distinction: the system preserves both the <strong>raw model output</strong> and the <strong>reviewer-used final output</strong>, enabling comparison of what the model suggested versus what the human adopted.</p>
+
+    <div class="table-wrap"><table>
+      <thead><tr><th>Captured field</th><th>Purpose</th></tr></thead>
+      <tbody>
+        <tr><td>Model name + version</td><td>Ties output to an exact model state</td></tr>
+        <tr><td>Prompt / template version</td><td>Enables output reproduction</td></tr>
+        <tr><td>Retrieval context version / trace ID</td><td>Links to the grounding context used</td></tr>
+        <tr><td>Input artifact references</td><td>What documents / fields were fed in</td></tr>
+        <tr><td>Raw output content</td><td>The unmodified model response</td></tr>
+        <tr><td>Confidence score / band</td><td>Structured uncertainty at time of generation</td></tr>
+        <tr><td>Abstention flag</td><td>Whether the model abstained and why</td></tr>
+        <tr><td>Shown to reviewer</td><td>Was this output surfaced in the workspace?</td></tr>
+        <tr><td>Reviewer disposition</td><td>Accepted / edited / rejected</td></tr>
+        <tr><td>Retrieved clause IDs</td><td>RAG grounding trace — which policy clauses were used</td></tr>
+        <tr><td>Grounding package ID</td><td>Links output to the exact retrieval bundle</td></tr>
+      </tbody>
+    </table></div>
+
+    <!-- RECONSTRUCTION -->
+    <h2 id="reconstruction">Decision Reconstruction &amp; Historical Snapshots</h2>
+    <p>Reconstruction lets an auditor replay the complete decision context months later — without relying on memory or current-state data. Reconstruction uses <strong>snapshotted historical context</strong>, never recomputed current retrieval or policy content.</p>
+
+    <div class="recon-grid">
+      <div class="recon-card">
+        <div class="recon-card-icon" style="background:#EFF6FF;">&#128337;</div>
+        <h4>A — Timeline View</h4>
+        <p>Chronological list of all workflow, review, and model events for a case.</p>
+        <ul>
+          <li>State transitions with timestamps</li>
+          <li>Every reviewer action</li>
+          <li>Every AI output event</li>
+          <li>Follow-up and re-review cycles</li>
+        </ul>
+      </div>
+      <div class="recon-card">
+        <div class="recon-card-icon" style="background:#F0FDF4;">&#128196;</div>
+        <h4>B — Decision Packet View</h4>
+        <p>Compact package summarising everything that went into the final decision.</p>
+        <ul>
+          <li>Final disposition + rationale</li>
+          <li>Evidence used</li>
+          <li>Policy clauses used</li>
+          <li>Reviewer actions and overrides</li>
+          <li>Unresolved conflicts, if any</li>
+        </ul>
+      </div>
+      <div class="recon-card">
+        <div class="recon-card-icon" style="background:#FFF7ED;">&#8646;</div>
+        <h4>C — Before / After Comparison</h4>
+        <p>Side-by-side diff view for audit and quality review.</p>
+        <ul>
+          <li>System output vs reviewer final</li>
+          <li>Original extraction vs corrected</li>
+          <li>Pre- vs post-follow-up evidence</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- POLICY VERSION -->
+    <h2 id="policy-version">Policy Version Preservation</h2>
+    <p>Future policy changes must not alter the explanation of a past case. At each material decision point, the platform creates a <strong>policy decision snapshot</strong>.</p>
+
+    <div class="policy-snapshot">
+      <div class="ps-col">
+        <h5>What is preserved</h5>
+        <ul>
+          <li>Policy document ID</li>
+          <li>Policy version</li>
+          <li>Effective dates</li>
+          <li>Clause IDs used</li>
+          <li>Clause text snapshot or hash</li>
+          <li>Policy family / taxonomy</li>
+          <li>Mandatory vs advisory</li>
+          <li>Jurisdiction metadata</li>
+        </ul>
+      </div>
+      <div class="ps-col">
+        <h5>Why it matters</h5>
+        <ul>
+          <li>Historical approvals remain valid under updated policy</li>
+          <li>Rejected cases stay explainable</li>
+          <li>Model outputs can be reproduced faithfully</li>
+          <li>Internal audit can verify the correct rule set was used</li>
+        </ul>
+      </div>
+      <div class="ps-col">
+        <h5>Snapshot contains</h5>
+        <ul>
+          <li>Applicable policy set ID</li>
+          <li>Selected clause IDs</li>
+          <li>Clause summaries shown to reviewer</li>
+          <li>Effective version metadata</li>
+          <li>Retrieval or rules trace</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- GOVERNANCE CONTROLS -->
+    <h2 id="governance">Governance Controls</h2>
+
+    <div class="gov-grid">
+      <div class="gov-item">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 1L1 4v3c0 3.3 2.5 6.4 6 7 3.5-.6 6-3.7 6-7V4L7 1z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>
+        Immutable write-once audit events
+      </div>
+      <div class="gov-item">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 7a3 3 0 100-6 3 3 0 000 6zM1 13c0-3.3 2.7-6 6-6s6 2.7 6 6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+        Actor attribution — human and system
+      </div>
+      <div class="gov-item">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" stroke="currentColor" stroke-width="1.4"/><path d="M7 4v3l2 2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+        Durable timestamps + time sync
+      </div>
+      <div class="gov-item">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="1" y="1" width="12" height="12" rx="2" stroke="currentColor" stroke-width="1.4"/><path d="M4 7h6M4 4.5h6M4 9.5h4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+        Reason-code enforcement on overrides
+      </div>
+      <div class="gov-item">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7h10M7 2l5 5-5 5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Versioning — prompts, models, rules, policies
+      </div>
+      <div class="gov-item">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1 7h2l2-4 2 8 2-6 2 4 1-2h1" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Trace IDs — workflow, retrieval, model
+      </div>
+      <div class="gov-item">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="3" y="1" width="8" height="10" rx="1.5" stroke="currentColor" stroke-width="1.4"/><path d="M5 5h4M5 7.5h2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><path d="M7 11v2M5 13h4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+        Tamper-evident controls + hash chaining
+      </div>
+      <div class="gov-item">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M5 1H3a2 2 0 00-2 2v8a2 2 0 002 2h8a2 2 0 002-2V9M10 1l3 3-6 6H4V7l6-6z" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        RBAC — access controls on case notes
+      </div>
+      <div class="gov-item">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="6" cy="6" r="5" stroke="currentColor" stroke-width="1.4"/><path d="M10 10l3 3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+        Searchable trail for investigations and QA
+      </div>
+      <div class="gov-item">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1 4h12M1 4v8h12V4M4 4V2h6v2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Retention aligned to compliance requirements
+      </div>
+    </div>
+
+    <h3>QA &amp; Monitoring Use Cases</h3>
+    <div class="qa-tags">
+      <span class="qa-tag">All cases where AI recommendation was overridden</span>
+      <span class="qa-tag">Cases decided under a specific policy version</span>
+      <span class="qa-tag">Approval rates by model version</span>
+      <span class="qa-tag">High-edit extraction fields by document type</span>
+      <span class="qa-tag">Frequent abstention reasons</span>
+      <span class="qa-tag">Escalations triggered by specific risk flags</span>
+      <span class="qa-tag">Override rate trends over time</span>
+      <span class="qa-tag">SLA breach frequency by case type</span>
+    </div>
+
+    <div class="callout callout-info">
+      <div class="callout-icon">&#128279;</div>
+      <div class="callout-body">Audit events flow from the HITL control model described in <a href="hitl-fallback.html">Section 6.1</a>. Together they answer both sides of governance: <em>who controlled the decision</em> (6.1) and <em>how the decision can be proven later</em> (6.2).</div>
+    </div>
+
+    <nav class="section-nav">
+      <a href="hitl-fallback.html" class="nav-btn"><span class="nav-btn-dir">← Previous</span><span class="nav-btn-title">HITL &amp; Fallback</span></a>
+      <span class="nav-center">27 of 39</span>
+      <a href="compliance.html" class="nav-btn next"><span class="nav-btn-dir">Next →</span><span class="nav-btn-title">Compliance &amp; Regulatory Alignment</span></a>
+    </nav>
+  </main>
+</div>
+<footer class="site-footer">Reap AI Platform — KYB Review Copilot &nbsp;·&nbsp; Technical PRD</footer>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script src="../js/main.js"></script>
+</body></html>

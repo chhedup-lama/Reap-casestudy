@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>4.6 Workflow State Model — Reap KYB PRD</title>
+  <link rel="stylesheet" href="../css/styles.css" />
+  <style>
+    /* ── Design principle cards ──────────────────────── */
+    .principles-grid {
+      display:grid; grid-template-columns:repeat(auto-fill,minmax(210px,1fr));
+      gap:10px; margin:18px 0 36px;
+    }
+    .principle-card {
+      background:var(--surface); border:1px solid var(--border);
+      border-left:3px solid var(--b4); border-radius:var(--radius);
+      padding:14px 16px;
+    }
+    .principle-card h4 { font-size:13px; font-weight:700; color:var(--text); margin-bottom:4px; }
+    .principle-card p  { font-size:12px; color:var(--text-dim); line-height:1.5; margin:0; }
+
+    /* ── Actor / trigger type badges ────────────────── */
+    .badge {
+      display:inline-flex; align-items:center; justify-content:center;
+      font-size:10px; font-weight:700; letter-spacing:.3px;
+      padding:2px 0; border-radius:4px; white-space:nowrap;
+      width:130px;
+    }
+    .badge-auto    { background:#DBEAFE; color:#1D4ED8; }
+    .badge-manual  { background:#DCFCE7; color:#15803D; }
+    .badge-hybrid  { background:#FEF3C7; color:#92400E; }
+    .badge-system  { background:#F3F4F6; color:#374151; }
+
+    /* ── State pill ──────────────────────────────────── */
+    .state-pill {
+      display:inline-flex; align-items:center; gap:5px;
+      font-family:'JetBrains Mono',monospace; font-size:12px; font-weight:500;
+      padding:3px 9px; border-radius:20px; white-space:nowrap;
+      background:var(--bg); border:1px solid var(--border); color:var(--text);
+    }
+    .state-pill .dot {
+      width:6px; height:6px; border-radius:50%; flex-shrink:0;
+    }
+    .dot-new       { background:#94A3B8; }
+    .dot-pipeline  { background:#60A5FA; }
+    .dot-review    { background:#FBBF24; }
+    .dot-waiting   { background:#F97316; }
+    .dot-escalated { background:#F43F5E; }
+    .dot-terminal-ok  { background:#10B981; }
+    .dot-terminal-end { background:#6B7280; }
+
+    /* ── State definitions table spacing ────────────── */
+    .state-table td:first-child { white-space:nowrap; }
+    .state-table td code { font-size:11.5px; }
+
+    /* ── Phase section ───────────────────────────────── */
+    .phase-block {
+      background:var(--surface); border:1px solid var(--border);
+      border-radius:var(--radius); margin-bottom:16px; overflow:hidden;
+    }
+    .phase-header {
+      display:flex; align-items:center; gap:12px;
+      padding:14px 18px; border-bottom:1px solid var(--border);
+      background:var(--bg);
+    }
+    .phase-num {
+      width:26px; height:26px; border-radius:6px; background:var(--b4);
+      display:flex; align-items:center; justify-content:center;
+      font-size:11px; font-weight:700; color:white; flex-shrink:0;
+    }
+    .phase-header h4 { font-size:14px; font-weight:700; color:var(--text); margin:0; }
+    .phase-transitions { padding:4px 0; }
+    .transition-row {
+      display:flex; align-items:flex-start; gap:14px;
+      padding:12px 18px; border-bottom:1px solid var(--border);
+    }
+    .transition-row:last-child { border-bottom:none; }
+    .transition-arrow {
+      font-family:'JetBrains Mono',monospace; font-size:12px;
+      color:var(--text-dim); white-space:nowrap; padding-top:1px;
+      min-width:340px; flex-shrink:0;
+    }
+    .transition-arrow strong { color:var(--text); }
+    .transition-meta { display:flex; flex-direction:column; gap:4px; }
+    .transition-trigger { font-size:13px; color:var(--text-mid); line-height:1.5; }
+
+    /* ── Audit trigger list ──────────────────────────── */
+    .audit-triggers {
+      display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr));
+      gap:8px; margin:16px 0;
+    }
+    .audit-trigger-item {
+      display:flex; align-items:center; gap:10px;
+      background:var(--surface); border:1px solid var(--border);
+      border-radius:var(--radius); padding:10px 14px;
+      font-size:13px; color:var(--text-mid);
+    }
+    .audit-trigger-item::before {
+      content:''; width:6px; height:6px; border-radius:50%;
+      background:var(--b4); flex-shrink:0;
+    }
+
+    /* ── Sidebar anchor nav ──────────────────────────── */
+    .sidebar-on-page-title {
+      font-size:10px; font-weight:700; letter-spacing:.8px;
+      text-transform:uppercase; color:var(--text-dim);
+      margin:20px 0 6px; padding-left:4px;
+    }
+    .sidebar-on-page { list-style:none; }
+    .sidebar-on-page li a {
+      display:block; padding:3px 10px; font-size:12px;
+      color:var(--text-mid); border-radius:4px; text-decoration:none;
+      transition:color .12s, background .12s; line-height:1.4;
+    }
+    .sidebar-on-page li a:hover { color:var(--text); background:var(--border); }
+
+    /* ── Audit record schema ─────────────────────────── */
+    .schema-grid {
+      display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr));
+      gap:8px; margin:16px 0;
+    }
+    .schema-field {
+      background:var(--bg); border:1px solid var(--border);
+      border-radius:6px; padding:10px 12px;
+    }
+    .schema-field code {
+      font-family:'JetBrains Mono',monospace; font-size:12px;
+      font-weight:500; color:var(--text); display:block; margin-bottom:3px;
+    }
+    .schema-field span { font-size:12px; color:var(--text-dim); line-height:1.4; }
+
+    @media(max-width:680px) {
+      .transition-arrow { min-width:0; }
+      .transition-row { flex-direction:column; gap:6px; }
+    }
+  </style>
+</head>
+<body>
+<header class="site-header">
+  <div class="header-inner">
+    <a href="../index.html" class="site-logo"><div class="logo-mark">R</div><span>Reap AI Platform</span></a>
+    <div class="header-divider"></div><span class="header-subtitle">KYB Review Copilot</span>
+    <nav class="header-nav"><a href="../index.html">Overview</a><a href="solution-architecture.html">Architecture</a><a href="reviewer-workflow.html">Workflow</a></nav>
+  </div>
+</header>
+
+<div class="page-layout">
+  <aside class="sidebar">
+    <a href="../index.html" class="sidebar-back">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M9 11L5 7l4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      All Sections
+    </a>
+    <div class="sidebar-section-title">Block 4 — Solution Architecture</div>
+    <ul class="sidebar-nav">
+      <li><a href="solution-architecture.html">4.1 E2E Architecture</a></li>
+      <li><a href="data-model.html">4.2 Data Model</a></li>
+      <li><a href="api-design.html">4.3 API Design</a></li>
+      <li><a href="infrastructure.html">4.4 Infrastructure</a></li>
+      <li><a href="security-design.html">4.5 Security</a></li>
+      <li><a href="workflow-state.html" class="active">4.6 Workflow State Model</a></li>
+    </ul>
+
+    <div class="sidebar-on-page-title">On this page</div>
+    <ul class="sidebar-on-page">
+      <li><a href="#principles">Design Principles</a></li>
+      <li><a href="#diagram">State Diagram</a></li>
+      <li><a href="#states">State Definitions</a></li>
+      <li><a href="#transitions">Transition Rules</a></li>
+      <li><a href="#audit">Audit Event Model</a></li>
+      <li><a href="#actor-model">Manual vs Automated</a></li>
+    </ul>
+  </aside>
+
+  <main class="content">
+    <nav class="breadcrumb">
+      <a href="../index.html">Home</a><span class="breadcrumb-sep">›</span>
+      <span>Block 4 — Solution Architecture</span><span class="breadcrumb-sep">›</span>
+      <span class="breadcrumb-current">4.6 Workflow State Model</span>
+    </nav>
+
+    <div class="section-header">
+      <div class="section-block-tag" style="background:var(--b4)">Block 4 — Solution Architecture</div>
+      <h1>Workflow State Model</h1>
+      <p class="section-intro">
+        The complete KYB case lifecycle — 12 states, all valid transitions, who triggers each,
+        and what gets logged. Designed for a hybrid operating model where automated pipelines
+        handle deterministic steps and humans own every judgment call.
+      </p>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════
+         DESIGN PRINCIPLES
+    ════════════════════════════════════════════════ -->
+    <h2 id="principles">Design Principles</h2>
+
+    <div class="principles-grid">
+      <div class="principle-card">
+        <h4>Clear handoff points</h4>
+        <p>Automated and human phases never blur — the boundary between pipeline and analyst is always explicit.</p>
+      </div>
+      <div class="principle-card">
+        <h4>Explicit waiting states</h4>
+        <p>Customer and internal dependencies get their own states, not informal holds inside active review.</p>
+      </div>
+      <div class="principle-card">
+        <h4>Rework without losing trace</h4>
+        <p>Re-review and follow-up loops are first-class states — re-entry is tracked, not hidden.</p>
+      </div>
+      <div class="principle-card">
+        <h4>Escalation path always present</h4>
+        <p>From any active state, escalation to senior review is a valid, structured transition.</p>
+      </div>
+      <div class="principle-card">
+        <h4>Full auditability</h4>
+        <p>Every material state change fires an immutable audit event with actor, trigger, and case version.</p>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════
+         STATE DIAGRAM
+    ════════════════════════════════════════════════ -->
+    <h2 id="diagram">State Diagram</h2>
+    <p>The complete KYB case lifecycle from intake to closure, showing all valid state transitions with their trigger type.</p>
+
+    <div class="diagram-section">
+      <div class="diagram-label">
+        <h3>KYB Case Lifecycle — State Machine</h3>
+        <span class="diagram-badge">Mermaid stateDiagram-v2</span>
+      </div>
+      <div class="diagram-wrap">
+        <div class="mermaid">
+stateDiagram-v2
+    [*] --> New : Case created
+    New --> Ingestion_Complete : Case payload + docs received\n[Automated]
+    Ingestion_Complete --> Extraction_In_Progress : Pipeline starts\n[Automated]
+    Extraction_In_Progress --> Review_Ready : Extraction + validations complete\n[Automated]
+    Extraction_In_Progress --> Escalated : High-risk flag / sanctions hit / processing exception\n[Automated]
+    Review_Ready --> In_Review : Analyst claims or opens case\n[Manual]
+    In_Review --> Follow_Up_Requested : More info or docs needed\n[Manual]
+    In_Review --> Escalated : Policy / risk / fraud concern\n[Manual]
+    In_Review --> Approved : Reviewer approves case\n[Manual]
+    In_Review --> Rejected : Reviewer rejects case\n[Manual]
+    Follow_Up_Requested --> Awaiting_Response : Request sent to merchant\n[Automated]
+    Awaiting_Response --> Re_Review : Response received\n[Automated]
+    Awaiting_Response --> Rejected : SLA expired / insufficient response\n[Manual or Automated]
+    Re_Review --> In_Review : Analyst resumes with updated evidence\n[Manual]
+    Re_Review --> Escalated : New risk or unresolved policy conflict\n[Manual or Automated]
+    Escalated --> In_Review : Returned to analyst with guidance\n[Manual]
+    Escalated --> Approved : Senior reviewer approves\n[Manual]
+    Escalated --> Rejected : Senior reviewer rejects\n[Manual]
+    Approved --> Monitoring : Ongoing monitoring enrollment\n[Automated]
+    Rejected --> Closed : Rejection finalized\n[Automated]
+    Monitoring --> Closed : Monitoring handoff complete\n[Automated or Manual]
+    Closed --> [*]
+        </div>
+      </div>
+    </div>
+
+    <div class="callout callout-info">
+      <div class="callout-icon">&#9432;</div>
+      <div class="callout-body">
+        <strong>Reading the diagram.</strong> Labels in <strong>[Automated]</strong> fire without human action.
+        Labels in <strong>[Manual]</strong> require an explicit analyst or approver action.
+        <strong>[Manual or Automated]</strong> means policy can configure either path depending on operating model.
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════
+         STATE DEFINITIONS
+    ════════════════════════════════════════════════ -->
+    <h2 id="states">State Definitions</h2>
+    <p>All 12 states in the lifecycle, with trigger source, actor type, and the audit event each fires.</p>
+
+    <div class="table-wrap">
+      <table class="state-table">
+        <thead>
+          <tr>
+            <th>State</th>
+            <th>Description</th>
+            <th>Triggered by</th>
+            <th>Type</th>
+            <th>Audit event fires</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="state-pill"><span class="dot dot-new"></span>New</span></td>
+            <td>Case created; intake processing not yet started</td>
+            <td>API / form submission / onboarding system</td>
+            <td><span class="badge badge-auto">Automated</span></td>
+            <td>On case creation</td>
+          </tr>
+          <tr>
+            <td><span class="state-pill"><span class="dot dot-pipeline"></span>Ingestion Complete</span></td>
+            <td>Files, metadata, and source inputs received and stored</td>
+            <td>Ingestion pipeline completion</td>
+            <td><span class="badge badge-auto">Automated</span></td>
+            <td>On intake completion</td>
+          </tr>
+          <tr>
+            <td><span class="state-pill"><span class="dot dot-pipeline"></span>Extraction In Progress</span></td>
+            <td>Document parsing, OCR, entity extraction, classification running</td>
+            <td>Document intelligence pipeline</td>
+            <td><span class="badge badge-auto">Automated</span></td>
+            <td>On extraction start</td>
+          </tr>
+          <tr>
+            <td><span class="state-pill"><span class="dot dot-review"></span>Review-Ready</span></td>
+            <td>Extraction finished; review packet prepared for analyst</td>
+            <td>System after extraction + validations complete</td>
+            <td><span class="badge badge-auto">Automated</span></td>
+            <td>On review package creation</td>
+          </tr>
+          <tr>
+            <td><span class="state-pill"><span class="dot dot-review"></span>In Review</span></td>
+            <td>Analyst actively reviewing extracted fields, evidence, and flags</td>
+            <td>Analyst opens / claims case</td>
+            <td><span class="badge badge-manual">Manual</span></td>
+            <td>On claim / open / assignment</td>
+          </tr>
+          <tr>
+            <td><span class="state-pill"><span class="dot dot-waiting"></span>Follow-Up Requested</span></td>
+            <td>Reviewer requests more documents, clarification, or corrections</td>
+            <td>Analyst / compliance reviewer</td>
+            <td><span class="badge badge-manual">Manual</span></td>
+            <td>On request raised, including reason</td>
+          </tr>
+          <tr>
+            <td><span class="state-pill"><span class="dot dot-waiting"></span>Awaiting Response</span></td>
+            <td>Case paused pending merchant / partner response</td>
+            <td>System after follow-up request sent</td>
+            <td><span class="badge badge-auto">Automated</span></td>
+            <td>On outbound request sent</td>
+          </tr>
+          <tr>
+            <td><span class="state-pill"><span class="dot dot-review"></span>Re-Review</span></td>
+            <td>New information arrived; case sent back for analyst reassessment</td>
+            <td>System after response received, or analyst reopens</td>
+            <td><span class="badge badge-hybrid">Hybrid</span></td>
+            <td>On re-entry to review cycle</td>
+          </tr>
+          <tr>
+            <td><span class="state-pill"><span class="dot dot-escalated"></span>Escalated</span></td>
+            <td>Case routed to senior compliance / risk / policy team</td>
+            <td>Analyst / rules engine / risk trigger</td>
+            <td><span class="badge badge-hybrid">Hybrid</span></td>
+            <td>On escalation, with reason and target queue</td>
+          </tr>
+          <tr>
+            <td><span class="state-pill"><span class="dot dot-terminal-ok"></span>Approved</span></td>
+            <td>Case approved for onboarding / continuation</td>
+            <td>Analyst / approver / policy reviewer</td>
+            <td><span class="badge badge-manual">Manual</span></td>
+            <td>On decision recorded</td>
+          </tr>
+          <tr>
+            <td><span class="state-pill"><span class="dot dot-escalated"></span>Rejected</span></td>
+            <td>Case declined — policy, risk, incomplete response, or adverse findings</td>
+            <td>Analyst / approver / policy reviewer</td>
+            <td><span class="badge badge-manual">Manual</span></td>
+            <td>On decision recorded</td>
+          </tr>
+          <tr>
+            <td><span class="state-pill"><span class="dot dot-terminal-ok"></span>Monitoring</span></td>
+            <td>Approved case enters ongoing monitoring / periodic review</td>
+            <td>System after approval</td>
+            <td><span class="badge badge-auto">Automated</span></td>
+            <td>On monitoring enrollment</td>
+          </tr>
+          <tr>
+            <td><span class="state-pill"><span class="dot dot-terminal-end"></span>Closed</span></td>
+            <td>Case complete — no further workflow activity pending</td>
+            <td>System after rejection, monitoring handoff, or admin closure</td>
+            <td><span class="badge badge-hybrid">Hybrid</span></td>
+            <td>On closure</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════
+         TRANSITION RULES
+    ════════════════════════════════════════════════ -->
+    <h2 id="transitions">Transition Rules</h2>
+    <p>All valid state transitions grouped by phase. Each transition shows the exact trigger condition and type.</p>
+
+    <!-- Phase 1 -->
+    <div class="phase-block">
+      <div class="phase-header">
+        <div class="phase-num">1</div>
+        <h4>Intake &amp; Preparation</h4>
+        <span class="badge badge-auto" style="margin-left:auto">All Automated</span>
+      </div>
+      <div class="phase-transitions">
+        <div class="transition-row">
+          <div class="transition-arrow"><strong>New</strong> → <strong>Ingestion Complete</strong></div>
+          <div class="transition-meta">
+            <span class="transition-trigger">Case payload, uploaded documents, and metadata successfully received and stored</span>
+            <span class="badge badge-auto">Automated</span>
+          </div>
+        </div>
+        <div class="transition-row">
+          <div class="transition-arrow"><strong>Ingestion Complete</strong> → <strong>Extraction In Progress</strong></div>
+          <div class="transition-meta">
+            <span class="transition-trigger">Ingestion service publishes case to extraction / enrichment pipeline</span>
+            <span class="badge badge-auto">Automated</span>
+          </div>
+        </div>
+        <div class="transition-row">
+          <div class="transition-arrow"><strong>Extraction In Progress</strong> → <strong>Review-Ready</strong></div>
+          <div class="transition-meta">
+            <span class="transition-trigger">Extraction, validations, confidence scoring, and packaging complete successfully</span>
+            <span class="badge badge-auto">Automated</span>
+          </div>
+        </div>
+        <div class="transition-row">
+          <div class="transition-arrow"><strong>Extraction In Progress</strong> → <strong>Escalated</strong></div>
+          <div class="transition-meta">
+            <span class="transition-trigger">System detects high-risk flag, sanctions hit, fraud indicator, or unsupported document scenario requiring specialist handling</span>
+            <span class="badge badge-auto">Automated</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Phase 2 -->
+    <div class="phase-block">
+      <div class="phase-header">
+        <div class="phase-num">2</div>
+        <h4>Human Review Cycle</h4>
+        <span class="badge badge-manual" style="margin-left:auto">All Manual</span>
+      </div>
+      <div class="phase-transitions">
+        <div class="transition-row">
+          <div class="transition-arrow"><strong>Review-Ready</strong> → <strong>In Review</strong></div>
+          <div class="transition-meta">
+            <span class="transition-trigger">Analyst claims or opens case from queue</span>
+            <span class="badge badge-manual">Manual</span>
+          </div>
+        </div>
+        <div class="transition-row">
+          <div class="transition-arrow"><strong>In Review</strong> → <strong>Follow-Up Requested</strong></div>
+          <div class="transition-meta">
+            <span class="transition-trigger">Reviewer determines information is insufficient, inconsistent, or missing</span>
+            <span class="badge badge-manual">Manual</span>
+          </div>
+        </div>
+        <div class="transition-row">
+          <div class="transition-arrow"><strong>In Review</strong> → <strong>Escalated</strong></div>
+          <div class="transition-meta">
+            <span class="transition-trigger">Reviewer identifies policy ambiguity, high-risk pattern, fraud concern, or approval authority limit exceeded</span>
+            <span class="badge badge-manual">Manual</span>
+          </div>
+        </div>
+        <div class="transition-row">
+          <div class="transition-arrow"><strong>In Review</strong> → <strong>Approved</strong></div>
+          <div class="transition-meta">
+            <span class="transition-trigger">Reviewer confirms case satisfies KYB requirements and policy thresholds</span>
+            <span class="badge badge-manual">Manual</span>
+          </div>
+        </div>
+        <div class="transition-row">
+          <div class="transition-arrow"><strong>In Review</strong> → <strong>Rejected</strong></div>
+          <div class="transition-meta">
+            <span class="transition-trigger">Reviewer determines case fails policy, risk, or completeness standards</span>
+            <span class="badge badge-manual">Manual</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Phase 3 -->
+    <div class="phase-block">
+      <div class="phase-header">
+        <div class="phase-num">3</div>
+        <h4>Follow-Up &amp; Rework Loop</h4>
+        <span class="badge badge-hybrid" style="margin-left:auto">Mixed</span>
+      </div>
+      <div class="phase-transitions">
+        <div class="transition-row">
+          <div class="transition-arrow"><strong>Follow-Up Requested</strong> → <strong>Awaiting Response</strong></div>
+          <div class="transition-meta">
+            <span class="transition-trigger">Follow-up request issued to merchant / partner / internal submitter</span>
+            <span class="badge badge-auto">Automated</span>
+          </div>
+        </div>
+        <div class="transition-row">
+          <div class="transition-arrow"><strong>Awaiting Response</strong> → <strong>Re-Review</strong></div>
+          <div class="transition-meta">
+            <span class="transition-trigger">Requested information or documents received before SLA expiry</span>
+            <span class="badge badge-auto">Automated</span>
+          </div>
+        </div>
+        <div class="transition-row">
+          <div class="transition-arrow"><strong>Awaiting Response</strong> → <strong>Rejected</strong></div>
+          <div class="transition-meta">
+            <span class="transition-trigger">No response within SLA, or response materially insufficient after threshold rules applied</span>
+            <span class="badge badge-hybrid">Manual or Automated</span>
+          </div>
+        </div>
+        <div class="transition-row">
+          <div class="transition-arrow"><strong>Re-Review</strong> → <strong>In Review</strong></div>
+          <div class="transition-meta">
+            <span class="transition-trigger">Analyst resumes case evaluation with updated evidence</span>
+            <span class="badge badge-manual">Manual</span>
+          </div>
+        </div>
+        <div class="transition-row">
+          <div class="transition-arrow"><strong>Re-Review</strong> → <strong>Escalated</strong></div>
+          <div class="transition-meta">
+            <span class="transition-trigger">New evidence introduces heightened risk or unresolved policy conflict</span>
+            <span class="badge badge-hybrid">Manual or Automated</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Phase 4 -->
+    <div class="phase-block">
+      <div class="phase-header">
+        <div class="phase-num">4</div>
+        <h4>Escalation &amp; Decisioning</h4>
+        <span class="badge badge-manual" style="margin-left:auto">All Manual</span>
+      </div>
+      <div class="phase-transitions">
+        <div class="transition-row">
+          <div class="transition-arrow"><strong>Escalated</strong> → <strong>In Review</strong></div>
+          <div class="transition-meta">
+            <span class="transition-trigger">Specialist reviewer returns case to analyst workflow with disposition notes</span>
+            <span class="badge badge-manual">Manual</span>
+          </div>
+        </div>
+        <div class="transition-row">
+          <div class="transition-arrow"><strong>Escalated</strong> → <strong>Approved</strong></div>
+          <div class="transition-meta">
+            <span class="transition-trigger">Senior reviewer / compliance approver clears case</span>
+            <span class="badge badge-manual">Manual</span>
+          </div>
+        </div>
+        <div class="transition-row">
+          <div class="transition-arrow"><strong>Escalated</strong> → <strong>Rejected</strong></div>
+          <div class="transition-meta">
+            <span class="transition-trigger">Senior reviewer / compliance approver declines case</span>
+            <span class="badge badge-manual">Manual</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Phase 5 -->
+    <div class="phase-block">
+      <div class="phase-header">
+        <div class="phase-num">5</div>
+        <h4>Post-Decision Lifecycle</h4>
+        <span class="badge badge-auto" style="margin-left:auto">Mostly Automated</span>
+      </div>
+      <div class="phase-transitions">
+        <div class="transition-row">
+          <div class="transition-arrow"><strong>Approved</strong> → <strong>Monitoring</strong></div>
+          <div class="transition-meta">
+            <span class="transition-trigger">Approved case handed off to periodic review / transaction monitoring / ongoing KYB controls</span>
+            <span class="badge badge-auto">Automated</span>
+          </div>
+        </div>
+        <div class="transition-row">
+          <div class="transition-arrow"><strong>Rejected</strong> → <strong>Closed</strong></div>
+          <div class="transition-meta">
+            <span class="transition-trigger">Rejection workflow completes — notifications sent, retention steps executed</span>
+            <span class="badge badge-auto">Automated</span>
+          </div>
+        </div>
+        <div class="transition-row">
+          <div class="transition-arrow"><strong>Monitoring</strong> → <strong>Closed</strong></div>
+          <div class="transition-meta">
+            <span class="transition-trigger">Monitoring ownership transferred or case lifecycle formally completed in this workflow</span>
+            <span class="badge badge-hybrid">Automated or Manual</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════
+         AUDIT EVENT MODEL
+    ════════════════════════════════════════════════ -->
+    <h2 id="audit">Audit Event Model</h2>
+    <p>Every material action across the case lifecycle generates an immutable audit event. The audit log is append-only — no event is modified or deleted after creation.</p>
+
+    <h3>What triggers an audit event</h3>
+    <div class="audit-triggers">
+      <div class="audit-trigger-item">Every state change</div>
+      <div class="audit-trigger-item">Any manual decision or override</div>
+      <div class="audit-trigger-item">Any escalation</div>
+      <div class="audit-trigger-item">Any follow-up request</div>
+      <div class="audit-trigger-item">Any approval or rejection</div>
+      <div class="audit-trigger-item">Any SLA breach or timeout-driven transition</div>
+      <div class="audit-trigger-item">Any reassignment or queue change</div>
+      <div class="audit-trigger-item">Any case reopen / re-review entry</div>
+    </div>
+
+    <h3>Audit record schema</h3>
+    <p>Each event captures the following fields, locked at write time.</p>
+    <div class="schema-grid">
+      <div class="schema-field">
+        <code>case_id</code>
+        <span>Identifies the case this event belongs to</span>
+      </div>
+      <div class="schema-field">
+        <code>prior_state</code>
+        <span>State the case was in before this transition</span>
+      </div>
+      <div class="schema-field">
+        <code>new_state</code>
+        <span>State the case moved into</span>
+      </div>
+      <div class="schema-field">
+        <code>timestamp</code>
+        <span>Precise time of the event (UTC, immutable)</span>
+      </div>
+      <div class="schema-field">
+        <code>actor_type</code>
+        <span>system / analyst / compliance / admin</span>
+      </div>
+      <div class="schema-field">
+        <code>actor_id</code>
+        <span>User ID or service name that triggered the event</span>
+      </div>
+      <div class="schema-field">
+        <code>trigger_reason_code</code>
+        <span>Structured reason code for the transition</span>
+      </div>
+      <div class="schema-field">
+        <code>decision_note</code>
+        <span>Free-text comment from the reviewer, if applicable</span>
+      </div>
+      <div class="schema-field">
+        <code>evidence_snapshot_ref</code>
+        <span>Document version and evidence set active at event time</span>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════
+         MANUAL VS AUTOMATED
+    ════════════════════════════════════════════════ -->
+    <h2 id="actor-model">Manual vs Automated Transitions</h2>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Transition type</th><th>Covers</th><th>Rationale</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><span class="badge badge-auto">Automated</span></td>
+            <td>Pipeline completion, waiting-state movement, monitoring enrollment, system-triggered risk routing</td>
+            <td>Deterministic processing steps with no judgment requirement — automating these reduces latency and reduces human error</td>
+          </tr>
+          <tr>
+            <td><span class="badge badge-manual">Manual</span></td>
+            <td>Review start, follow-up initiation, approval, rejection, specialist escalation</td>
+            <td>Judgment-heavy decisions that carry legal and compliance weight — always require named human accountability</td>
+          </tr>
+          <tr>
+            <td><span class="badge badge-hybrid">Hybrid</span></td>
+            <td>SLA-triggered rejection, re-review entry, rework loop exits, closure</td>
+            <td>Policy can configure either auto-routing or reviewer-led action based on risk tier, operating model, or product context</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout callout-warn">
+      <div class="callout-icon">&#9888;</div>
+      <div class="callout-body">
+        <strong>Approval and Rejection are always Manual.</strong> No automated transition may move a case directly into Approved or Rejected without an explicit human action and a named reviewer ID — regardless of AI recommendation confidence. This is a hard constraint, not a configuration option.
+      </div>
+    </div>
+
+    <nav class="section-nav">
+      <a href="security-design.html" class="nav-btn"><span class="nav-btn-dir">← Previous</span><span class="nav-btn-title">Security Architecture</span></a>
+      <span class="nav-center">20 of 39</span>
+      <a href="rag-overview.html" class="nav-btn next"><span class="nav-btn-dir">Next →</span><span class="nav-btn-title">RAG Architecture Overview</span></a>
+    </nav>
+  </main>
+</div>
+
+<footer class="site-footer">Reap AI Platform — KYB Review Copilot &nbsp;·&nbsp; Technical PRD</footer>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script src="../js/main.js"></script>
+</body>
+</html>

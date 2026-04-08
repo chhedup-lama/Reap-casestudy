@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>8.2 Experimentation &amp; A/B Testing — Reap KYB PRD</title>
+  <link rel="stylesheet" href="../css/styles.css" />
+</head>
+<body>
+<header class="site-header">
+  <div class="header-inner">
+    <a href="../index.html" class="site-logo"><div class="logo-mark">R</div><span>Reap AI Platform</span></a>
+    <div class="header-divider"></div><span class="header-subtitle">KYB Review Copilot</span>
+    <nav class="header-nav"><a href="../index.html">Overview</a><a href="solution-architecture.html">Architecture</a><a href="reviewer-workflow.html">Workflow</a></nav>
+  </div>
+</header>
+<div class="page-layout">
+  <aside class="sidebar">
+    <a href="../index.html" class="sidebar-back"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M9 11L5 7l4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg> All Sections</a>
+    <div class="sidebar-section-title">Block 8 — Measurement</div>
+    <ul class="sidebar-nav">
+      <li><a href="metrics-framework.html">8.1 Metrics Framework</a></li>
+      <li><a href="experimentation.html" class="active">8.2 Experimentation</a></li>
+      <li><a href="monitoring.html">8.3 Monitoring</a></li>
+      <li><a href="recommendation.html">8.4 Recommendation</a></li>
+    </ul>
+  </aside>
+  <main class="content">
+    <nav class="breadcrumb"><a href="../index.html">Home</a><span class="breadcrumb-sep">›</span><span>Block 8 — Measurement</span><span class="breadcrumb-sep">›</span><span class="breadcrumb-current">8.2 Experimentation &amp; A/B Testing Plan</span></nav>
+    <div class="section-header">
+      <div class="section-block-tag" style="background:var(--b8)">Block 8 — Measurement &amp; Recommendation</div>
+      <h1>Experimentation &amp; A/B Testing Plan</h1>
+      <p class="section-intro">How to run controlled experiments that isolate the impact of AI suggestions on review quality and speed — without exposing the full caseload to an unvalidated system.</p>
+    </div>
+    <div class="stub-banner">&#9998; Content coming soon — this section is a structured stub awaiting full copy.</div>
+
+    <h2>Experiment 1: Shadow Mode Validation</h2>
+    <p>[ Pre-launch. AI runs in parallel, outputs not shown to analysts. Compare AI recommendations vs. actual analyst decisions on 500 cases. Measure agreement rate and false positive/negative rates before exposing analysts to suggestions. ]</p>
+
+    <h2>Experiment 2: AI Suggestion Impact on Review Time</h2>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Parameter</th><th>Value</th></tr></thead>
+      <tbody>
+        <tr><td>Hypothesis</td><td>Analysts with AI suggestions will review cases [ ]% faster without increasing error rate</td></tr>
+        <tr><td>Control group</td><td>Analysts using workspace without AI suggestion panel</td></tr>
+        <tr><td>Treatment group</td><td>Analysts using workspace with full AI summary visible</td></tr>
+        <tr><td>Allocation</td><td>50/50 random case assignment</td></tr>
+        <tr><td>Primary metric</td><td>Median review time</td></tr>
+        <tr><td>Guardrail metric</td><td>Compliance breach rate must not increase</td></tr>
+        <tr><td>Sample size</td><td>[ ] cases per arm for statistical power</td></tr>
+      </tbody>
+    </table></div>
+
+    <h2>Experiment 3: Confidence Threshold Calibration</h2>
+    <p>[ Test different confidence routing thresholds to find the optimal balance between analyst queue volume and escalation rate. ]</p>
+
+    <h2>Statistical Validity</h2>
+    <p>[ Minimum detectable effect size, statistical power requirements, and stopping rules for the experiments. ]</p>
+
+    <nav class="section-nav">
+      <a href="metrics-framework.html" class="nav-btn"><span class="nav-btn-dir">← Previous</span><span class="nav-btn-title">Metrics Framework</span></a>
+      <span class="nav-center">37 of 39</span>
+      <a href="monitoring.html" class="nav-btn next"><span class="nav-btn-dir">Next →</span><span class="nav-btn-title">Monitoring &amp; Alerting</span></a>
+    </nav>
+  </main>
+</div>
+<footer class="site-footer">Reap AI Platform — KYB Review Copilot &nbsp;·&nbsp; Technical PRD</footer>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script src="../js/main.js"></script>
+</body></html>

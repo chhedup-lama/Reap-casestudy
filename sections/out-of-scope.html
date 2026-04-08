@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>3.2 Out of Scope &amp; Constraints — Reap KYB PRD</title>
+  <link rel="stylesheet" href="../css/styles.css" />
+<style>
+  /* ── MVP Banner ── */
+  .mvp-banner { display:flex; align-items:center; gap:14px; padding:16px 20px; background:var(--navy); border-radius:11px; margin:20px 0 28px; }
+  .mvp-icon { width:38px; height:38px; border-radius:9px; background:rgba(99,91,255,.25); display:flex; align-items:center; justify-content:center; color:#A5B4FC; flex-shrink:0; }
+  .mvp-text { font-size:13px; color:rgba(255,255,255,.85); line-height:1.6; }
+  .mvp-text strong { color:#fff; }
+
+  /* ── MVP vs Future Table ── */
+  .mvf-wrap { border:1px solid var(--border); border-radius:11px; overflow:hidden; margin-bottom:28px; }
+  .mvf-table { width:100%; border-collapse:collapse; font-size:13px; }
+  .mvf-table thead th { padding:9px 16px; font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.07em; border-bottom:2px solid var(--border); }
+  .mvf-table thead th:first-child { background:var(--bg); color:var(--text-dim); width:140px; }
+  .mvf-table thead th.th-mvp { background:#EFF6FF; color:#1D4ED8; }
+  .mvf-table thead th.th-fut { background:#F5F3FF; color:#6D28D9; }
+  .mvf-table td { padding:12px 16px; border-bottom:1px solid var(--border); vertical-align:top; }
+  .mvf-table tbody tr:last-child td { border-bottom:none; }
+  .mvf-table tbody tr:hover td { background:var(--bg); }
+  .mvf-table td:first-child { font-size:11px; font-weight:700; color:var(--text-dim); text-transform:uppercase; letter-spacing:.05em; background:var(--bg); }
+  .td-mvp { background:#FAFCFF; color:var(--text-mid); font-size:12px; }
+  .td-fut { background:#FDFAFF; color:var(--text-mid); font-size:12px; display:flex; align-items:flex-start; gap:6px; }
+  .fut-arr { color:#7C3AED; font-weight:700; flex-shrink:0; margin-top:1px; }
+
+  /* ── Scope Principles ── */
+  .scope-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:10px; margin-bottom:32px; }
+  @media(max-width:600px){ .scope-grid { grid-template-columns:1fr; } }
+  .scope-card { border:1px solid var(--border); border-radius:10px; padding:14px 16px; background:var(--surface); display:flex; align-items:center; gap:12px; }
+  .sc-icon { width:30px; height:30px; border-radius:7px; display:flex; align-items:center; justify-content:center; flex-shrink:0; background:#EFF6FF; color:#1D4ED8; }
+  .sc-over { font-size:13px; font-weight:700; color:var(--text); }
+  .sc-sep { font-size:11px; color:var(--text-dim); margin:0 4px; }
+  .sc-under { font-size:13px; color:var(--text-mid); }
+
+  /* ── Section divider label ── */
+  .sec-divider { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.09em; color:var(--text-dim); margin:0 0 12px; display:flex; align-items:center; gap:8px; }
+  .sec-divider::after { content:''; flex:1; height:1px; background:var(--border); }
+
+  /* ── Out of Scope Items ── */
+  .oos-wrap { border:1px solid var(--border); border-radius:11px; overflow:hidden; margin-bottom:28px; }
+  .oos-col-head { display:grid; grid-template-columns:1fr 1fr 160px; padding:8px 16px; background:var(--bg); border-bottom:2px solid var(--border); gap:12px; }
+  .och { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.07em; color:var(--text-dim); }
+  .oos-row { display:grid; grid-template-columns:1fr 1fr 160px; padding:13px 16px; border-bottom:1px solid var(--border); gap:12px; align-items:start; }
+  .oos-row:last-child { border-bottom:none; }
+  .oos-row:hover { background:var(--bg); }
+  @media(max-width:700px){ .oos-col-head,.oos-row { grid-template-columns:1fr; } }
+  .oos-cap { display:flex; align-items:flex-start; gap:8px; }
+  .oos-x { width:20px; height:20px; border-radius:5px; background:#FEF2F2; display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:1px; }
+  .oos-x svg { color:#DC2626; }
+  .oos-name { font-size:12px; font-weight:700; color:var(--text); line-height:1.4; }
+  .oos-why { font-size:12px; color:var(--text-mid); line-height:1.45; }
+  .when-pill { display:inline-flex; align-items:center; gap:4px; padding:3px 9px; border-radius:5px; font-size:10px; font-weight:600; background:#FFFBEB; color:#B45309; border:1px solid #FDE68A; white-space:nowrap; }
+
+  /* ── Hard Constraints ── */
+  .hc-group { margin-bottom:16px; }
+  .hc-type-header { display:flex; align-items:center; gap:8px; margin-bottom:8px; }
+  .hc-type-badge { display:inline-flex; align-items:center; gap:5px; padding:3px 10px; border-radius:5px; font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.07em; }
+  .hct-reg  { background:#FEF2F2; color:#B91C1C; border:1px solid #FECACA; }
+  .hct-tech { background:#EFF6FF; color:#1D4ED8; border:1px solid #BFDBFE; }
+  .hct-org  { background:#ECFDF5; color:#047857; border:1px solid #A7F3D0; }
+  .hct-ops  { background:#FFFBEB; color:#B45309; border:1px solid #FDE68A; }
+  .hc-rows { border:1px solid var(--border); border-radius:10px; overflow:hidden; }
+  .hc-row { display:grid; grid-template-columns:1fr 1fr; padding:12px 16px; border-bottom:1px solid var(--border); gap:16px; align-items:start; }
+  .hc-row:last-child { border-bottom:none; }
+  .hc-row:hover { background:var(--bg); }
+  @media(max-width:640px){ .hc-row { grid-template-columns:1fr; } }
+  .hc-constraint { font-size:12px; color:var(--text); font-weight:500; line-height:1.45; }
+  .hc-impl { font-size:12px; color:var(--text-mid); line-height:1.45; display:flex; align-items:flex-start; gap:6px; }
+  .hc-arr { color:var(--accent); flex-shrink:0; font-weight:700; }
+
+  /* ── Deferred ── */
+  .def-wrap { border:1px solid var(--border); border-radius:11px; overflow:hidden; margin-bottom:8px; }
+  .def-col-head { display:grid; grid-template-columns:1fr 1fr 140px; padding:8px 16px; background:var(--bg); border-bottom:2px solid var(--border); gap:12px; }
+  .def-row { display:grid; grid-template-columns:1fr 1fr 140px; padding:12px 16px; border-bottom:1px solid var(--border); gap:12px; align-items:start; }
+  .def-row:last-child { border-bottom:none; }
+  .def-row:hover { background:var(--bg); }
+  @media(max-width:700px){ .def-col-head,.def-row { grid-template-columns:1fr; } }
+  .def-cap { display:flex; align-items:flex-start; gap:7px; }
+  .def-clock { width:20px; height:20px; border-radius:5px; background:#F5F3FF; display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:1px; color:#7C3AED; }
+  .def-name { font-size:12px; font-weight:700; color:var(--text); line-height:1.4; }
+  .def-why { font-size:12px; color:var(--text-mid); line-height:1.45; }
+  .def-phase { display:inline-flex; align-items:center; gap:4px; padding:3px 9px; border-radius:5px; font-size:10px; font-weight:600; background:#F5F3FF; color:#6D28D9; border:1px solid #DDD6FE; }
+  .def-note { font-size:12px; color:var(--text-dim); margin-bottom:24px; padding:10px 14px; background:var(--bg); border-radius:8px; border-left:3px solid var(--accent); }
+</style>
+</head>
+<body>
+<header class="site-header">
+  <div class="header-inner">
+    <a href="../index.html" class="site-logo"><div class="logo-mark">R</div><span>Reap AI Platform</span></a>
+    <div class="header-divider"></div><span class="header-subtitle">KYB Review Copilot</span>
+    <nav class="header-nav"><a href="../index.html">Overview</a><a href="solution-architecture.html">Architecture</a><a href="reviewer-workflow.html">Workflow</a></nav>
+  </div>
+</header>
+<div class="page-layout">
+  <aside class="sidebar">
+    <a href="../index.html" class="sidebar-back"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M9 11L5 7l4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg> All Sections</a>
+    <div class="sidebar-section-title">Block 3 — Product Scope</div>
+    <ul class="sidebar-nav">
+      <li><a href="feature-scope.html">3.1 Feature Scope</a></li>
+      <li><a href="out-of-scope.html" class="active">3.2 Out of Scope</a></li>
+      <li><a href="build-vs-buy.html">3.3 Build vs Buy</a></li>
+      <li><a href="phased-delivery.html">3.4 Phased Delivery</a></li>
+      <li><a href="dependencies.html">3.5 Dependencies</a></li>
+    </ul>
+    <div style="margin-top:24px;" class="sidebar-section-title">On this page</div>
+    <ul class="sidebar-nav">
+      <li><a href="#mvp">MVP Boundaries</a></li>
+      <li><a href="#oos">Out of Scope</a></li>
+      <li><a href="#constraints">Hard Constraints</a></li>
+      <li><a href="#deferred">Deferred Capabilities</a></li>
+    </ul>
+  </aside>
+  <main class="content">
+    <nav class="breadcrumb"><a href="../index.html">Home</a><span class="breadcrumb-sep">›</span><span>Block 3 — Product Scope</span><span class="breadcrumb-sep">›</span><span class="breadcrumb-current">3.2 Out of Scope &amp; Constraints</span></nav>
+    <div class="section-header">
+      <div class="section-block-tag" style="background:var(--b3)">Block 3 — Product Scope</div>
+      <h1>Out of Scope &amp; Constraints</h1>
+      <p class="section-intro">What this product deliberately does not do — and the non-negotiable guardrails that shape everything it does.</p>
+    </div>
+
+    <!-- MVP Banner -->
+    <div id="mvp" class="mvp-banner">
+      <div class="mvp-icon">
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="7" stroke="currentColor" stroke-width="1.5"/><path d="M9 5v5M9 12.5v.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </div>
+      <div class="mvp-text">The MVP is a <strong>human-in-the-loop review copilot</strong> — not an automated decision engine. AI prepares, retrieves, and recommends. <strong>Humans decide.</strong></div>
+    </div>
+
+    <!-- MVP vs Future -->
+    <div class="sec-divider">MVP Boundary vs Future Capability</div>
+    <div class="mvf-wrap">
+      <table class="mvf-table">
+        <thead>
+          <tr>
+            <th>Dimension</th>
+            <th class="th-mvp">MVP Boundary</th>
+            <th class="th-fut">Future Capability</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Decisioning</td>
+            <td class="td-mvp">Human makes every final decision</td>
+            <td class="td-fut"><span class="fut-arr">→</span>Selective automation for low-risk, high-confidence scenarios</td>
+          </tr>
+          <tr>
+            <td>AI Role</td>
+            <td class="td-mvp">Extract, summarize, retrieve, recommend</td>
+            <td class="td-fut"><span class="fut-arr">→</span>Recommend + orchestrate bounded actions</td>
+          </tr>
+          <tr>
+            <td>Workflow</td>
+            <td class="td-mvp">Basic case states and review actions</td>
+            <td class="td-fut"><span class="fut-arr">→</span>Advanced routing, prioritization, and cross-team orchestration</td>
+          </tr>
+          <tr>
+            <td>Documents</td>
+            <td class="td-mvp">Core KYB documents only</td>
+            <td class="td-fut"><span class="fut-arr">→</span>Wider document coverage and more flexible ingestion</td>
+          </tr>
+          <tr>
+            <td>Policy Use</td>
+            <td class="td-mvp">Retrieved guidance for reviewer support</td>
+            <td class="td-fut"><span class="fut-arr">→</span>Structured policy reasoning and rule-driven enforcement</td>
+          </tr>
+          <tr>
+            <td>Data Sources</td>
+            <td class="td-mvp">Primarily uploaded / internal documents</td>
+            <td class="td-fut"><span class="fut-arr">→</span>External verification and enrichment sources</td>
+          </tr>
+          <tr>
+            <td>Quality</td>
+            <td class="td-mvp">Low-confidence cases routed to human review</td>
+            <td class="td-fut"><span class="fut-arr">→</span>More granular confidence-aware automation</td>
+          </tr>
+          <tr>
+            <td>Learning Loop</td>
+            <td class="td-mvp">Reviewer corrections captured</td>
+            <td class="td-fut"><span class="fut-arr">→</span>Governed improvement loop and eval-driven model upgrades</td>
+          </tr>
+          <tr>
+            <td>Reporting</td>
+            <td class="td-mvp">Essential audit and ops visibility</td>
+            <td class="td-fut"><span class="fut-arr">→</span>Rich analytics, productivity insights, and portfolio trends</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Scope Principles -->
+    <div class="sec-divider">Scope Principles</div>
+    <div class="scope-grid" style="margin-bottom:32px;">
+      <div class="scope-card">
+        <div class="sc-icon"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" stroke="currentColor" stroke-width="1.3"/><path d="M4 7l2 2 4-4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div><span class="sc-over">Reviewer usability</span><span class="sc-sep">over</span><span class="sc-under">workflow breadth</span></div>
+      </div>
+      <div class="scope-card">
+        <div class="sc-icon"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 1.5L2 4v3.5c0 3 2 5.5 5 6.5 3-1 5-3.5 5-6.5V4L7 1.5z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg></div>
+        <div><span class="sc-over">Auditability</span><span class="sc-sep">over</span><span class="sc-under">automation depth</span></div>
+      </div>
+      <div class="scope-card">
+        <div class="sc-icon"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="2" y="3" width="10" height="8" rx="1.5" stroke="currentColor" stroke-width="1.3"/><path d="M5 3V2M9 3V2M2 6h10" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg></div>
+        <div><span class="sc-over">Extraction quality</span><span class="sc-sep">over</span><span class="sc-under">model complexity</span></div>
+      </div>
+      <div class="scope-card">
+        <div class="sc-icon"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 2v4M7 8.5v.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><circle cx="7" cy="7" r="6" stroke="currentColor" stroke-width="1.3"/></svg></div>
+        <div><span class="sc-over">Operational safety</span><span class="sc-sep">over</span><span class="sc-under">straight-through processing</span></div>
+      </div>
+    </div>
+
+    <!-- Out of Scope -->
+    <div id="oos" class="sec-divider">Explicit Out-of-Scope Items</div>
+    <p style="font-size:13px;color:var(--text-mid);margin-bottom:12px;">Capabilities that materially increase regulatory risk, require major external dependencies, introduce new user surfaces, or expand beyond the core internal KYB reviewer workflow.</p>
+    <div class="oos-wrap">
+      <div class="oos-col-head">
+        <div class="och">Capability</div>
+        <div class="och">Why Excluded</div>
+        <div class="och">When in Scope</div>
+      </div>
+      <div class="oos-row">
+        <div class="oos-cap"><div class="oos-x"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 2l6 6M8 2L2 8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></div><div class="oos-name">Fully Automated Approvals</div></div>
+        <div class="oos-why">Too risky for Phase 1; requires stronger controls, calibration, and regulatory sign-off</div>
+        <div><span class="when-pill">Later phase</span></div>
+      </div>
+      <div class="oos-row">
+        <div class="oos-cap"><div class="oos-x"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 2l6 6M8 2L2 8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></div><div class="oos-name">Customer-Facing Application Portal Rebuild</div></div>
+        <div class="oos-why">Separate product surface and delivery track — not needed to validate copilot value</div>
+        <div><span class="when-pill">Separate PRD</span></div>
+      </div>
+      <div class="oos-row">
+        <div class="oos-cap"><div class="oos-x"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 2l6 6M8 2L2 8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></div><div class="oos-name">KYC (Individual) Verification</div></div>
+        <div class="oos-why">Different entity type, document set, policy logic, and review flow</div>
+        <div><span class="when-pill">Platform reuse Phase 3+</span></div>
+      </div>
+      <div class="oos-row">
+        <div class="oos-cap"><div class="oos-x"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 2l6 6M8 2L2 8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></div><div class="oos-name">Real-Time Sanctions Screening</div></div>
+        <div class="oos-why">Depends on external vendor contracts and integrations outside this scope</div>
+        <div><span class="when-pill">Phase 2</span></div>
+      </div>
+      <div class="oos-row">
+        <div class="oos-cap"><div class="oos-x"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 2l6 6M8 2L2 8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></div><div class="oos-name">Beneficial Ownership Network Graphing</div></div>
+        <div class="oos-why">Higher-complexity analytics — not essential for initial reviewer workflow</div>
+        <div><span class="when-pill">Later phase</span></div>
+      </div>
+      <div class="oos-row">
+        <div class="oos-cap"><div class="oos-x"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 2l6 6M8 2L2 8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></div><div class="oos-name">Adverse Media Deep Investigation</div></div>
+        <div class="oos-why">Requires external data sources, ranking logic, and analyst workflow expansion</div>
+        <div><span class="when-pill">Phase 2–3</span></div>
+      </div>
+      <div class="oos-row">
+        <div class="oos-cap"><div class="oos-x"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 2l6 6M8 2L2 8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></div><div class="oos-name">Continuous Monitoring After Onboarding</div></div>
+        <div class="oos-why">Focused on initial KYB review only — post-onboarding surveillance is a separate workstream</div>
+        <div><span class="when-pill">Separate PRD</span></div>
+      </div>
+      <div class="oos-row">
+        <div class="oos-cap"><div class="oos-x"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 2l6 6M8 2L2 8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></div><div class="oos-name">Automated Policy Authoring / Rewrite</div></div>
+        <div class="oos-why">Policy creation is a human compliance responsibility — copilot consumes policy, not generates it</div>
+        <div><span class="when-pill">Future admin-assist</span></div>
+      </div>
+      <div class="oos-row">
+        <div class="oos-cap"><div class="oos-x"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 2l6 6M8 2L2 8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></div><div class="oos-name">Automated Multi-Channel Customer Outreach</div></div>
+        <div class="oos-why">Broader than reviewer assist scope — requires CRM / onboarding integration</div>
+        <div><span class="when-pill">Future integration</span></div>
+      </div>
+      <div class="oos-row">
+        <div class="oos-cap"><div class="oos-x"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 2l6 6M8 2L2 8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></div><div class="oos-name">Full Case Auto-Escalation Orchestration</div></div>
+        <div class="oos-why">Phase 1 supports escalation recommendations — not org-wide operating model redesign</div>
+        <div><span class="when-pill">Later phase</span></div>
+      </div>
+      <div class="oos-row">
+        <div class="oos-cap"><div class="oos-x"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 2l6 6M8 2L2 8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></div><div class="oos-name">Custom Model Training / Fine-Tuning in Phase 1</div></div>
+        <div class="oos-why">Adds cost, complexity, and governance overhead before baseline value is proven</div>
+        <div><span class="when-pill">Later optimization</span></div>
+      </div>
+      <div class="oos-row">
+        <div class="oos-cap"><div class="oos-x"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 2l6 6M8 2L2 8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></div><div class="oos-name">Multi-Language Document Review at Launch</div></div>
+        <div class="oos-why">Increases extraction, policy mapping, and QA complexity significantly</div>
+        <div><span class="when-pill">Future expansion</span></div>
+      </div>
+      <div class="oos-row">
+        <div class="oos-cap"><div class="oos-x"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 2l6 6M8 2L2 8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></div><div class="oos-name">Reviewer Performance Scoring / People Evaluation</div></div>
+        <div class="oos-why">Sensitive change-management area — risk of misalignment if introduced before trust is built</div>
+        <div><span class="when-pill">Later as QA tooling</span></div>
+      </div>
+      <div class="oos-row">
+        <div class="oos-cap"><div class="oos-x"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 2l6 6M8 2L2 8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></div><div class="oos-name">External Applicant Collaboration Workspace</div></div>
+        <div class="oos-why">Introduces a separate user persona and interface beyond internal reviewer tooling</div>
+        <div><span class="when-pill">Separate initiative</span></div>
+      </div>
+      <div class="oos-row">
+        <div class="oos-cap"><div class="oos-x"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 2l6 6M8 2L2 8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></div><div class="oos-name">End-to-End Onboarding Decision Engine Beyond KYB</div></div>
+        <div class="oos-why">Broader than compliance review — includes commercial, fraud, and operational decisioning</div>
+        <div><span class="when-pill">Longer-term vision</span></div>
+      </div>
+    </div>
+
+    <!-- Hard Constraints -->
+    <div id="constraints" class="sec-divider">Hard Constraints</div>
+    <p style="font-size:13px;color:var(--text-mid);margin-bottom:16px;">Non-negotiable guardrails that shape the solution. Cannot be traded away for speed, scope, or convenience.</p>
+
+    <div class="hc-group">
+      <div class="hc-type-header"><span class="hc-type-badge hct-reg"><svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M6 1L1.5 3.5v3C1.5 9 3.5 11 6 11.5c2.5-.5 4.5-2.5 4.5-5v-3L6 1z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/></svg> Regulatory</span></div>
+      <div class="hc-rows">
+        <div class="hc-row"><div class="hc-constraint">Final approval and rejection decisions must remain with an authorized human reviewer in Phase 1</div><div class="hc-impl"><span class="hc-arr">→</span>System can recommend, draft, and prioritize — but cannot autonomously approve or reject</div></div>
+        <div class="hc-row"><div class="hc-constraint">Every recommendation must be evidence-backed and traceable to source documents and applicable policy</div><div class="hc-impl"><span class="hc-arr">→</span>Outputs must include citations, linked evidence, and policy grounding</div></div>
+        <div class="hc-row"><div class="hc-constraint">Decision history must be audit-reconstructable at any point in time</div><div class="hc-impl"><span class="hc-arr">→</span>Reviewer actions, model outputs, edits, overrides, timestamps, and policy versions must be logged</div></div>
+        <div class="hc-row"><div class="hc-constraint">Policy interpretation authority remains with Compliance / Legal</div><div class="hc-impl"><span class="hc-arr">→</span>The product cannot invent or reinterpret policy without human ownership</div></div>
+      </div>
+    </div>
+
+    <div class="hc-group">
+      <div class="hc-type-header"><span class="hc-type-badge hct-tech"><svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M4 2L2 6l2 4M8 2l2 4-2 4M5 7h2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg> Technical</span></div>
+      <div class="hc-rows">
+        <div class="hc-row"><div class="hc-constraint">Must operate on top of existing case and document systems — not require a full platform replacement</div><div class="hc-impl"><span class="hc-arr">→</span>Architecture integrates with current workflow, storage, and verification systems</div></div>
+        <div class="hc-row"><div class="hc-constraint">Uploaded documents and case data may be incomplete, low-quality, or inconsistent</div><div class="hc-impl"><span class="hc-arr">→</span>Must support abstention, missing-data handling, and confidence-based fallback</div></div>
+        <div class="hc-row"><div class="hc-constraint">Retrieval must be scoped to the correct policy set, case context, and jurisdiction</div><div class="hc-impl"><span class="hc-arr">→</span>Strong metadata, access controls, and retrieval logic are required</div></div>
+        <div class="hc-row"><div class="hc-constraint">PII and sensitive business data must be handled within enterprise security controls</div><div class="hc-impl"><span class="hc-arr">→</span>Data access, storage, logging, and model usage must meet security and privacy requirements</div></div>
+        <div class="hc-row"><div class="hc-constraint">External verification data may depend on third-party systems with latency or availability limits</div><div class="hc-impl"><span class="hc-arr">→</span>Workflow must handle connector failure, timeout, and degraded-mode review</div></div>
+      </div>
+    </div>
+
+    <div class="hc-group">
+      <div class="hc-type-header"><span class="hc-type-badge hct-org"><svg width="11" height="11" viewBox="0 0 12 12" fill="none"><circle cx="6" cy="3.5" r="1.5" stroke="currentColor" stroke-width="1.2"/><path d="M3 9.5c0-1.657 1.343-2.5 3-2.5s3 .843 3 2.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><circle cx="2" cy="5" r="1.2" stroke="currentColor" stroke-width="1.1"/><circle cx="10" cy="5" r="1.2" stroke="currentColor" stroke-width="1.1"/></svg> Organisational</span></div>
+      <div class="hc-rows">
+        <div class="hc-row"><div class="hc-constraint">Analysts and compliance teams will not adopt a tool that increases review time or documentation burden</div><div class="hc-impl"><span class="hc-arr">→</span>UX must reduce swivel-chair work and fit into existing review habits</div></div>
+        <div class="hc-row"><div class="hc-constraint">Compliance, Risk, and Ops must be able to trust and explain system behavior</div><div class="hc-impl"><span class="hc-arr">→</span>The copilot must be transparent, editable, and controllable — not a black box</div></div>
+        <div class="hc-row"><div class="hc-constraint">Engineering capacity is finite — Phase 1 must be implementable without building a large custom AI platform</div><div class="hc-impl"><span class="hc-arr">→</span>Prioritize high-value workflow assist over broad platform ambition</div></div>
+        <div class="hc-row"><div class="hc-constraint">Change management in regulated operations is slow and review-heavy</div><div class="hc-impl"><span class="hc-arr">→</span>Rollout should support phased adoption, shadow mode, controlled pilots, and measurable guardrails</div></div>
+      </div>
+    </div>
+
+    <div class="hc-group" style="margin-bottom:28px;">
+      <div class="hc-type-header"><span class="hc-type-badge hct-ops"><svg width="11" height="11" viewBox="0 0 12 12" fill="none"><circle cx="6" cy="6" r="5" stroke="currentColor" stroke-width="1.2"/><path d="M6 3v3l2 1.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg> Operational</span></div>
+      <div class="hc-rows">
+        <div class="hc-row"><div class="hc-constraint">SLA performance cannot materially degrade during rollout</div><div class="hc-impl"><span class="hc-arr">→</span>Introduction of the copilot must not slow queues, even during pilot stages</div></div>
+        <div class="hc-row"><div class="hc-constraint">Escalation paths and accountability must remain clear at all times</div><div class="hc-impl"><span class="hc-arr">→</span>The system must never obscure who made the final judgment or why</div></div>
+      </div>
+    </div>
+
+    <!-- Deferred Capabilities -->
+    <div id="deferred" class="sec-divider">Deferred Capabilities</div>
+    <div class="def-note">Unlike explicit out-of-scope items, deferred capabilities remain on the roadmap — intentionally sequenced for later phases, not rejected.</div>
+    <div class="def-wrap">
+      <div class="def-col-head">
+        <div class="och">Capability</div>
+        <div class="och">Why Deferred</div>
+        <div class="och">Likely Phase</div>
+      </div>
+      <div class="def-row">
+        <div class="def-cap"><div class="def-clock"><svg width="11" height="11" viewBox="0 0 12 12" fill="none"><circle cx="6" cy="6" r="5" stroke="currentColor" stroke-width="1.2"/><path d="M6 3v3l2 1.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg></div><div class="def-name">Automated Approval for Low-Risk Cases</div></div>
+        <div class="def-why">Requires confidence calibration, policy validation, and governance sign-off first</div>
+        <div><span class="def-phase">After Phase 1 proven</span></div>
+      </div>
+      <div class="def-row">
+        <div class="def-cap"><div class="def-clock"><svg width="11" height="11" viewBox="0 0 12 12" fill="none"><circle cx="6" cy="6" r="5" stroke="currentColor" stroke-width="1.2"/><path d="M6 3v3l2 1.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg></div><div class="def-name">Auto-Rejection with Stricter Routing</div></div>
+        <div class="def-why">Higher regulatory and customer impact than assistive recommendations</div>
+        <div><span class="def-phase">Future phase</span></div>
+      </div>
+      <div class="def-row">
+        <div class="def-cap"><div class="def-clock"><svg width="11" height="11" viewBox="0 0 12 12" fill="none"><circle cx="6" cy="6" r="5" stroke="currentColor" stroke-width="1.2"/><path d="M6 3v3l2 1.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg></div><div class="def-name">Real-Time Sanctions / Watchlist Connectors</div></div>
+        <div class="def-why">Valuable but dependent on third-party systems and contracts</div>
+        <div><span class="def-phase">Phase 2</span></div>
+      </div>
+      <div class="def-row">
+        <div class="def-cap"><div class="def-clock"><svg width="11" height="11" viewBox="0 0 12 12" fill="none"><circle cx="6" cy="6" r="5" stroke="currentColor" stroke-width="1.2"/><path d="M6 3v3l2 1.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg></div><div class="def-name">Adverse Media Enrichment</div></div>
+        <div class="def-why">Useful for complex-risk cases but not essential for initial productivity gains</div>
+        <div><span class="def-phase">Phase 2–3</span></div>
+      </div>
+      <div class="def-row">
+        <div class="def-cap"><div class="def-clock"><svg width="11" height="11" viewBox="0 0 12 12" fill="none"><circle cx="6" cy="6" r="5" stroke="currentColor" stroke-width="1.2"/><path d="M6 3v3l2 1.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg></div><div class="def-name">Beneficial Ownership Graph / Relationship Visualization</div></div>
+        <div class="def-why">Helpful for escalations but not required for Phase 1 review flow</div>
+        <div><span class="def-phase">Phase 2–3</span></div>
+      </div>
+      <div class="def-row">
+        <div class="def-cap"><div class="def-clock"><svg width="11" height="11" viewBox="0 0 12 12" fill="none"><circle cx="6" cy="6" r="5" stroke="currentColor" stroke-width="1.2"/><path d="M6 3v3l2 1.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg></div><div class="def-name">Cross-Case Learning &amp; Similar-Case Retrieval</div></div>
+        <div class="def-why">Needs clean historical decision data and careful grounding before activation</div>
+        <div><span class="def-phase">After audit logs mature</span></div>
+      </div>
+      <div class="def-row">
+        <div class="def-cap"><div class="def-clock"><svg width="11" height="11" viewBox="0 0 12 12" fill="none"><circle cx="6" cy="6" r="5" stroke="currentColor" stroke-width="1.2"/><path d="M6 3v3l2 1.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg></div><div class="def-name">Reviewer Personalization / Adaptive Copilot Behavior</div></div>
+        <div class="def-why">Adds UX and governance complexity too early in the lifecycle</div>
+        <div><span class="def-phase">After core is stable</span></div>
+      </div>
+      <div class="def-row">
+        <div class="def-cap"><div class="def-clock"><svg width="11" height="11" viewBox="0 0 12 12" fill="none"><circle cx="6" cy="6" r="5" stroke="currentColor" stroke-width="1.2"/><path d="M6 3v3l2 1.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg></div><div class="def-name">Feedback Loop for Model Improvement</div></div>
+        <div class="def-why">Important for learning but requires governance and eval setup first</div>
+        <div><span class="def-phase">Phase 2</span></div>
+      </div>
+      <div class="def-row">
+        <div class="def-cap"><div class="def-clock"><svg width="11" height="11" viewBox="0 0 12 12" fill="none"><circle cx="6" cy="6" r="5" stroke="currentColor" stroke-width="1.2"/><path d="M6 3v3l2 1.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg></div><div class="def-name">A/B Testing &amp; Experimentation Layer</div></div>
+        <div class="def-why">Useful for optimization but not required for first controlled rollout</div>
+        <div><span class="def-phase">After baseline live</span></div>
+      </div>
+      <div class="def-row">
+        <div class="def-cap"><div class="def-clock"><svg width="11" height="11" viewBox="0 0 12 12" fill="none"><circle cx="6" cy="6" r="5" stroke="currentColor" stroke-width="1.2"/><path d="M6 3v3l2 1.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg></div><div class="def-name">Advanced Reviewer Quality &amp; Decision Analytics</div></div>
+        <div class="def-why">Secondary to getting the core workflow right first</div>
+        <div><span class="def-phase">Phase 2 reporting</span></div>
+      </div>
+      <div class="def-row">
+        <div class="def-cap"><div class="def-clock"><svg width="11" height="11" viewBox="0 0 12 12" fill="none"><circle cx="6" cy="6" r="5" stroke="currentColor" stroke-width="1.2"/><path d="M6 3v3l2 1.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg></div><div class="def-name">Reusable Platformization for KYC / Underwriting</div></div>
+        <div class="def-why">Strategic upside exists but Phase 1 must prove KYB depth before broader abstraction</div>
+        <div><span class="def-phase">Future platform</span></div>
+      </div>
+      <div class="def-row">
+        <div class="def-cap"><div class="def-clock"><svg width="11" height="11" viewBox="0 0 12 12" fill="none"><circle cx="6" cy="6" r="5" stroke="currentColor" stroke-width="1.2"/><path d="M6 3v3l2 1.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg></div><div class="def-name">Policy Admin Console for Business Users</div></div>
+        <div class="def-why">Valuable for maintainability but not needed to validate the initial copilot workflow</div>
+        <div><span class="def-phase">Later platform phase</span></div>
+      </div>
+    </div>
+
+    <nav class="section-nav" style="margin-top:16px;">
+      <a href="feature-scope.html" class="nav-btn"><span class="nav-btn-dir">← Previous</span><span class="nav-btn-title">Feature Scope</span></a>
+      <span class="nav-center">12 of 39</span>
+      <a href="build-vs-buy.html" class="nav-btn next"><span class="nav-btn-dir">Next →</span><span class="nav-btn-title">Build vs Buy Analysis</span></a>
+    </nav>
+  </main>
+</div>
+<footer class="site-footer">Reap AI Platform — KYB Review Copilot &nbsp;·&nbsp; Technical PRD</footer>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script src="../js/main.js"></script>
+</body></html>

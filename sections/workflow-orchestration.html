@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>5.6 Workflow Orchestration &amp; Human Review — Reap KYB PRD</title>
+  <link rel="stylesheet" href="../css/styles.css" />
+  <style>
+    /* ── Design principle bar ── */
+    .dp-flow {
+      background:var(--navy); border-radius:10px; padding:.9rem 1.3rem;
+      display:flex; align-items:center; gap:.6rem; flex-wrap:wrap;
+      margin-bottom:2rem; font-size:.82rem;
+    }
+    .dp-step  { color:#c7d2fe; font-weight:500; }
+    .dp-arrow { color:#6366f1; font-weight:700; font-size:1rem; }
+
+    /* ── Section number ── */
+    .sec-num {
+      display:inline-flex; align-items:center; justify-content:center;
+      width:24px; height:24px; border-radius:50%; font-size:.68rem; font-weight:800;
+      background:#dbeafe; color:#1e40af; flex-shrink:0; margin-right:.4rem;
+    }
+    h2.numbered { display:flex; align-items:center; margin-top:1.75rem; }
+
+    /* ── Phase modules ── */
+    .phase-modules { display:grid; grid-template-columns:repeat(4,1fr); gap:.65rem; margin-bottom:1.75rem; }
+    .pm-card {
+      background:var(--surface); border:1px solid var(--border); border-radius:9px;
+      padding:.8rem .9rem; text-align:center; border-top:3px solid var(--b5);
+    }
+    .pm-icon { width:32px; height:32px; border-radius:7px; margin:0 auto .45rem; display:flex; align-items:center; justify-content:center; }
+    .pm-name { font-size:.78rem; font-weight:700; color:var(--text); }
+    .pm-sub  { font-size:.68rem; color:var(--text-dim); margin-top:.2rem; line-height:1.35; }
+
+    /* ── Scope chips ── */
+    .scope-chips { display:flex; flex-wrap:wrap; gap:.4rem; margin-bottom:1.75rem; }
+    .sc-chip {
+      display:inline-flex; align-items:center; gap:.35rem; font-size:.74rem; font-weight:600;
+      background:var(--surface); border:1px solid var(--border); border-radius:5px; padding:.3rem .65rem; color:var(--text-mid);
+    }
+    .sc-chip svg { flex-shrink:0; }
+
+    /* ── Workflow transition flow ── */
+    .wf-transition {
+      display:flex; flex-direction:column; gap:.4rem; margin-bottom:1.75rem;
+    }
+    .wf-row {
+      display:flex; align-items:center; gap:.6rem;
+      background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:.55rem .85rem;
+    }
+    .wf-from {
+      font-size:.78rem; font-weight:700; color:var(--text); min-width:200px;
+    }
+    .wf-arrow { color:#94a3b8; font-size:.9rem; flex-shrink:0; }
+    .wf-to { font-size:.78rem; font-weight:700; }
+    .wf-to.ok    { color:#15803d; }
+    .wf-to.warn  { color:#b45309; }
+    .wf-to.err   { color:#b91c1c; }
+
+    /* ── HITL control points ── */
+    .hitl-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:.55rem; margin-bottom:1.75rem; }
+    .hitl-item {
+      display:flex; align-items:flex-start; gap:.5rem; background:#eff6ff;
+      border:1px solid #bfdbfe; border-radius:8px; padding:.55rem .75rem;
+    }
+    .hitl-num {
+      width:20px; height:20px; border-radius:50%; background:#1d4ed8; color:#fff;
+      font-size:.63rem; font-weight:800; display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:1px;
+    }
+    .hitl-label { font-size:.76rem; color:#1e3a5f; line-height:1.4; }
+
+    /* ── Principle note ── */
+    .dp-note {
+      font-size:.78rem; color:#3730a3; background:#eef2ff; border:1px solid #c7d2fe;
+      border-left:3px solid #4338ca; border-radius:0 7px 7px 0;
+      padding:.6rem .9rem; margin-bottom:1.25rem; line-height:1.5;
+    }
+    .dp-note strong { color:#1e40af; }
+    .dp-note.warn { background:#fffbeb; border-color:#fde68a; border-left-color:#f59e0b; color:#78350f; }
+    .dp-note.warn strong { color:#92400e; }
+    .dp-note.green { background:#f0fdf4; border-color:#bbf7d0; border-left-color:#16a34a; color:#14532d; }
+    .dp-note.green strong { color:#15803d; }
+
+    /* ── Low-confidence triggers ── */
+    .trigger-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:.5rem; margin-bottom:1rem; }
+    .trig-item {
+      display:flex; align-items:flex-start; gap:.45rem; background:#fff5f5;
+      border:1px solid #fecaca; border-radius:7px; padding:.5rem .7rem;
+      font-size:.75rem; color:#7f1d1d; line-height:1.4;
+    }
+    .trig-item svg { flex-shrink:0; margin-top:1px; }
+
+    /* ── Abstention / behavior 2col ── */
+    .ab-2col { display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-bottom:1.75rem; }
+    .ab-block { background:var(--surface); border:1px solid var(--border); border-radius:9px; padding:.9rem 1rem; }
+    .ab-title { font-size:.7rem; font-weight:700; text-transform:uppercase; letter-spacing:.07em; color:var(--text-dim); margin-bottom:.5rem; }
+
+    /* ── Abstention return fields ── */
+    .abret-chips { display:flex; flex-wrap:wrap; gap:.35rem; margin-bottom:1.25rem; }
+    .abret-chip {
+      font-size:.73rem; font-weight:600; background:#fef3c7; color:#92400e;
+      border:1px solid #fde68a; border-radius:5px; padding:.22rem .6rem;
+    }
+
+    /* ── Manual review gates ── */
+    .gate-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:.5rem; margin-bottom:1.75rem; }
+    .gate-item {
+      display:flex; align-items:flex-start; gap:.5rem; background:var(--surface);
+      border:1px solid var(--border); border-left:3px solid #6d28d9;
+      border-radius:0 8px 8px 0; padding:.55rem .75rem;
+      font-size:.76rem; color:var(--text-mid); line-height:1.4;
+    }
+    .gate-item svg { flex-shrink:0; margin-top:1px; color:#6d28d9; }
+
+    /* ── Override fields ── */
+    .ovr-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:.5rem; margin-bottom:1rem; }
+    .ovr-item {
+      background:var(--surface); border:1px solid var(--border); border-radius:7px; padding:.5rem .75rem;
+    }
+    .ovr-label { font-size:.74rem; font-weight:700; color:var(--text); }
+    .ovr-sub   { font-size:.67rem; color:var(--text-dim); margin-top:1px; }
+
+    /* ── Escalation carry-forward ── */
+    .esc-chips { display:flex; flex-wrap:wrap; gap:.35rem; margin-bottom:1.75rem; }
+    .esc-chip {
+      font-size:.73rem; font-weight:600; background:#f5f3ff; color:#5b21b6;
+      border:1px solid #ddd6fe; border-radius:5px; padding:.22rem .6rem;
+    }
+
+    /* ── Safe automation 2col ── */
+    .safe-2col { display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-bottom:1.75rem; }
+    .safe-block { border-radius:10px; padding:.9rem 1rem; border:1px solid var(--border); }
+    .safe-yes  { background:#f0fdf4; border-color:#bbf7d0; }
+    .safe-no   { background:#fff5f5; border-color:#fecaca; }
+    .safe-title { font-size:.7rem; font-weight:700; text-transform:uppercase; letter-spacing:.08em; margin-bottom:.5rem; }
+    .safe-yes .safe-title { color:#15803d; }
+    .safe-no  .safe-title { color:#b91c1c; }
+    .rl { list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:.3rem; }
+    .rl li { display:flex; align-items:flex-start; gap:.45rem; font-size:.79rem; line-height:1.4; }
+    .rl-dot { width:6px; height:6px; border-radius:50%; flex-shrink:0; margin-top:5px; }
+
+    /* ── Reviewer trust 3 questions ── */
+    .q-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:.65rem; margin-bottom:1rem; }
+    .q-card {
+      background:var(--navy); border-radius:9px; padding:.85rem 1rem;
+    }
+    .q-num  { font-size:.65rem; font-weight:700; text-transform:uppercase; letter-spacing:.08em; color:#818cf8; margin-bottom:.3rem; }
+    .q-text { font-size:.84rem; font-weight:700; color:#fff; }
+
+    /* ── Audit events ── */
+    .audit-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:.5rem; margin-bottom:1rem; }
+    .audit-item {
+      display:flex; align-items:flex-start; gap:.45rem; background:var(--surface);
+      border:1px solid var(--border); border-radius:7px; padding:.5rem .7rem;
+      font-size:.76rem; color:var(--text-mid); line-height:1.4;
+    }
+    .audit-dot { width:6px; height:6px; border-radius:50%; background:#1d4ed8; flex-shrink:0; margin-top:5px; }
+
+    /* ── Metrics chips ── */
+    .metrics-grid { display:grid; grid-template-columns:repeat(5,1fr); gap:.5rem; margin-bottom:1.75rem; }
+    .metric-item {
+      background:var(--surface); border:1px solid var(--border); border-radius:8px;
+      padding:.55rem .7rem; text-align:center;
+    }
+    .metric-label { font-size:.72rem; font-weight:600; color:var(--text); line-height:1.35; }
+
+    /* ── Design principles ── */
+    .prin-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:.5rem; margin-bottom:1.75rem; }
+    .prin-item {
+      display:flex; align-items:flex-start; gap:.5rem; background:#f0fdf4;
+      border:1px solid #bbf7d0; border-radius:7px; padding:.5rem .7rem;
+      font-size:.76rem; color:#15803d; line-height:1.4;
+    }
+    .prin-item svg { flex-shrink:0; margin-top:1px; }
+
+    /* ── Non-goals ── */
+    .ng-grid { display:grid; grid-template-columns:1fr 1fr; gap:.5rem; margin-bottom:1.75rem; }
+    .ng-item {
+      display:flex; align-items:flex-start; gap:.5rem; font-size:.78rem;
+      color:var(--text-mid); line-height:1.4; padding:.45rem .65rem;
+      background:#fafafa; border:1px solid var(--border); border-radius:7px;
+    }
+    .ng-x { color:#dc2626; flex-shrink:0; margin-top:1px; }
+
+    /* ── Final principle banner ── */
+    .final-principle {
+      background:var(--navy); border-radius:12px; padding:1.2rem 1.5rem;
+      text-align:center; margin-bottom:2rem;
+    }
+    .fp-label { font-size:.67rem; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:#818cf8; margin-bottom:.4rem; }
+    .fp-text  { font-size:.9rem; font-weight:600; color:#fff; line-height:1.6; }
+    .fp-sub   { font-size:.78rem; color:#94a3b8; margin-top:.45rem; }
+
+    @media(max-width:960px){
+      .phase-modules,.hitl-grid,.trigger-grid,.metrics-grid { grid-template-columns:repeat(2,1fr); }
+      .ab-2col,.safe-2col { grid-template-columns:1fr; }
+      .ovr-grid,.gate-grid,.audit-grid,.q-grid,.prin-grid { grid-template-columns:1fr 1fr; }
+      .ng-grid { grid-template-columns:1fr; }
+    }
+    @media(max-width:540px){
+      .hitl-grid,.trigger-grid,.ovr-grid,.gate-grid,.audit-grid,.q-grid,.prin-grid,.metrics-grid { grid-template-columns:1fr; }
+    }
+  </style>
+</head>
+<body>
+<header class="site-header">
+  <div class="header-inner">
+    <a href="../index.html" class="site-logo"><div class="logo-mark">R</div><span>Reap AI Platform</span></a>
+    <div class="header-divider"></div><span class="header-subtitle">KYB Review Copilot</span>
+    <nav class="header-nav"><a href="../index.html">Overview</a><a href="solution-architecture.html">Architecture</a><a href="reviewer-workflow.html">Workflow</a></nav>
+  </div>
+</header>
+<div class="page-layout">
+  <aside class="sidebar">
+    <a href="../index.html" class="sidebar-back"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M9 11L5 7l4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg> All Sections</a>
+    <div class="sidebar-section-title">Block 5 — End to End Platform Components enabling KYB</div>
+    <ul class="sidebar-nav">
+      <li><a href="rag-overview.html">5.1 RAG Overview</a></li>
+      <li><a href="ingestion-pipeline.html">5.2 Input &amp; Intake Layer</a></li>
+      <li><a href="retrieval-policy.html">5.3 Document Intelligence</a></li>
+      <li><a href="llm-reasoning.html">5.4 Knowledge, Retrieval &amp; Policy Grounding</a></li>
+      <li><a href="reviewer-assist.html">5.5 Reviewer Assist</a></li>
+      <li><a href="workflow-orchestration.html" class="active">5.6 Workflow Orchestration</a></li>
+      <li><a href="confidence-scoring.html">5.7 Confidence Scoring</a></li>
+    </ul>
+  </aside>
+  <main class="content">
+    <nav class="breadcrumb"><a href="../index.html">Home</a><span class="breadcrumb-sep">›</span><span>Block 5 — End to End Platform Components enabling KYB</span><span class="breadcrumb-sep">›</span><span class="breadcrumb-current">5.6 Workflow Orchestration &amp; Human Review</span></nav>
+    <div class="section-header">
+      <div class="section-block-tag" style="background:var(--b5)">Block 5 — End to End Platform Components enabling KYB</div>
+      <h1>Workflow Orchestration &amp; Human Review</h1>
+      <p class="section-intro">Governs how cases move through review, when human intervention is required, and how AI-assisted outputs are safely converted into governed operational actions.</p>
+    </div>
+
+    <!-- Design principle -->
+    <div class="dp-flow">
+      <span class="dp-step">Case state changes</span>
+      <span class="dp-arrow">→</span>
+      <span class="dp-step">Route to review or intervention</span>
+      <span class="dp-arrow">→</span>
+      <span class="dp-step">Human control points</span>
+      <span class="dp-arrow">→</span>
+      <span class="dp-step">Override / escalate if needed</span>
+      <span class="dp-arrow">→</span>
+      <span class="dp-step">Human decides</span>
+      <span class="dp-arrow">→</span>
+      <span class="dp-step">Full audit trail</span>
+    </div>
+
+    <!-- Phase 1 modules -->
+    <div class="phase-modules">
+      <div class="pm-card">
+        <div class="pm-icon" style="background:#dbeafe;">
+          <svg width="16" height="16" viewBox="0 0 18 18" fill="none"><rect x="2" y="3" width="14" height="12" rx="2" stroke="#1d4ed8" stroke-width="1.5"/><path d="M6 3V2M12 3V2M2 7h14" stroke="#1d4ed8" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </div>
+        <div class="pm-name">Workflow State</div>
+        <div class="pm-sub">Transitions from intake to final disposition</div>
+      </div>
+      <div class="pm-card">
+        <div class="pm-icon" style="background:#fee2e2;">
+          <svg width="16" height="16" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="7" stroke="#dc2626" stroke-width="1.5"/><path d="M9 5v4M9 12v.5" stroke="#dc2626" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </div>
+        <div class="pm-name">Low-Confidence &amp; Abstention</div>
+        <div class="pm-sub">Safe degradation, not hidden uncertainty</div>
+      </div>
+      <div class="pm-card">
+        <div class="pm-icon" style="background:#f5f3ff;">
+          <svg width="16" height="16" viewBox="0 0 18 18" fill="none"><path d="M9 2L2 15h14L9 2z" stroke="#6d28d9" stroke-width="1.5" stroke-linejoin="round"/><path d="M9 8v3M9 13v.5" stroke="#6d28d9" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </div>
+        <div class="pm-name">Override &amp; Escalation</div>
+        <div class="pm-sub">First-class events, fully captured and auditable</div>
+      </div>
+      <div class="pm-card">
+        <div class="pm-icon" style="background:#dcfce7;">
+          <svg width="16" height="16" viewBox="0 0 18 18" fill="none"><path d="M3 9l4 4 8-8" stroke="#16a34a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div class="pm-name">Safe Automation Boundaries</div>
+        <div class="pm-sub">AI prepares — humans stay accountable</div>
+      </div>
+    </div>
+
+    <!-- Section 1: Scope -->
+    <h2 class="numbered"><span class="sec-num">1</span> Phase 1 Scope</h2>
+    <p style="font-size:.82rem;color:var(--text-dim);margin-bottom:.8rem;">The objective is to ensure the platform can move cases forward safely, not just generate intelligent outputs. Phase 1 covers:</p>
+    <div class="scope-chips">
+      <span class="sc-chip"><svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#16a34a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Workflow state transitions</span>
+      <span class="sc-chip"><svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#16a34a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Review-ready vs manual-intervention routing</span>
+      <span class="sc-chip"><svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#16a34a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Explicit human control points</span>
+      <span class="sc-chip"><svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#16a34a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Low-confidence &amp; abstention handling</span>
+      <span class="sc-chip"><svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#16a34a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Manual review gates</span>
+      <span class="sc-chip"><svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#16a34a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Override capture</span>
+      <span class="sc-chip"><svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#16a34a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Escalation routing</span>
+      <span class="sc-chip"><svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#16a34a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Safe automation boundaries</span>
+      <span class="sc-chip"><svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#16a34a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Audit logging of all workflow &amp; reviewer actions</span>
+    </div>
+
+    <!-- Section 2: Workflow transitions -->
+    <h2 class="numbered"><span class="sec-num">2</span> Workflow State Transitions</h2>
+    <p style="font-size:.82rem;color:var(--text-dim);margin-bottom:.8rem;">Ingestion and intelligence outputs directly determine whether a case advances to reviewer handling or is blocked for intervention.</p>
+    <div class="wf-transition">
+      <div class="wf-row">
+        <div class="wf-from">Uploaded</div>
+        <span class="wf-arrow">→</span>
+        <div class="wf-to ok">Validated</div>
+      </div>
+      <div class="wf-row">
+        <div class="wf-from">Validated</div>
+        <span class="wf-arrow">→</span>
+        <div class="wf-to ok">Processing</div>
+      </div>
+      <div class="wf-row">
+        <div class="wf-from">Processing</div>
+        <span class="wf-arrow">→</span>
+        <div class="wf-to warn">Quality Check Pending</div>
+      </div>
+      <div class="wf-row">
+        <div class="wf-from">Quality Check Passed</div>
+        <span class="wf-arrow">→</span>
+        <div class="wf-to ok">Review Ready</div>
+      </div>
+      <div class="wf-row">
+        <div class="wf-from">Quality Check Failed</div>
+        <span class="wf-arrow">→</span>
+        <div class="wf-to err">Manual Intervention Required</div>
+      </div>
+      <div class="wf-row">
+        <div class="wf-from">Reprocessed</div>
+        <span class="wf-arrow">→</span>
+        <div class="wf-to ok">Review Ready</div>
+        <span style="font-size:.72rem;color:var(--text-dim);margin-left:.5rem;">or</span>
+        <div class="wf-to err" style="margin-left:.4rem;">Failed Again</div>
+      </div>
+    </div>
+
+    <!-- Section 3: HITL design -->
+    <h2 class="numbered"><span class="sec-num">3</span> Human-in-the-Loop Design</h2>
+    <div class="dp-note"><strong>Design principle:</strong> The KYB copilot is a decision-support system, not an autonomous compliance decision-maker. AI assists the workflow; humans remain accountable for the outcome.</div>
+    <p style="font-size:.82rem;color:var(--text-dim);margin-bottom:.8rem;">Reviewers remain accountable for evidence validation, open item confirmation, follow-up handling, escalation, and final case disposition. Required human control points:</p>
+    <div class="hitl-grid">
+      <div class="hitl-item"><div class="hitl-num">1</div><div class="hitl-label">Review of AI-generated findings</div></div>
+      <div class="hitl-item"><div class="hitl-num">2</div><div class="hitl-label">Validation of evidence sufficiency</div></div>
+      <div class="hitl-item"><div class="hitl-num">3</div><div class="hitl-label">Confirmation or editing of open items</div></div>
+      <div class="hitl-item"><div class="hitl-num">4</div><div class="hitl-label">Override of incorrect system outputs</div></div>
+      <div class="hitl-item"><div class="hitl-num">5</div><div class="hitl-label">Approval of follow-up communication</div></div>
+      <div class="hitl-item"><div class="hitl-num">6</div><div class="hitl-label">Acceptance or rejection of recommendations</div></div>
+      <div class="hitl-item"><div class="hitl-num">7</div><div class="hitl-label">Escalation to specialist or compliance review</div></div>
+      <div class="hitl-item"><div class="hitl-num">8</div><div class="hitl-label">Final decision submission</div></div>
+    </div>
+
+    <!-- Section 4: Low confidence & abstention -->
+    <h2 class="numbered"><span class="sec-num">4</span> Low-Confidence &amp; Abstention Handling</h2>
+    <div class="dp-note warn"><strong>Principle:</strong> Low confidence should trigger safe degradation — not hidden uncertainty. "Insufficient evidence to recommend" is safer than an unsupported conclusion.</div>
+
+    <p style="font-size:.78rem;font-weight:700;color:var(--text);margin-bottom:.6rem;">Low-Confidence Triggers</p>
+    <div class="trigger-grid">
+      <div class="trig-item"><svg width="12" height="12" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" stroke="#dc2626" stroke-width="1.3"/><path d="M7 4v3M7 9v.5" stroke="#dc2626" stroke-width="1.3" stroke-linecap="round"/></svg>Weak retrieval</div>
+      <div class="trig-item"><svg width="12" height="12" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" stroke="#dc2626" stroke-width="1.3"/><path d="M7 4v3M7 9v.5" stroke="#dc2626" stroke-width="1.3" stroke-linecap="round"/></svg>Poor OCR quality</div>
+      <div class="trig-item"><svg width="12" height="12" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" stroke="#dc2626" stroke-width="1.3"/><path d="M7 4v3M7 9v.5" stroke="#dc2626" stroke-width="1.3" stroke-linecap="round"/></svg>Conflicting evidence</div>
+      <div class="trig-item"><svg width="12" height="12" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" stroke="#dc2626" stroke-width="1.3"/><path d="M7 4v3M7 9v.5" stroke="#dc2626" stroke-width="1.3" stroke-linecap="round"/></svg>Low extraction confidence</div>
+      <div class="trig-item"><svg width="12" height="12" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" stroke="#dc2626" stroke-width="1.3"/><path d="M7 4v3M7 9v.5" stroke="#dc2626" stroke-width="1.3" stroke-linecap="round"/></svg>Unsupported policy mapping</div>
+      <div class="trig-item"><svg width="12" height="12" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" stroke="#dc2626" stroke-width="1.3"/><path d="M7 4v3M7 9v.5" stroke="#dc2626" stroke-width="1.3" stroke-linecap="round"/></svg>Ambiguous entity resolution</div>
+      <div class="trig-item"><svg width="12" height="12" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" stroke="#dc2626" stroke-width="1.3"/><path d="M7 4v3M7 9v.5" stroke="#dc2626" stroke-width="1.3" stroke-linecap="round"/></svg>Incomplete document coverage</div>
+      <div class="trig-item"><svg width="12" height="12" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" stroke="#dc2626" stroke-width="1.3"/><path d="M7 4v3M7 9v.5" stroke="#dc2626" stroke-width="1.3" stroke-linecap="round"/></svg>Citation binding fails</div>
+    </div>
+
+    <div class="ab-2col">
+      <div class="ab-block">
+        <div class="ab-title">Expected System Behaviour — Low Confidence</div>
+        <ul class="rl">
+          <li><span class="rl-dot" style="background:#1d4ed8;"></span>Reduce recommendation strength</li>
+          <li><span class="rl-dot" style="background:#1d4ed8;"></span>Surface uncertainty explicitly to reviewer</li>
+          <li><span class="rl-dot" style="background:#1d4ed8;"></span>Highlight likely causes in plain language</li>
+          <li><span class="rl-dot" style="background:#1d4ed8;"></span>Direct reviewer attention to weak criteria</li>
+          <li><span class="rl-dot" style="background:#1d4ed8;"></span>Suggest follow-up instead of forcing conclusions</li>
+          <li><span class="rl-dot" style="background:#1d4ed8;"></span>Route to manual review where required</li>
+        </ul>
+      </div>
+      <div class="ab-block">
+        <div class="ab-title">Abstention Conditions</div>
+        <ul class="rl">
+          <li><span class="rl-dot" style="background:#dc2626;"></span>Evidence is insufficient for any safe conclusion</li>
+          <li><span class="rl-dot" style="background:#dc2626;"></span>Evidence conflicts materially across sources</li>
+          <li><span class="rl-dot" style="background:#dc2626;"></span>Policy retrieval or citation binding fails</li>
+          <li><span class="rl-dot" style="background:#dc2626;"></span>Ingestion quality is too poor to rely on</li>
+          <li><span class="rl-dot" style="background:#dc2626;"></span>Case falls outside supported policy scope</li>
+          <li><span class="rl-dot" style="background:#dc2626;"></span>Required document coverage is incomplete</li>
+        </ul>
+      </div>
+    </div>
+    <p style="font-size:.78rem;font-weight:700;color:var(--text);margin-bottom:.55rem;">Abstention Response Must Return</p>
+    <div class="abret-chips">
+      <span class="abret-chip">Reason for abstention</span>
+      <span class="abret-chip">Impacted criteria</span>
+      <span class="abret-chip">Missing evidence summary</span>
+      <span class="abret-chip">Recommended next action</span>
+    </div>
+
+    <!-- Section 5: Manual review gates -->
+    <h2 class="numbered"><span class="sec-num">5</span> Manual Review Gates</h2>
+    <div class="dp-note"><strong>These gates must be policy-configurable</strong> — not embedded only in model behaviour. Certain case types always require manual review regardless of confidence score.</div>
+    <div class="gate-grid">
+      <div class="gate-item"><svg width="13" height="13" viewBox="0 0 16 16" fill="none"><rect x="3" y="7" width="10" height="7" rx="1.5" stroke="currentColor" stroke-width="1.3"/><path d="M5 7V5a3 3 0 016 0v2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>High-risk jurisdictions</div>
+      <div class="gate-item"><svg width="13" height="13" viewBox="0 0 16 16" fill="none"><rect x="3" y="7" width="10" height="7" rx="1.5" stroke="currentColor" stroke-width="1.3"/><path d="M5 7V5a3 3 0 016 0v2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>Prohibited or restricted category signals</div>
+      <div class="gate-item"><svg width="13" height="13" viewBox="0 0 16 16" fill="none"><rect x="3" y="7" width="10" height="7" rx="1.5" stroke="currentColor" stroke-width="1.3"/><path d="M5 7V5a3 3 0 016 0v2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>Ownership complexity above threshold</div>
+      <div class="gate-item"><svg width="13" height="13" viewBox="0 0 16 16" fill="none"><rect x="3" y="7" width="10" height="7" rx="1.5" stroke="currentColor" stroke-width="1.3"/><path d="M5 7V5a3 3 0 016 0v2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>Material inconsistencies in core documents</div>
+      <div class="gate-item"><svg width="13" height="13" viewBox="0 0 16 16" fill="none"><rect x="3" y="7" width="10" height="7" rx="1.5" stroke="currentColor" stroke-width="1.3"/><path d="M5 7V5a3 3 0 016 0v2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>Poor-quality key evidence</div>
+      <div class="gate-item"><svg width="13" height="13" viewBox="0 0 16 16" fill="none"><rect x="3" y="7" width="10" height="7" rx="1.5" stroke="currentColor" stroke-width="1.3"/><path d="M5 7V5a3 3 0 016 0v2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>Sanctions / adverse media flags</div>
+      <div class="gate-item"><svg width="13" height="13" viewBox="0 0 16 16" fill="none"><rect x="3" y="7" width="10" height="7" rx="1.5" stroke="currentColor" stroke-width="1.3"/><path d="M5 7V5a3 3 0 016 0v2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>Policy exception scenarios</div>
+      <div class="gate-item"><svg width="13" height="13" viewBox="0 0 16 16" fill="none"><rect x="3" y="7" width="10" height="7" rx="1.5" stroke="currentColor" stroke-width="1.3"/><path d="M5 7V5a3 3 0 016 0v2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>Unsupported document types or languages</div>
+      <div class="gate-item"><svg width="13" height="13" viewBox="0 0 16 16" fill="none"><rect x="3" y="7" width="10" height="7" rx="1.5" stroke="currentColor" stroke-width="1.3"/><path d="M5 7V5a3 3 0 016 0v2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>Judgment-heavy escalations</div>
+    </div>
+
+    <!-- Section 6: Override & escalation -->
+    <h2 class="numbered"><span class="sec-num">6</span> Override &amp; Escalation</h2>
+    <p style="font-size:.82rem;color:var(--text-dim);margin-bottom:.8rem;">Reviewer overrides are first-class system events — not exceptions to be silently absorbed. Every override must be captured in full.</p>
+    <div class="ovr-grid">
+      <div class="ovr-item"><div class="ovr-label">Original AI Finding</div><div class="ovr-sub">What the system concluded</div></div>
+      <div class="ovr-item"><div class="ovr-label">Original Recommendation</div><div class="ovr-sub">What the system suggested</div></div>
+      <div class="ovr-item"><div class="ovr-label">Override Action</div><div class="ovr-sub">What the reviewer changed it to</div></div>
+      <div class="ovr-item"><div class="ovr-label">Override Rationale</div><div class="ovr-sub">Reviewer-provided reason</div></div>
+      <div class="ovr-item"><div class="ovr-label">Evidence Reference</div><div class="ovr-sub">What evidence the override relied on</div></div>
+      <div class="ovr-item"><div class="ovr-label">Timestamp</div><div class="ovr-sub">When the override occurred</div></div>
+      <div class="ovr-item"><div class="ovr-label">Reviewer Identity / Role</div><div class="ovr-sub">Who overrode and at what authority level</div></div>
+      <div class="ovr-item"><div class="ovr-label">Outcome Impact</div><div class="ovr-sub">Whether override changed the final decision</div></div>
+    </div>
+
+    <p style="font-size:.78rem;font-weight:700;color:var(--text);margin:.75rem 0 .55rem;">Escalation — What Must Be Carried Forward</p>
+    <div class="esc-chips">
+      <span class="esc-chip">Escalation reason</span>
+      <span class="esc-chip">Impacted criteria</span>
+      <span class="esc-chip">Evidence bundle</span>
+      <span class="esc-chip">Prior reviewer notes</span>
+      <span class="esc-chip">Open items</span>
+      <span class="esc-chip">Current status</span>
+      <span class="esc-chip">Assigned owner / queue</span>
+    </div>
+    <div class="dp-note">This ensures the next reviewer does not need to reconstruct the case manually.</div>
+
+    <!-- Section 7: Safe automation boundaries -->
+    <h2 class="numbered"><span class="sec-num">7</span> Safe Automation Boundaries</h2>
+    <div class="dp-note green"><strong>Principle:</strong> Automate preparation, not accountability.</div>
+    <div class="safe-2col">
+      <div class="safe-block safe-yes">
+        <div class="safe-title">Suitable for AI Assistance</div>
+        <ul class="rl">
+          <li><span class="rl-dot" style="background:#16a34a;"></span>Summarising case evidence</li>
+          <li><span class="rl-dot" style="background:#16a34a;"></span>Surfacing relevant policy</li>
+          <li><span class="rl-dot" style="background:#16a34a;"></span>Highlighting missing documents</li>
+          <li><span class="rl-dot" style="background:#16a34a;"></span>Proposing open items</li>
+          <li><span class="rl-dot" style="background:#16a34a;"></span>Identifying inconsistencies</li>
+          <li><span class="rl-dot" style="background:#16a34a;"></span>Drafting reviewer notes</li>
+          <li><span class="rl-dot" style="background:#16a34a;"></span>Suggesting recommendation options</li>
+          <li><span class="rl-dot" style="background:#16a34a;"></span>Preparing follow-up requests</li>
+        </ul>
+      </div>
+      <div class="safe-block safe-no">
+        <div class="safe-title">Not Suitable for Autonomous Action</div>
+        <ul class="rl">
+          <li><span class="rl-dot" style="background:#dc2626;"></span>Final compliance approval or rejection</li>
+          <li><span class="rl-dot" style="background:#dc2626;"></span>Policy exception granting</li>
+          <li><span class="rl-dot" style="background:#dc2626;"></span>Irreversible disposition actions</li>
+          <li><span class="rl-dot" style="background:#dc2626;"></span>Uncited factual assertions</li>
+          <li><span class="rl-dot" style="background:#dc2626;"></span>Applicant-facing requests without human approval</li>
+          <li><span class="rl-dot" style="background:#dc2626;"></span>Automatic resolution of material contradictions</li>
+          <li><span class="rl-dot" style="background:#dc2626;"></span>Unsupported policy interpretation</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Section 8: Reviewer trust -->
+    <h2 class="numbered"><span class="sec-num">8</span> Reviewer Trust &amp; Experience</h2>
+    <p style="font-size:.82rem;color:var(--text-dim);margin-bottom:.8rem;">The workflow should help every reviewer answer three questions quickly:</p>
+    <div class="q-grid">
+      <div class="q-card"><div class="q-num">Question 1</div><div class="q-text">What did the system find?</div></div>
+      <div class="q-card"><div class="q-num">Question 2</div><div class="q-text">Why does it believe that?</div></div>
+      <div class="q-card"><div class="q-num">Question 3</div><div class="q-text">What should happen next?</div></div>
+    </div>
+    <div class="ab-block" style="margin-bottom:1.75rem;">
+      <div class="ab-title">To Support This, the Experience Must</div>
+      <ul class="rl" style="display:grid;grid-template-columns:1fr 1fr;gap:.3rem .9rem;">
+        <li><span class="rl-dot" style="background:#1d4ed8;"></span>Expose evidence before persuasion</li>
+        <li><span class="rl-dot" style="background:#1d4ed8;"></span>Make uncertainty visible</li>
+        <li><span class="rl-dot" style="background:#1d4ed8;"></span>Separate facts from recommendations</li>
+        <li><span class="rl-dot" style="background:#1d4ed8;"></span>Distinguish system suggestions from approved decisions</li>
+        <li><span class="rl-dot" style="background:#1d4ed8;"></span>Preserve manual control at all stages</li>
+        <li><span class="rl-dot" style="background:#1d4ed8;"></span>Avoid black-box interactions</li>
+      </ul>
+    </div>
+
+    <!-- Section 9: Audit logging -->
+    <h2 class="numbered"><span class="sec-num">9</span> Auditability &amp; Logging</h2>
+    <p style="font-size:.82rem;color:var(--text-dim);margin-bottom:.8rem;">Workflow, fallback, and reviewer actions must be fully logged to support decision reconstruction, QA, compliance audit, and model improvement.</p>
+    <div class="audit-grid">
+      <div class="audit-item"><span class="audit-dot"></span>Workflow state transitions</div>
+      <div class="audit-item"><span class="audit-dot"></span>Low-confidence trigger events</div>
+      <div class="audit-item"><span class="audit-dot"></span>Abstention events + reason</div>
+      <div class="audit-item"><span class="audit-dot"></span>Open item creation / edits / closure</div>
+      <div class="audit-item"><span class="audit-dot"></span>Reviewer confirmation / rejection of suggestions</div>
+      <div class="audit-item"><span class="audit-dot"></span>Override captures (full schema)</div>
+      <div class="audit-item"><span class="audit-dot"></span>Escalation events + carry-forward context</div>
+      <div class="audit-item"><span class="audit-dot"></span>Final disposition</div>
+      <div class="audit-item"><span class="audit-dot"></span>Actor identity + timestamp for all material actions</div>
+    </div>
+
+    <!-- Section 10: Success metrics -->
+    <h2 class="numbered"><span class="sec-num">10</span> Phase 1 Success Metrics</h2>
+    <div class="metrics-grid">
+      <div class="metric-item"><div class="metric-label">Review-ready conversion rate</div></div>
+      <div class="metric-item"><div class="metric-label">Manual-review routing rate</div></div>
+      <div class="metric-item"><div class="metric-label">Low-confidence rate</div></div>
+      <div class="metric-item"><div class="metric-label">Abstention rate</div></div>
+      <div class="metric-item"><div class="metric-label">Override rate</div></div>
+      <div class="metric-item"><div class="metric-label">Escalation rate</div></div>
+      <div class="metric-item"><div class="metric-label">Open-item acceptance rate</div></div>
+      <div class="metric-item"><div class="metric-label">Avg. time to resolve open items</div></div>
+      <div class="metric-item"><div class="metric-label">Final decision turnaround time</div></div>
+      <div class="metric-item"><div class="metric-label">Reviewer agreement with evidence sufficiency</div></div>
+    </div>
+
+    <!-- Section 11: Design principles -->
+    <h2 class="numbered"><span class="sec-num">11</span> Key Design Principles</h2>
+    <div class="prin-grid">
+      <div class="prin-item"><svg width="13" height="13" viewBox="0 0 14 14" fill="none"><path d="M2 7l3 3 7-7" stroke="#16a34a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Original document remains the source artifact</div>
+      <div class="prin-item"><svg width="13" height="13" viewBox="0 0 14 14" fill="none"><path d="M2 7l3 3 7-7" stroke="#16a34a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Processing outputs are versioned, not silently replaced</div>
+      <div class="prin-item"><svg width="13" height="13" viewBox="0 0 14 14" fill="none"><path d="M2 7l3 3 7-7" stroke="#16a34a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Low-quality inputs block or warn — never silently pass</div>
+      <div class="prin-item"><svg width="13" height="13" viewBox="0 0 14 14" fill="none"><path d="M2 7l3 3 7-7" stroke="#16a34a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Workflow state reflects real evidence and review readiness</div>
+      <div class="prin-item"><svg width="13" height="13" viewBox="0 0 14 14" fill="none"><path d="M2 7l3 3 7-7" stroke="#16a34a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Every reviewer action must be traceable</div>
+      <div class="prin-item"><svg width="13" height="13" viewBox="0 0 14 14" fill="none"><path d="M2 7l3 3 7-7" stroke="#16a34a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Human fallback must preserve auditability</div>
+      <div class="prin-item"><svg width="13" height="13" viewBox="0 0 14 14" fill="none"><path d="M2 7l3 3 7-7" stroke="#16a34a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Failure must be explicit and recoverable</div>
+      <div class="prin-item"><svg width="13" height="13" viewBox="0 0 14 14" fill="none"><path d="M2 7l3 3 7-7" stroke="#16a34a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Final case disposition remains a human action</div>
+    </div>
+
+    <!-- Section 12: Non-goals -->
+    <h2 class="numbered"><span class="sec-num">12</span> Non-Goals</h2>
+    <div class="ng-grid">
+      <div class="ng-item"><svg class="ng-x" width="13" height="13" viewBox="0 0 14 14" fill="none"><path d="M4 4l6 6M10 4l-6 6" stroke="#dc2626" stroke-width="1.5" stroke-linecap="round"/></svg>Replace reviewer judgment</div>
+      <div class="ng-item"><svg class="ng-x" width="13" height="13" viewBox="0 0 14 14" fill="none"><path d="M4 4l6 6M10 4l-6 6" stroke="#dc2626" stroke-width="1.5" stroke-linecap="round"/></svg>Act on uncited reasoning</div>
+      <div class="ng-item"><svg class="ng-x" width="13" height="13" viewBox="0 0 14 14" fill="none"><path d="M4 4l6 6M10 4l-6 6" stroke="#dc2626" stroke-width="1.5" stroke-linecap="round"/></svg>Silently resolve material contradictions</div>
+      <div class="ng-item"><svg class="ng-x" width="13" height="13" viewBox="0 0 14 14" fill="none"><path d="M4 4l6 6M10 4l-6 6" stroke="#dc2626" stroke-width="1.5" stroke-linecap="round"/></svg>Auto-close evidence gaps without reviewer confirmation</div>
+      <div class="ng-item"><svg class="ng-x" width="13" height="13" viewBox="0 0 14 14" fill="none"><path d="M4 4l6 6M10 4l-6 6" stroke="#dc2626" stroke-width="1.5" stroke-linecap="round"/></svg>Make final compliance decisions autonomously</div>
+      <div class="ng-item"><svg class="ng-x" width="13" height="13" viewBox="0 0 14 14" fill="none"><path d="M4 4l6 6M10 4l-6 6" stroke="#dc2626" stroke-width="1.5" stroke-linecap="round"/></svg>Conceal uncertainty in polished language</div>
+    </div>
+
+    <!-- Final principle -->
+    <div class="final-principle">
+      <div class="fp-label">Phase 1 Design Principle</div>
+      <div class="fp-text">Workflow orchestration should ensure AI-assisted review remains operationally usable, governed, and safe.</div>
+      <div class="fp-sub">Help reviewers move cases forward with more speed and consistency — while preserving clear control over exceptions, escalations, and final decisions.</div>
+    </div>
+
+    <nav class="section-nav">
+      <a href="reviewer-assist.html" class="nav-btn"><span class="nav-btn-dir">← Previous</span><span class="nav-btn-title">Reviewer Assist / Case Intelligence</span></a>
+      <span class="nav-center">26 of 39</span>
+      <a href="confidence-scoring.html" class="nav-btn next"><span class="nav-btn-dir">Next →</span><span class="nav-btn-title">Confidence Scoring &amp; Uncertainty</span></a>
+    </nav>
+  </main>
+</div>
+<footer class="site-footer">Reap AI Platform — KYB Review Copilot &nbsp;·&nbsp; Technical PRD</footer>
+<script src="../js/main.js"></script>
+</body>
+</html>

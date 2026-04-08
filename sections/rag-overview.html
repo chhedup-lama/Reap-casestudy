@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>5.1 RAG Architecture Overview — Reap KYB PRD</title>
+  <link rel="stylesheet" href="../css/styles.css" />
+  <style>
+    /* ── Core principle banner ── */
+    .rag-principle {
+      background:var(--navy); border-radius:12px; padding:1.4rem 1.6rem;
+      margin-bottom:2rem; display:flex; gap:1rem; align-items:flex-start;
+    }
+    .rag-principle-icon {
+      width:44px; height:44px; background:rgba(99,102,241,.25); border-radius:10px;
+      display:flex; align-items:center; justify-content:center; flex-shrink:0;
+    }
+    .rag-principle-body { flex:1; }
+    .rag-principle-label { font-size:.68rem; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:#818cf8; margin-bottom:.35rem; }
+    .rag-principle-text { color:#e2e8f0; font-size:.9rem; line-height:1.6; }
+    .rag-principle-text strong { color:#fff; }
+    .rag-principle-pills { display:flex; gap:.5rem; flex-wrap:wrap; margin-top:.75rem; }
+    .rpp { font-size:.69rem; font-weight:600; background:rgba(255,255,255,.08); color:#c7d2fe;
+           border-radius:4px; padding:.2rem .55rem; border:1px solid rgba(255,255,255,.1); }
+
+    /* ── Why RAG vs LLM ── */
+    .versus-grid { display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-bottom:2rem; }
+    .versus-card { border-radius:10px; padding:1.1rem 1.2rem; border:1px solid var(--border); }
+    .versus-card.bad  { background:#fff5f5; border-color:#fecaca; }
+    .versus-card.good { background:#f0fdf4; border-color:#bbf7d0; }
+    .versus-hdr { display:flex; align-items:center; gap:.5rem; font-weight:700; font-size:.82rem; margin-bottom:.7rem; }
+    .versus-list { list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:.4rem; }
+    .versus-list li { display:flex; align-items:flex-start; gap:.5rem; font-size:.8rem; line-height:1.45; }
+    .versus-list li .vi { flex-shrink:0; margin-top:2px; }
+
+    /* Compliance-fit row */
+    .cf-row { display:grid; grid-template-columns:repeat(4,1fr); gap:.7rem; margin-bottom:2rem; }
+    .cf-card {
+      background:var(--surface); border:1px solid var(--border); border-radius:9px;
+      padding:.8rem .9rem; text-align:center;
+    }
+    .cf-card-icon { width:32px; height:32px; border-radius:7px; margin:0 auto .5rem;
+      display:flex; align-items:center; justify-content:center; }
+    .cf-card-label { font-size:.73rem; font-weight:700; color:var(--text); }
+    .cf-card-sub { font-size:.68rem; color:var(--text-dim); margin-top:2px; }
+
+    /* ── Design mantra ── */
+    .mantra-bar {
+      background:#1e1b4b; border-left:4px solid #6366f1; border-radius:0 8px 8px 0;
+      padding:.85rem 1.2rem; margin-bottom:2rem; font-size:.85rem;
+      color:#c7d2fe; font-style:italic; font-weight:500;
+    }
+    .mantra-bar strong { color:#fff; font-style:normal; }
+
+    /* ── Component grid ── */
+    .comp-layer-label {
+      font-size:.68rem; font-weight:700; letter-spacing:.09em; text-transform:uppercase;
+      color:var(--text-dim); margin:1.25rem 0 .5rem; padding-left:.25rem;
+      display:flex; align-items:center; gap:.5rem;
+    }
+    .comp-layer-label::after { content:''; flex:1; height:1px; background:var(--border); }
+    .comp-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:.7rem; margin-bottom:.5rem; }
+    .comp-card {
+      background:var(--surface); border:1px solid var(--border); border-radius:10px;
+      padding:.9rem 1rem; display:flex; gap:.75rem; align-items:flex-start;
+    }
+    .comp-card-icon {
+      width:36px; height:36px; border-radius:8px; flex-shrink:0;
+      display:flex; align-items:center; justify-content:center;
+    }
+    .comp-card-name { font-size:.82rem; font-weight:700; color:var(--text); margin-bottom:.2rem; }
+    .comp-card-role { font-size:.74rem; color:var(--text-mid); line-height:1.4; margin-bottom:.35rem; }
+    .comp-tech { font-size:.67rem; font-weight:600; color:#6366f1; background:#eef2ff;
+      border:1px solid #c7d2fe; border-radius:3px; padding:.1rem .4rem; display:inline-block; }
+
+    /* ── Two corpora ── */
+    .corpora-grid { display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-bottom:2rem; }
+    .corpus-card { border-radius:10px; padding:1.1rem 1.2rem; border:1px solid var(--border); }
+    .corpus-c1 { background:#eff6ff; border-color:#bfdbfe; }
+    .corpus-c2 { background:#fdf4ff; border-color:#e9d5ff; }
+    .corpus-hdr { display:flex; align-items:center; gap:.6rem; margin-bottom:.3rem; }
+    .corpus-badge { font-size:.67rem; font-weight:700; text-transform:uppercase; letter-spacing:.07em;
+      border-radius:4px; padding:.15rem .5rem; }
+    .corpus-c1 .corpus-badge { background:#dbeafe; color:#1e40af; }
+    .corpus-c2 .corpus-badge { background:#f3e8ff; color:#6b21a8; }
+    .corpus-purpose { font-size:.74rem; color:var(--text-mid); margin:.5rem 0 .6rem; font-style:italic; }
+    .corpus-chips { display:flex; flex-wrap:wrap; gap:.3rem; }
+    .corpus-chip { font-size:.69rem; background:rgba(255,255,255,.7); color:var(--text);
+      border:1px solid rgba(0,0,0,.08); border-radius:3px; padding:.12rem .4rem; }
+    .corpus-req { font-size:.72rem; margin-top:.7rem; padding:.5rem .7rem;
+      border-radius:5px; font-weight:500; }
+    .corpus-c1 .corpus-req { background:rgba(29,78,216,.08); color:#1e40af; }
+    .corpus-c2 .corpus-req { background:rgba(109,40,217,.08); color:#6b21a8; }
+
+    /* Two-corpus reasoning model */
+    .two-corpus-logic {
+      background:#f8fafc; border:1px solid var(--border); border-radius:10px;
+      padding:.9rem 1.1rem; margin-bottom:2rem;
+      display:grid; grid-template-columns:1fr 1fr 1fr; gap:.75rem;
+    }
+    .tcl-item { text-align:center; }
+    .tcl-q { font-size:.72rem; font-weight:600; color:var(--text-dim); margin-bottom:.25rem; }
+    .tcl-a { font-size:.78rem; font-weight:700; color:var(--text); }
+    .tcl-sep { display:flex; align-items:center; justify-content:center; font-size:1.2rem; color:var(--text-dim); }
+
+    /* ── Retrieval flow ── */
+    .flow-steps { display:flex; flex-direction:column; gap:.5rem; margin-bottom:2rem; }
+    .flow-step {
+      display:flex; align-items:flex-start; gap:.9rem; background:var(--surface);
+      border:1px solid var(--border); border-radius:9px; padding:.7rem .9rem;
+    }
+    .flow-num {
+      width:28px; height:28px; border-radius:50%; display:flex; align-items:center;
+      justify-content:center; font-size:.72rem; font-weight:800; flex-shrink:0;
+      margin-top:1px;
+    }
+    .flow-step-title { font-size:.82rem; font-weight:700; color:var(--text); }
+    .flow-step-sub { font-size:.73rem; color:var(--text-dim); margin-top:1px; }
+
+    /* ── Citation model ── */
+    .cit-grid { display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-bottom:1rem; }
+    .cit-block { background:var(--surface); border:1px solid var(--border); border-radius:9px; padding:.9rem 1rem; }
+    .cit-block-title { font-size:.73rem; font-weight:700; text-transform:uppercase; letter-spacing:.07em;
+      color:var(--text-dim); margin-bottom:.6rem; }
+    .cit-item { display:flex; align-items:flex-start; gap:.5rem; font-size:.79rem;
+      color:var(--text-mid); margin-bottom:.4rem; line-height:1.4; }
+    .cit-item:last-child { margin-bottom:0; }
+    .cit-dot { width:6px; height:6px; border-radius:50%; flex-shrink:0; margin-top:5px; }
+
+    .guardrail-bar {
+      background:#fff7ed; border:1px solid #fcd34d; border-left:4px solid #f59e0b;
+      border-radius:0 8px 8px 0; padding:.7rem 1rem; font-size:.8rem;
+      color:#92400e; margin-bottom:2rem; display:flex; align-items:flex-start; gap:.6rem;
+    }
+
+    /* ── Confidence signals ── */
+    .conf-signals { display:flex; flex-wrap:wrap; gap:.5rem; margin-bottom:1rem; }
+    .conf-sig {
+      display:flex; align-items:center; gap:.4rem; font-size:.77rem; font-weight:600;
+      background:#f0fdf4; color:#15803d; border:1px solid #bbf7d0;
+      border-radius:5px; padding:.3rem .65rem;
+    }
+    .conf-use { font-size:.8rem; color:var(--text-mid); margin-bottom:1rem; line-height:1.5; }
+    .abstain-grid { display:grid; grid-template-columns:1fr 1fr; gap:.5rem; margin-bottom:2rem; }
+    .abstain-item {
+      display:flex; align-items:flex-start; gap:.5rem; background:#fff5f5;
+      border:1px solid #fecaca; border-radius:7px; padding:.55rem .75rem;
+      font-size:.77rem; color:#b91c1c; line-height:1.4;
+    }
+    .abstain-item svg { flex-shrink:0; margin-top:1px; }
+
+    /* ── Design considerations ── */
+    .dc-grid { display:grid; grid-template-columns:1fr 1fr; gap:.6rem; margin-bottom:2rem; }
+    .dc-item {
+      background:var(--surface); border:1px solid var(--border); border-radius:8px;
+      padding:.7rem .9rem; display:flex; gap:.7rem; align-items:flex-start;
+    }
+    .dc-num {
+      font-size:.68rem; font-weight:800; background:#e0e7ff; color:#3730a3;
+      border-radius:4px; padding:.15rem .4rem; flex-shrink:0; margin-top:1px;
+    }
+    .dc-title { font-size:.8rem; font-weight:700; color:var(--text); }
+    .dc-body { font-size:.73rem; color:var(--text-dim); margin-top:2px; line-height:1.4; }
+
+    /* ── Non-goals ── */
+    .nongoal-grid { display:grid; grid-template-columns:1fr 1fr; gap:.5rem; margin-bottom:2rem; }
+    .ng-item {
+      display:flex; align-items:flex-start; gap:.5rem; font-size:.78rem;
+      color:var(--text-mid); line-height:1.4; padding:.45rem .6rem;
+      background:#fafafa; border:1px solid var(--border); border-radius:6px;
+    }
+    .ng-x { color:#dc2626; flex-shrink:0; }
+
+    /* ── Final principle ── */
+    .final-principle {
+      background:var(--navy); border-radius:12px; padding:1.2rem 1.5rem;
+      text-align:center; margin-bottom:2rem;
+    }
+    .fp-label { font-size:.68rem; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:#818cf8; margin-bottom:.5rem; }
+    .fp-text { font-size:.95rem; font-weight:600; color:#fff; line-height:1.55; }
+    .fp-sub { font-size:.79rem; color:#94a3b8; margin-top:.5rem; }
+
+    @media(max-width:800px){
+      .versus-grid,.corpora-grid,.cit-grid,.dc-grid,.nongoal-grid,.abstain-grid { grid-template-columns:1fr; }
+      .comp-grid { grid-template-columns:1fr 1fr; }
+      .cf-row { grid-template-columns:repeat(2,1fr); }
+      .two-corpus-logic { grid-template-columns:1fr; }
+    }
+    @media(max-width:540px){
+      .comp-grid { grid-template-columns:1fr; }
+      .cf-row { grid-template-columns:1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+<header class="site-header">
+  <div class="header-inner">
+    <a href="../index.html" class="site-logo"><div class="logo-mark">R</div><span>Reap AI Platform</span></a>
+    <div class="header-divider"></div><span class="header-subtitle">KYB Review Copilot</span>
+    <nav class="header-nav"><a href="../index.html">Overview</a><a href="solution-architecture.html">Architecture</a><a href="reviewer-workflow.html">Workflow</a></nav>
+  </div>
+</header>
+<div class="page-layout">
+  <aside class="sidebar">
+    <a href="../index.html" class="sidebar-back"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M9 11L5 7l4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg> All Sections</a>
+    <div class="sidebar-section-title">Block 5 — End to End Platform Components enabling KYB</div>
+    <ul class="sidebar-nav">
+      <li><a href="rag-overview.html" class="active">5.1 RAG Overview</a></li>
+      <li><a href="ingestion-pipeline.html">5.2 Input &amp; Intake Layer</a></li>
+      <li><a href="retrieval-policy.html">5.3 Document Intelligence</a></li>
+      <li><a href="llm-reasoning.html">5.4 Knowledge, Retrieval &amp; Policy Grounding</a></li>
+      <li><a href="reviewer-assist.html">5.5 Reviewer Assist</a></li>
+      <li><a href="workflow-orchestration.html">5.6 Workflow Orchestration</a></li>
+      <li><a href="confidence-scoring.html">5.7 Confidence Scoring</a></li>
+    </ul>
+  </aside>
+  <main class="content">
+    <nav class="breadcrumb"><a href="../index.html">Home</a><span class="breadcrumb-sep">›</span><span>Block 5 — End to End Platform Components enabling KYB</span><span class="breadcrumb-sep">›</span><span class="breadcrumb-current">5.1 RAG Architecture Overview</span></nav>
+    <div class="section-header">
+      <div class="section-block-tag" style="background:var(--b5)">Block 5 — End to End Platform Components enabling KYB</div>
+      <h1>RAG Architecture Overview</h1>
+      <p class="section-intro">Why Retrieval-Augmented Generation is the only appropriate pattern for compliance-critical KYB — and how it's designed here.</p>
+    </div>
+
+    <!-- Core Principle -->
+    <div class="rag-principle">
+      <div class="rag-principle-icon">
+        <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M11 3l2 5h5l-4 3 1.5 5L11 13l-4.5 3L8 11 4 8h5L11 3z" stroke="#818cf8" stroke-width="1.5" stroke-linejoin="round"/></svg>
+      </div>
+      <div class="rag-principle-body">
+        <div class="rag-principle-label">Core Principle</div>
+        <div class="rag-principle-text">A pure LLM is not sufficient for KYB. The task is <strong>evidence-based, policy-bound, and audit-sensitive</strong>. The model is <strong>not the source of truth</strong> — retrieved policy text, applicant documents, and reviewer-approved rules are.</div>
+        <div class="rag-principle-pills">
+          <span class="rpp">Traceable</span>
+          <span class="rpp">Auditable</span>
+          <span class="rpp">Policy-aligned</span>
+          <span class="rpp">Reviewer-verifiable</span>
+          <span class="rpp">Compliance-safe</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Why RAG vs Pure LLM -->
+    <h2>Why Not a Pure LLM</h2>
+    <div class="versus-grid">
+      <div class="versus-card bad">
+        <div class="versus-hdr" style="color:#b91c1c">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" stroke="#b91c1c" stroke-width="1.4"/><path d="M5 11l6-6M11 11L5 5" stroke="#b91c1c" stroke-width="1.4" stroke-linecap="round"/></svg>
+          Pure LLM — 3 failure modes
+        </div>
+        <ul class="versus-list">
+          <li><span class="vi"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 3v4m0 3h.01" stroke="#dc2626" stroke-width="1.5" stroke-linecap="round"/><circle cx="7" cy="7" r="6" stroke="#dc2626" stroke-width="1.3"/></svg></span><span><strong style="color:#b91c1c">Hallucination</strong> — fabricates plausible-sounding policy or facts with no grounding</span></li>
+          <li><span class="vi"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 3v4m0 3h.01" stroke="#dc2626" stroke-width="1.5" stroke-linecap="round"/><circle cx="7" cy="7" r="6" stroke="#dc2626" stroke-width="1.3"/></svg></span><span><strong style="color:#b91c1c">Staleness</strong> — training cutoff means policy changes go undetected</span></li>
+          <li><span class="vi"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 3v4m0 3h.01" stroke="#dc2626" stroke-width="1.5" stroke-linecap="round"/><circle cx="7" cy="7" r="6" stroke="#dc2626" stroke-width="1.3"/></svg></span><span><strong style="color:#b91c1c">Non-traceability</strong> — no evidence link means audit is impossible</span></li>
+        </ul>
+      </div>
+      <div class="versus-card good">
+        <div class="versus-hdr" style="color:#15803d">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" stroke="#15803d" stroke-width="1.4"/><path d="M5 8l2.5 2.5L11 5" stroke="#15803d" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          RAG — what it fixes
+        </div>
+        <ul class="versus-list">
+          <li><span class="vi"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 7l3 3 5-5" stroke="#16a34a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span>Retrieves current policy + case evidence <em>before</em> generating</span></li>
+          <li><span class="vi"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 7l3 3 5-5" stroke="#16a34a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span>Grounds every finding in retrievable source evidence</span></li>
+          <li><span class="vi"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 7l3 3 5-5" stroke="#16a34a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span>Attaches explicit citations to every claim and recommendation</span></li>
+          <li><span class="vi"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 7l3 3 5-5" stroke="#16a34a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span>Abstains when evidence is weak, missing, or conflicting</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Compliance fit -->
+    <div class="cf-row">
+      <div class="cf-card">
+        <div class="cf-card-icon" style="background:#dbeafe"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 2l1.5 3.5L13 6l-2.5 2.5.5 3.5L8 10.5 5 12l.5-3.5L3 6l3.5-.5L8 2z" stroke="#1e40af" stroke-width="1.3" stroke-linejoin="round"/></svg></div>
+        <div class="cf-card-label">Fact-checking</div><div class="cf-card-sub">Evidence vs submission</div>
+      </div>
+      <div class="cf-card">
+        <div class="cf-card-icon" style="background:#f3e8ff"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="3" y="2" width="10" height="12" rx="2" stroke="#7c3aed" stroke-width="1.3"/><path d="M6 6h4M6 9h3" stroke="#7c3aed" stroke-width="1.3" stroke-linecap="round"/></svg></div>
+        <div class="cf-card-label">Policy application</div><div class="cf-card-sub">Rules, not model memory</div>
+      </div>
+      <div class="cf-card">
+        <div class="cf-card-icon" style="background:#dcfce7"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 3v4l3 2" stroke="#15803d" stroke-width="1.4" stroke-linecap="round"/><circle cx="8" cy="8" r="6" stroke="#15803d" stroke-width="1.3"/></svg></div>
+        <div class="cf-card-label">Gap identification</div><div class="cf-card-sub">Missing or inconsistent docs</div>
+      </div>
+      <div class="cf-card">
+        <div class="cf-card-icon" style="background:#fee2e2"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M5 8h6M8 5v6" stroke="#b91c1c" stroke-width="1.4" stroke-linecap="round"/><circle cx="8" cy="8" r="6" stroke="#b91c1c" stroke-width="1.3"/></svg></div>
+        <div class="cf-card-label">Audit chain</div><div class="cf-card-sub">Evidence lineage preserved</div>
+      </div>
+    </div>
+
+    <!-- Mantra -->
+    <div class="mantra-bar">
+      <strong>Generate only after retrieving.</strong> &nbsp;Recommend only with evidence. &nbsp;Escalate when evidence is weak, conflicting, or missing.
+    </div>
+
+    <!-- System Components -->
+    <h2>RAG System Components</h2>
+
+    <div class="comp-layer-label">Retrieval Layer</div>
+    <div class="comp-grid">
+      <div class="comp-card">
+        <div class="comp-card-icon" style="background:#dbeafe"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="8" cy="8" r="5" stroke="#1e40af" stroke-width="1.4"/><path d="M12 12l3 3" stroke="#1e40af" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+        <div><div class="comp-card-name">Retriever</div><div class="comp-card-role">Semantic search over policy corpus and case document corpus</div><span class="comp-tech">Vector DB + Embedding Model</span></div>
+      </div>
+      <div class="comp-card">
+        <div class="comp-card-icon" style="background:#dbeafe"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M4 9h10M4 6h7M4 12h5" stroke="#1e40af" stroke-width="1.4" stroke-linecap="round"/></svg></div>
+        <div><div class="comp-card-name">Metadata Filter Layer</div><div class="comp-card-role">Narrows retrieval by jurisdiction, entity type, policy version, case stage</div><span class="comp-tech">Structured Metadata Filtering</span></div>
+      </div>
+      <div class="comp-card">
+        <div class="comp-card-icon" style="background:#dbeafe"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M5 13l4-8 4 8" stroke="#1e40af" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M6.5 10h5" stroke="#1e40af" stroke-width="1.3" stroke-linecap="round"/></svg></div>
+        <div><div class="comp-card-name">Ranker / Re-ranker</div><div class="comp-card-role">Re-scores chunks to improve precision and reduce noisy context</div><span class="comp-tech">Cross-encoder + BM25 Hybrid</span></div>
+      </div>
+      <div class="comp-card">
+        <div class="comp-card-icon" style="background:#dbeafe"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><rect x="3" y="6" width="12" height="6" rx="2" stroke="#1e40af" stroke-width="1.4"/><path d="M7 9h4" stroke="#1e40af" stroke-width="1.3" stroke-linecap="round"/></svg></div>
+        <div><div class="comp-card-name">Query Builder</div><div class="comp-card-role">Converts workflow step / criterion into targeted retrieval queries</div><span class="comp-tech">Prompted Query Expansion</span></div>
+      </div>
+      <div class="comp-card">
+        <div class="comp-card-icon" style="background:#dbeafe"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><rect x="3" y="3" width="5" height="5" rx="1" stroke="#1e40af" stroke-width="1.3"/><rect x="10" y="3" width="5" height="5" rx="1" stroke="#1e40af" stroke-width="1.3"/><rect x="3" y="10" width="5" height="5" rx="1" stroke="#1e40af" stroke-width="1.3"/><path d="M13 10v5M10.5 12.5h5" stroke="#1e40af" stroke-width="1.3" stroke-linecap="round"/></svg></div>
+        <div><div class="comp-card-name">Context Assembler</div><div class="comp-card-role">Builds grounded context package — chunk selection, deduplication, token-budget management</div><span class="comp-tech">Custom Chunk Assembly</span></div>
+      </div>
+    </div>
+
+    <div class="comp-layer-label">Generation Layer</div>
+    <div class="comp-grid">
+      <div class="comp-card">
+        <div class="comp-card-icon" style="background:#ede9fe"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M5 13l3-8 3 8" stroke="#6d28d9" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M9 13l3-8 3 8" stroke="#6d28d9" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div><div class="comp-card-name">Generator</div><div class="comp-card-role">Produces structured findings and recommendations using retrieved evidence only</div><span class="comp-tech">LLM + Schema-constrained Output</span></div>
+      </div>
+      <div class="comp-card">
+        <div class="comp-card-icon" style="background:#ede9fe"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M4 14l3-3m0 0l2-5 2 5m0 0l3 3" stroke="#6d28d9" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div><div class="comp-card-name">Citation Engine</div><div class="comp-card-role">Links every claim, finding, and recommendation to source chunks with chunk IDs</div><span class="comp-tech">Custom Post-processing</span></div>
+      </div>
+    </div>
+
+    <div class="comp-layer-label">Safety &amp; Trust Layer</div>
+    <div class="comp-grid">
+      <div class="comp-card">
+        <div class="comp-card-icon" style="background:#dcfce7"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M9 3l5 2v5c0 3-2.5 5-5 6-2.5-1-5-3-5-6V5l5-2z" stroke="#15803d" stroke-width="1.4" stroke-linejoin="round"/></svg></div>
+        <div><div class="comp-card-name">Confidence Engine</div><div class="comp-card-role">Calibrated signal from evidence strength, retrieval quality, coverage, and model certainty</div><span class="comp-tech">Heuristic + Model-assisted Scoring</span></div>
+      </div>
+      <div class="comp-card">
+        <div class="comp-card-icon" style="background:#fee2e2"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M9 5v4m0 4h.01" stroke="#b91c1c" stroke-width="1.5" stroke-linecap="round"/><path d="M3.5 14h11L9 3 3.5 14z" stroke="#b91c1c" stroke-width="1.4" stroke-linejoin="round"/></svg></div>
+        <div><div class="comp-card-name">Abstention / Fallback Layer</div><div class="comp-card-role">Prevents unsupported output when evidence is weak, conflicting, or absent</div><span class="comp-tech">Rule Thresholds + Fallback Policies</span></div>
+      </div>
+    </div>
+
+    <div class="comp-layer-label">Operations Layer</div>
+    <div class="comp-grid">
+      <div class="comp-card">
+        <div class="comp-card-icon" style="background:#fef3c7"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><rect x="3" y="3" width="12" height="12" rx="2" stroke="#b45309" stroke-width="1.4"/><path d="M6 9h6M6 12h4" stroke="#b45309" stroke-width="1.3" stroke-linecap="round"/></svg></div>
+        <div><div class="comp-card-name">Audit Logger</div><div class="comp-card-role">Immutable log — retrieval set, prompt version, output, citations, reviewer edits, final decision</div><span class="comp-tech">Immutable Decision Log / Audit Store</span></div>
+      </div>
+      <div class="comp-card">
+        <div class="comp-card-icon" style="background:#fef3c7"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M9 3v5l3 3" stroke="#b45309" stroke-width="1.4" stroke-linecap="round"/><circle cx="9" cy="9" r="6.5" stroke="#b45309" stroke-width="1.4"/></svg></div>
+        <div><div class="comp-card-name">Knowledge Management</div><div class="comp-card-role">Ingestion, chunking, versioning, approval, and retirement of policy content</div><span class="comp-tech">Policy CMS + Document Pipeline</span></div>
+      </div>
+      <div class="comp-card">
+        <div class="comp-card-icon" style="background:#fef3c7"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M4 13V8m4 5V5m4 8v-3" stroke="#b45309" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+        <div><div class="comp-card-name">Evaluation Layer</div><div class="comp-card-role">Measures retrieval quality, citation quality, grounding, and reviewer acceptance</div><span class="comp-tech">Offline Eval Suite + Prod Telemetry</span></div>
+      </div>
+    </div>
+
+    <!-- Non-Goals -->
+    <h2>What RAG Should Not Do</h2>
+    <div class="nongoal-grid">
+      <div class="ng-item"><span class="ng-x"><svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M3 10L10 3M10 10L3 3" stroke="#dc2626" stroke-width="1.5" stroke-linecap="round"/></svg></span>Autonomously approve or reject cases without human controls</div>
+      <div class="ng-item"><span class="ng-x"><svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M3 10L10 3M10 10L3 3" stroke="#dc2626" stroke-width="1.5" stroke-linecap="round"/></svg></span>Answer from general world knowledge</div>
+      <div class="ng-item"><span class="ng-x"><svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M3 10L10 3M10 10L3 3" stroke="#dc2626" stroke-width="1.5" stroke-linecap="round"/></svg></span>Infer facts absent from submitted case documents</div>
+      <div class="ng-item"><span class="ng-x"><svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M3 10L10 3M10 10L3 3" stroke="#dc2626" stroke-width="1.5" stroke-linecap="round"/></svg></span>Invent rationale for missing evidence</div>
+      <div class="ng-item"><span class="ng-x"><svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M3 10L10 3M10 10L3 3" stroke="#dc2626" stroke-width="1.5" stroke-linecap="round"/></svg></span>Replace policy ownership by Compliance</div>
+      <div class="ng-item"><span class="ng-x"><svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M3 10L10 3M10 10L3 3" stroke="#dc2626" stroke-width="1.5" stroke-linecap="round"/></svg></span>Operate without versioned knowledge sources</div>
+      <div class="ng-item"><span class="ng-x"><svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M3 10L10 3M10 10L3 3" stroke="#dc2626" stroke-width="1.5" stroke-linecap="round"/></svg></span>Produce uncited persuasive prose</div>
+    </div>
+
+    <!-- Final principle -->
+    <div class="final-principle">
+      <div class="fp-label">Design Principle</div>
+      <div class="fp-text">The KYB Copilot is an evidence-grounded compliance assistant — not a freeform chatbot.</div>
+      <div class="fp-sub">Retrieve · Organise · Synthesise → structured recommendation a reviewer can validate, edit, or reject.</div>
+    </div>
+
+    <nav class="section-nav">
+      <a href="security-design.html" class="nav-btn"><span class="nav-btn-dir">← Previous</span><span class="nav-btn-title">Security Architecture</span></a>
+      <span class="nav-center">21 of 39</span>
+      <a href="ingestion-pipeline.html" class="nav-btn next"><span class="nav-btn-dir">Next →</span><span class="nav-btn-title">Document Ingestion Pipeline</span></a>
+    </nav>
+  </main>
+</div>
+<footer class="site-footer">Reap AI Platform — KYB Review Copilot &nbsp;·&nbsp; Technical PRD</footer>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script src="../js/main.js"></script>
+</body></html>

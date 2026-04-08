@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>7.4 Team &amp; Resourcing — Reap KYB PRD</title>
+  <link rel="stylesheet" href="../css/styles.css" />
+</head>
+<body>
+<header class="site-header">
+  <div class="header-inner">
+    <a href="../index.html" class="site-logo"><div class="logo-mark">R</div><span>Reap AI Platform</span></a>
+    <div class="header-divider"></div><span class="header-subtitle">KYB Review Copilot</span>
+    <nav class="header-nav"><a href="../index.html">Overview</a><a href="solution-architecture.html">Architecture</a><a href="reviewer-workflow.html">Workflow</a></nav>
+  </div>
+</header>
+<div class="page-layout">
+  <aside class="sidebar">
+    <a href="../index.html" class="sidebar-back"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M9 11L5 7l4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg> All Sections</a>
+    <div class="sidebar-section-title">Block 7 — Delivery Strategy</div>
+    <ul class="sidebar-nav">
+      <li><a href="workflow-state.html">7.1 Workflow State</a></li>
+      <li><a href="platform-reuse.html">7.2 Platform Reuse Map</a></li>
+      <li><a href="go-to-market.html">7.3 Go-to-Market</a></li>
+      <li><a href="team-resourcing.html" class="active">7.4 Team &amp; Resourcing</a></li>
+      <li><a href="dependency-map.html">7.5 Dependency Map</a></li>
+    </ul>
+  </aside>
+  <main class="content">
+    <nav class="breadcrumb"><a href="../index.html">Home</a><span class="breadcrumb-sep">›</span><span>Block 7 — Delivery Strategy</span><span class="breadcrumb-sep">›</span><span class="breadcrumb-current">7.4 Team &amp; Resourcing</span></nav>
+    <div class="section-header">
+      <div class="section-block-tag" style="background:var(--b7)">Block 7 — Delivery Strategy</div>
+      <h1>Team &amp; Resourcing</h1>
+      <p class="section-intro">Squad composition, role responsibilities, estimated FTE per phase, and any external vendor requirements for building and running the KYB Review Copilot.</p>
+    </div>
+
+    <style>
+      .squad-wrap { overflow-x:auto; margin:0 0 2rem; }
+      .squad-table { width:100%; border-collapse:collapse; min-width:560px; font-size:.82rem; }
+      .squad-table thead th {
+        background:var(--navy); color:#fff; font-weight:600; letter-spacing:.04em;
+        text-align:center; padding:.55rem .5rem; border:1px solid rgba(255,255,255,.1);
+        font-size:.75rem; text-transform:uppercase;
+      }
+      .squad-table thead th.role-col { text-align:left; min-width:160px; padding-left:.9rem; }
+      .squad-table tbody tr:hover { background:rgba(0,0,0,.02); }
+      .squad-table .cat-row td {
+        background:#f1f5f9; color:var(--text-dim); font-size:.7rem; font-weight:700;
+        text-transform:uppercase; letter-spacing:.08em; padding:.3rem .9rem;
+        border:1px solid var(--border);
+      }
+      .squad-table .role-cell {
+        padding:.52rem .5rem .52rem .9rem; font-weight:500; color:var(--text);
+        border:1px solid var(--border); white-space:nowrap;
+      }
+      .squad-table .alloc-cell {
+        text-align:center; border:1px solid var(--border);
+        padding:.4rem .3rem; font-weight:700; font-size:.8rem;
+        min-width:64px;
+      }
+      /* allocation levels */
+      .a100 { background:#16a34a; color:#fff; }
+      .a75  { background:#4ade80; color:#15532c; }
+      .a50  { background:#86efac; color:#14532d; }
+      .a25  { background:#d1fae5; color:#166534; }
+      .a0   { background:#f8fafc; color:#cbd5e1; }
+      .phase-legend { display:flex; gap:.75rem; flex-wrap:wrap; margin-bottom:1rem; font-size:.78rem; }
+      .pl-item { display:flex; align-items:center; gap:.35rem; color:var(--text-mid); }
+      .pl-swatch { width:14px; height:14px; border-radius:3px; flex-shrink:0; }
+      .squad-note { font-size:.75rem; color:var(--text-dim); margin-top:.6rem; }
+      .tbd-tag {
+        display:inline-flex; align-items:center; gap:2px;
+        font-size:.68rem; font-weight:600; letter-spacing:.04em; text-transform:uppercase;
+        color:#92400e; background:#fef3c7; border:1px solid #fcd34d;
+        border-radius:4px; padding:.15rem .5rem; margin-left:.6rem;
+        vertical-align:middle; line-height:1.4;
+      }
+      .squad-note b { color:var(--text-mid); }
+    </style>
+
+    <h2>Core Squad Composition</h2>
+    <div class="phase-legend">
+      <span class="pl-item"><span class="pl-swatch" style="background:#16a34a"></span>100% — Full</span>
+      <span class="pl-item"><span class="pl-swatch" style="background:#4ade80"></span>75% — Active</span>
+      <span class="pl-item"><span class="pl-swatch" style="background:#86efac"></span>50% — Part-time</span>
+      <span class="pl-item"><span class="pl-swatch" style="background:#d1fae5"></span>25% — Advisory</span>
+      <span class="pl-item"><span class="pl-swatch" style="background:#f1f5f9;border:1px solid #e2e8f0"></span>0% — Not engaged</span>
+    </div>
+    <div class="squad-wrap">
+      <table class="squad-table">
+        <thead>
+          <tr>
+            <th class="role-col">Role</th>
+            <th>P0</th><th>P1</th><th>P2</th><th>P3</th><th>P4</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Leadership -->
+          <tr class="cat-row"><td colspan="6">Leadership &amp; Management</td></tr>
+          <tr>
+            <td class="role-cell">PM</td>
+            <td class="alloc-cell a100">100</td><td class="alloc-cell a100">100</td><td class="alloc-cell a100">100</td><td class="alloc-cell a100">100</td><td class="alloc-cell a100">100</td>
+          </tr>
+          <tr>
+            <td class="role-cell">EM</td>
+            <td class="alloc-cell a75">75</td><td class="alloc-cell a100">100</td><td class="alloc-cell a100">100</td><td class="alloc-cell a100">100</td><td class="alloc-cell a75">75</td>
+          </tr>
+          <!-- Engineering -->
+          <tr class="cat-row"><td colspan="6">Engineering</td></tr>
+          <tr>
+            <td class="role-cell">Tech Lead</td>
+            <td class="alloc-cell a100">100</td><td class="alloc-cell a100">100</td><td class="alloc-cell a100">100</td><td class="alloc-cell a75">75</td><td class="alloc-cell a50">50</td>
+          </tr>
+          <tr>
+            <td class="role-cell">Applied AI Eng 1</td>
+            <td class="alloc-cell a100">100</td><td class="alloc-cell a100">100</td><td class="alloc-cell a100">100</td><td class="alloc-cell a75">75</td><td class="alloc-cell a50">50</td>
+          </tr>
+          <tr>
+            <td class="role-cell">Applied AI Eng 2</td>
+            <td class="alloc-cell a0">0</td><td class="alloc-cell a75">75</td><td class="alloc-cell a100">100</td><td class="alloc-cell a75">75</td><td class="alloc-cell a25">25</td>
+          </tr>
+          <tr>
+            <td class="role-cell">ML / Retrieval Eng</td>
+            <td class="alloc-cell a25">25</td><td class="alloc-cell a75">75</td><td class="alloc-cell a75">75</td><td class="alloc-cell a50">50</td><td class="alloc-cell a25">25</td>
+          </tr>
+          <tr>
+            <td class="role-cell">Backend Eng 1</td>
+            <td class="alloc-cell a50">50</td><td class="alloc-cell a100">100</td><td class="alloc-cell a100">100</td><td class="alloc-cell a75">75</td><td class="alloc-cell a50">50</td>
+          </tr>
+          <tr>
+            <td class="role-cell">Backend Eng 2</td>
+            <td class="alloc-cell a0">0</td><td class="alloc-cell a100">100</td><td class="alloc-cell a100">100</td><td class="alloc-cell a50">50</td><td class="alloc-cell a50">50</td>
+          </tr>
+          <tr>
+            <td class="role-cell">Backend Eng 3</td>
+            <td class="alloc-cell a0">0</td><td class="alloc-cell a0">0</td><td class="alloc-cell a75">75</td><td class="alloc-cell a50">50</td><td class="alloc-cell a25">25</td>
+          </tr>
+          <tr>
+            <td class="role-cell">Full-Stack Eng 1</td>
+            <td class="alloc-cell a25">25</td><td class="alloc-cell a75">75</td><td class="alloc-cell a100">100</td><td class="alloc-cell a75">75</td><td class="alloc-cell a50">50</td>
+          </tr>
+          <tr>
+            <td class="role-cell">Full-Stack Eng 2</td>
+            <td class="alloc-cell a0">0</td><td class="alloc-cell a0">0</td><td class="alloc-cell a75">75</td><td class="alloc-cell a50">50</td><td class="alloc-cell a25">25</td>
+          </tr>
+          <tr>
+            <td class="role-cell">Frontend Eng</td>
+            <td class="alloc-cell a0">0</td><td class="alloc-cell a50">50</td><td class="alloc-cell a75">75</td><td class="alloc-cell a50">50</td><td class="alloc-cell a25">25</td>
+          </tr>
+          <tr>
+            <td class="role-cell">Platform / Infra Eng</td>
+            <td class="alloc-cell a0">0</td><td class="alloc-cell a25">25</td><td class="alloc-cell a50">50</td><td class="alloc-cell a100">100</td><td class="alloc-cell a75">75</td>
+          </tr>
+          <!-- Design & QA -->
+          <tr class="cat-row"><td colspan="6">Design, QA &amp; Analysis</td></tr>
+          <tr>
+            <td class="role-cell">Designer</td>
+            <td class="alloc-cell a75">75</td><td class="alloc-cell a75">75</td><td class="alloc-cell a50">50</td><td class="alloc-cell a25">25</td><td class="alloc-cell a25">25</td>
+          </tr>
+          <tr>
+            <td class="role-cell">Analyst</td>
+            <td class="alloc-cell a0">0</td><td class="alloc-cell a50">50</td><td class="alloc-cell a50">50</td><td class="alloc-cell a75">75</td><td class="alloc-cell a50">50</td>
+          </tr>
+          <tr>
+            <td class="role-cell">QA / SET</td>
+            <td class="alloc-cell a0">0</td><td class="alloc-cell a50">50</td><td class="alloc-cell a75">75</td><td class="alloc-cell a75">75</td><td class="alloc-cell a50">50</td>
+          </tr>
+          <!-- SMEs -->
+          <tr class="cat-row"><td colspan="6">Subject Matter Experts</td></tr>
+          <tr>
+            <td class="role-cell">Ops SME</td>
+            <td class="alloc-cell a50">50</td><td class="alloc-cell a50">50</td><td class="alloc-cell a50">50</td><td class="alloc-cell a25">25</td><td class="alloc-cell a25">25</td>
+          </tr>
+          <tr>
+            <td class="role-cell">Compliance SME</td>
+            <td class="alloc-cell a50">50</td><td class="alloc-cell a50">50</td><td class="alloc-cell a50">50</td><td class="alloc-cell a0">0</td><td class="alloc-cell a25">25</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="squad-note"><b>P0</b> = Discovery &nbsp;·&nbsp; <b>P1</b> = Core Build &nbsp;·&nbsp; <b>P2</b> = AI Layer &nbsp;·&nbsp; <b>P3</b> = Scale &amp; Infra &nbsp;·&nbsp; <b>P4</b> = Sustain. Values represent % of working time allocated to this initiative.</p>
+
+    <h2>External Vendors <span class="tbd-tag"><svg width="13" height="13" viewBox="0 0 14 14" fill="none" style="vertical-align:-2px;margin-right:3px"><circle cx="7" cy="7" r="6" stroke="currentColor" stroke-width="1.4"/><path d="M7 4v3.5L9 9" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>To be Discussed with Stakeholders</span></h2>
+    <p>[ LLM provider contract, OCR vendor, vector database managed service, any compliance screening API providers. ]</p>
+
+    <h2>Resourcing Risks <span class="tbd-tag"><svg width="13" height="13" viewBox="0 0 14 14" fill="none" style="vertical-align:-2px;margin-right:3px"><circle cx="7" cy="7" r="6" stroke="currentColor" stroke-width="1.4"/><path d="M7 4v3.5L9 9" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>To be Discussed with Stakeholders</span></h2>
+    <p>[ ML engineering is the hardest to hire. Mitigation: start with well-structured RAG using existing LLM APIs — no model training required in Phase 1 or 2. ]</p>
+
+    <nav class="section-nav">
+      <a href="go-to-market.html" class="nav-btn"><span class="nav-btn-dir">← Previous</span><span class="nav-btn-title">Go-to-Market</span></a>
+      <span class="nav-center">34 of 39</span>
+      <a href="dependency-map.html" class="nav-btn next"><span class="nav-btn-dir">Next →</span><span class="nav-btn-title">Dependency &amp; Risk Map</span></a>
+    </nav>
+  </main>
+</div>
+<footer class="site-footer">Reap AI Platform — KYB Review Copilot &nbsp;·&nbsp; Technical PRD</footer>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script src="../js/main.js"></script>
+</body></html>

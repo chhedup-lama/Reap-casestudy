@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>2.1 User Personas &amp; Stakeholders — Reap KYB PRD</title>
+  <link rel="stylesheet" href="../css/styles.css" />
+<style>
+  /* ── Persona Cards ── */
+  .persona-section-label { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.09em; color:var(--text-dim); margin:36px 0 12px; display:flex; align-items:center; gap:8px; }
+  .persona-section-label::after { content:''; flex:1; height:1px; background:var(--border); }
+
+  .persona-card { border:1px solid var(--border); border-radius:12px; overflow:hidden; margin-bottom:20px; }
+  .pc-analyst  { border-left:4px solid #2563EB; }
+  .pc-lead     { border-left:4px solid #7C3AED; }
+
+  .pc-header { padding:18px 20px 16px; border-bottom:1px solid var(--border); display:flex; align-items:flex-start; gap:14px; background:var(--surface); }
+  .pc-avatar { width:40px; height:40px; border-radius:10px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .pc-analyst .pc-avatar { background:#EFF6FF; color:#2563EB; }
+  .pc-lead    .pc-avatar { background:#F5F3FF; color:#7C3AED; }
+  .pc-badge { display:inline-block; padding:2px 8px; border-radius:4px; font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.06em; margin-bottom:4px; }
+  .pc-analyst .pc-badge { background:#EFF6FF; color:#1D4ED8; }
+  .pc-lead    .pc-badge { background:#F5F3FF; color:#6D28D9; }
+  .pc-name { font-size:16px; font-weight:700; color:var(--text); margin-bottom:3px; }
+  .pc-desc { font-size:12px; color:var(--text-mid); line-height:1.5; }
+
+  .pc-body { display:grid; grid-template-columns:1fr 1fr 1fr 1fr; background:var(--surface); }
+  @media(max-width:800px){ .pc-body { grid-template-columns:1fr 1fr; } }
+  .pc-col { padding:16px 18px; border-right:1px solid var(--border); }
+  .pc-col:last-child { border-right:none; }
+  .pc-col-title { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.07em; color:var(--text-dim); margin-bottom:10px; display:flex; align-items:center; gap:5px; }
+  .pc-items { list-style:none; display:flex; flex-direction:column; gap:6px; }
+  .pc-items li { font-size:12px; color:var(--text-mid); display:flex; align-items:flex-start; gap:6px; line-height:1.45; }
+  .pc-dot { width:5px; height:5px; border-radius:50%; flex-shrink:0; margin-top:5px; }
+  .pc-analyst .pc-dot { background:#2563EB; }
+  .pc-lead    .pc-dot { background:#7C3AED; }
+
+  /* tool chips */
+  .tool-chips { display:flex; flex-wrap:wrap; gap:4px; }
+  .tool-chip { padding:2px 7px; border-radius:4px; font-size:10px; font-weight:600; background:var(--bg); border:1px solid var(--border); color:var(--text-mid); }
+
+  /* good day bar */
+  .pc-goodday { padding:12px 20px; border-top:1px solid var(--border); display:flex; align-items:center; gap:10px; }
+  .pc-analyst .pc-goodday { background:#F0F9FF; }
+  .pc-lead    .pc-goodday { background:#FAF5FF; }
+  .gdl { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.07em; flex-shrink:0; }
+  .pc-analyst .gdl { color:#0EA5E9; }
+  .pc-lead    .gdl { color:#9333EA; }
+  .gd-text { font-size:12px; color:var(--text-mid); line-height:1.5; }
+  .gd-text strong { color:var(--text); }
+
+  /* Secondary persona grid */
+  .secondary-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:28px; }
+  @media(max-width:600px){ .secondary-grid { grid-template-columns:1fr; } }
+  .sec-card { border:1px solid var(--border); border-radius:10px; overflow:hidden; }
+  .sc-ops  { border-left:4px solid #059669; }
+  .sc-sales{ border-left:4px solid #D97706; }
+  .sec-head { padding:14px 16px; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:10px; background:var(--surface); }
+  .sc-icon { width:32px; height:32px; border-radius:8px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .sc-ops  .sc-icon { background:#ECFDF5; color:#059669; }
+  .sc-sales .sc-icon { background:#FFFBEB; color:#D97706; }
+  .sec-name { font-size:13px; font-weight:700; color:var(--text); }
+  .sec-role { font-size:11px; color:var(--text-dim); margin-top:1px; }
+  .sec-body { padding:14px 16px; background:var(--surface); }
+  .sec-interaction { font-size:12px; color:var(--text-mid); margin-bottom:10px; line-height:1.5; padding-bottom:10px; border-bottom:1px solid var(--border); }
+  .sec-needs-label { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.07em; color:var(--text-dim); margin-bottom:7px; }
+  .sec-needs { list-style:none; display:flex; flex-direction:column; gap:5px; }
+  .sec-needs li { font-size:12px; color:var(--text-mid); display:flex; align-items:flex-start; gap:6px; line-height:1.4; }
+  .sn-dot { width:4px; height:4px; border-radius:50%; flex-shrink:0; margin-top:5px; }
+  .sc-ops  .sn-dot { background:#059669; }
+  .sc-sales .sn-dot { background:#D97706; }
+
+  /* Design implication */
+  .design-impl { border:1px solid #BFDBFE; border-radius:10px; padding:18px 22px; background:#EFF6FF; margin-top:8px; }
+  .di-label { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.08em; color:#3B82F6; margin-bottom:10px; display:flex; align-items:center; gap:6px; }
+  .di-body { font-size:13px; color:#1E3A5F; line-height:1.65; }
+  .di-body strong { color:#1D4ED8; }
+  .di-pills { display:flex; flex-wrap:wrap; gap:7px; margin-top:12px; }
+  .di-pill { padding:4px 11px; border-radius:5px; font-size:11px; font-weight:600; border:1px solid; }
+  .dip-analyst { background:#EFF6FF; color:#1D4ED8; border-color:#BFDBFE; }
+  .dip-lead    { background:#F5F3FF; color:#6D28D9; border-color:#DDD6FE; }
+  .dip-ops     { background:#ECFDF5; color:#047857; border-color:#A7F3D0; }
+  .dip-sales   { background:#FFFBEB; color:#B45309; border-color:#FDE68A; }
+
+  /* ── Stakeholder Map ── */
+  .smap-wrap { border:1px solid var(--border); border-radius:10px; overflow:hidden; margin-top:20px; }
+  .smap-table { width:100%; border-collapse:collapse; font-size:13px; }
+  .smap-table thead th { background:var(--bg); padding:9px 16px; text-align:left; font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.07em; color:var(--text-dim); border-bottom:2px solid var(--border); }
+  .smap-table thead th.th-influence { text-align:center; width:100px; }
+  .smap-table td { padding:13px 16px; border-bottom:1px solid var(--border); vertical-align:middle; }
+  .smap-table tbody tr:last-child td { border-bottom:none; }
+  .smap-table tbody tr:hover { background:var(--bg); }
+  .sm-name { font-weight:700; font-size:13px; color:var(--text); display:flex; align-items:center; gap:8px; }
+  .sm-icon { width:28px; height:28px; border-radius:7px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .smi-analyst  { background:#EFF6FF; color:#2563EB; }
+  .smi-lead     { background:#F5F3FF; color:#7C3AED; }
+  .smi-ops      { background:#ECFDF5; color:#059669; }
+  .smi-eng      { background:#FFF7ED; color:#EA580C; }
+  .smi-legal    { background:#FEF2F2; color:#DC2626; }
+  .sm-role { font-size:12px; color:var(--text-dim); }
+  .sm-influence { text-align:center; }
+  .inf-pill { display:inline-flex; align-items:center; gap:4px; padding:3px 10px; border-radius:5px; font-size:11px; font-weight:700; }
+  .inf-high   { background:#ECFDF5; color:#059669; border:1px solid #A7F3D0; }
+  .inf-medium { background:#FFFBEB; color:#B45309; border:1px solid #FDE68A; }
+  .sm-cares { font-size:12px; color:var(--text-mid); }
+</style>
+</head>
+<body>
+<header class="site-header">
+  <div class="header-inner">
+    <a href="../index.html" class="site-logo"><div class="logo-mark">R</div><span>Reap AI Platform</span></a>
+    <div class="header-divider"></div><span class="header-subtitle">KYB Review Copilot</span>
+    <nav class="header-nav"><a href="../index.html">Overview</a><a href="solution-architecture.html">Architecture</a><a href="reviewer-workflow.html">Workflow</a></nav>
+  </div>
+</header>
+<div class="page-layout">
+  <aside class="sidebar">
+    <a href="../index.html" class="sidebar-back"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M9 11L5 7l4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg> All Sections</a>
+    <div class="sidebar-section-title">Block 2 — Users &amp; Workflow</div>
+    <ul class="sidebar-nav">
+      <li><a href="user-personas.html" class="active">2.1 User Personas</a></li>
+      <li><a href="current-state.html">2.2 Current State</a></li>
+      <li><a href="pain-points.html">2.3 Pain Points</a></li>
+      <li><a href="jobs-to-be-done.html">2.4 Jobs-to-Be-Done</a></li>
+      <li><a href="reviewer-workflow.html">2.5 Reviewer Workflow</a></li>
+    </ul>
+    <div style="margin-top:24px;" class="sidebar-section-title">On this page</div>
+    <ul class="sidebar-nav">
+      <li><a href="#primary">Primary Users</a></li>
+      <li><a href="#secondary">Secondary Users</a></li>
+      <li><a href="#design-impl">Design Implication</a></li>
+    </ul>
+  </aside>
+  <main class="content">
+    <nav class="breadcrumb"><a href="../index.html">Home</a><span class="breadcrumb-sep">›</span><span>Block 2 — Users &amp; Workflow</span><span class="breadcrumb-sep">›</span><span class="breadcrumb-current">2.1 User Personas &amp; Stakeholders</span></nav>
+    <div class="section-header">
+      <div class="section-block-tag" style="background:var(--b2)">Block 2 — Users &amp; Workflow</div>
+      <h1>User Personas &amp; Stakeholders</h1>
+      <p class="section-intro">Four personas interact with the KYB review system — two doing the work, two depending on its outcomes.</p>
+    </div>
+
+    <!-- PRIMARY -->
+    <div id="primary" class="persona-section-label">Primary Users &nbsp;·&nbsp; Designed for</div>
+
+    <!-- KYB Analyst -->
+    <div class="persona-card pc-analyst">
+      <div class="pc-header">
+        <div class="pc-avatar">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="7" r="3.5" stroke="currentColor" stroke-width="1.5"/><path d="M3 17c0-3.314 3.134-6 7-6s7 2.686 7 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </div>
+        <div>
+          <div class="pc-badge">Primary · High Volume</div>
+          <div class="pc-name">KYB Analyst</div>
+          <div class="pc-desc">Core operational user. Reviews merchant applications, validates documents, cross-checks entity data, flags risk signals, and prepares approval or escalation recommendations.</div>
+        </div>
+      </div>
+      <div class="pc-body">
+        <div class="pc-col">
+          <div class="pc-col-title">
+            <svg width="11" height="11" viewBox="0 0 12 12" fill="none"><circle cx="6" cy="6" r="5" stroke="currentColor" stroke-width="1.2"/><path d="M6 3v3l2 1.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+            Day in the Life
+          </div>
+          <ul class="pc-items">
+            <li><span class="pc-dot"></span>Pull cases from queue</li>
+            <li><span class="pc-dot"></span>Review &amp; validate submitted docs</li>
+            <li><span class="pc-dot"></span>Cross-check entity &amp; ownership data</li>
+            <li><span class="pc-dot"></span>Identify gaps, flag risk signals</li>
+            <li><span class="pc-dot"></span>Draft follow-up requests</li>
+            <li><span class="pc-dot"></span>Escalate edge cases</li>
+          </ul>
+        </div>
+        <div class="pc-col">
+          <div class="pc-col-title">
+            <svg width="11" height="11" viewBox="0 0 12 12" fill="none"><rect x="1" y="2" width="10" height="8" rx="1.5" stroke="currentColor" stroke-width="1.2"/><path d="M4 2V1M8 2V1M1 5h10" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+            Tools Today
+          </div>
+          <div class="tool-chips">
+            <span class="tool-chip">CRM / Onboarding</span>
+            <span class="tool-chip">Case Mgmt</span>
+            <span class="tool-chip">Doc Viewer</span>
+            <span class="tool-chip">Policy PDFs</span>
+            <span class="tool-chip">External Checks</span>
+            <span class="tool-chip">Email</span>
+            <span class="tool-chip">Spreadsheets</span>
+          </div>
+        </div>
+        <div class="pc-col">
+          <div class="pc-col-title">
+            <svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M6 2v4M6 8.5v.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><circle cx="6" cy="6" r="5" stroke="currentColor" stroke-width="1.2"/></svg>
+            Key Frustrations
+          </div>
+          <ul class="pc-items">
+            <li><span class="pc-dot"></span>Constant tab-switching across tools</li>
+            <li><span class="pc-dot"></span>Manual data extraction from docs</li>
+            <li><span class="pc-dot"></span>Slow policy &amp; SOP lookup</li>
+            <li><span class="pc-dot"></span>Repetitive follow-up drafting</li>
+            <li><span class="pc-dot"></span>Rework from incomplete submissions</li>
+            <li><span class="pc-dot"></span>Low confidence on borderline cases</li>
+          </ul>
+        </div>
+        <div class="pc-col">
+          <div class="pc-col-title">
+            <svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M2 6h8M7 3l3 3-3 3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Needs from Product
+          </div>
+          <ul class="pc-items">
+            <li><span class="pc-dot"></span>Single workspace — all context in one place</li>
+            <li><span class="pc-dot"></span>Pre-extracted data with source citations</li>
+            <li><span class="pc-dot"></span>Gaps &amp; inconsistencies surfaced automatically</li>
+            <li><span class="pc-dot"></span>Policy-grounded AI (not generic summaries)</li>
+            <li><span class="pc-dot"></span>Fast contextual follow-up drafts</li>
+            <li><span class="pc-dot"></span>Clear confidence scores + abstention</li>
+          </ul>
+        </div>
+      </div>
+      <div class="pc-goodday">
+        <span class="gdl">Good day looks like</span>
+        <span class="gd-text"><strong>High case throughput, low rework, no avoidable escalations</strong> — with every decision traceable and audit-defensible.</span>
+      </div>
+    </div>
+
+    <!-- Compliance Lead -->
+    <div class="persona-card pc-lead">
+      <div class="pc-header">
+        <div class="pc-avatar">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 2l1.5 4h4l-3.3 2.4 1.3 4L10 10l-3.5 2.4 1.3-4L4.5 6h4L10 2z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>
+        </div>
+        <div>
+          <div class="pc-badge">Primary · Control Point</div>
+          <div class="pc-name">Compliance Lead / Senior Reviewer</div>
+          <div class="pc-desc">Escalation handler and governance owner. Interprets policy in edge cases, oversees analyst decision quality, and is accountable for audit readiness across the entire review process.</div>
+        </div>
+      </div>
+      <div class="pc-body">
+        <div class="pc-col">
+          <div class="pc-col-title">
+            <svg width="11" height="11" viewBox="0 0 12 12" fill="none"><circle cx="6" cy="6" r="5" stroke="currentColor" stroke-width="1.2"/><path d="M6 3v3l2 1.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+            Day in the Life
+          </div>
+          <ul class="pc-items">
+            <li><span class="pc-dot"></span>Review escalated &amp; high-risk cases</li>
+            <li><span class="pc-dot"></span>Validate analyst recommendations</li>
+            <li><span class="pc-dot"></span>Interpret policy for edge cases</li>
+            <li><span class="pc-dot"></span>Monitor operational quality</li>
+            <li><span class="pc-dot"></span>Respond to audit &amp; control queries</li>
+            <li><span class="pc-dot"></span>Refine SOPs, address bottlenecks</li>
+          </ul>
+        </div>
+        <div class="pc-col">
+          <div class="pc-col-title">
+            <svg width="11" height="11" viewBox="0 0 12 12" fill="none"><rect x="1" y="2" width="10" height="8" rx="1.5" stroke="currentColor" stroke-width="1.2"/><path d="M4 2V1M8 2V1M1 5h10" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+            Tools Today
+          </div>
+          <div class="tool-chips">
+            <span class="tool-chip">Case Mgmt</span>
+            <span class="tool-chip">Policy Repos</span>
+            <span class="tool-chip">Audit Logs</span>
+            <span class="tool-chip">Risk Systems</span>
+            <span class="tool-chip">Queue Dashboards</span>
+            <span class="tool-chip">Messaging</span>
+          </div>
+        </div>
+        <div class="pc-col">
+          <div class="pc-col-title">
+            <svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M6 2v4M6 8.5v.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><circle cx="6" cy="6" r="5" stroke="currentColor" stroke-width="1.2"/></svg>
+            Key Frustrations
+          </div>
+          <ul class="pc-items">
+            <li><span class="pc-dot"></span>Escalations arriving without context</li>
+            <li><span class="pc-dot"></span>Inconsistent analyst documentation</li>
+            <li><span class="pc-dot"></span>Time reconstructing decision rationale</li>
+            <li><span class="pc-dot"></span>Black-box AI in regulated workflows</li>
+            <li><span class="pc-dot"></span>Incomplete evidence chains at audit</li>
+            <li><span class="pc-dot"></span>Recurring errors hard to diagnose</li>
+          </ul>
+        </div>
+        <div class="pc-col">
+          <div class="pc-col-title">
+            <svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M2 6h8M7 3l3 3-3 3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Needs from Product
+          </div>
+          <ul class="pc-items">
+            <li><span class="pc-dot"></span>Synthesized escalation view with full case context</li>
+            <li><span class="pc-dot"></span>Evidence → policy traceability on every decision</li>
+            <li><span class="pc-dot"></span>Override &amp; rationale capture built in</li>
+            <li><span class="pc-dot"></span>Confidence scores &amp; risk-based routing</li>
+            <li><span class="pc-dot"></span>Audit-ready logs: who, what, when, why</li>
+            <li><span class="pc-dot"></span>Quality &amp; consistency oversight dashboards</li>
+          </ul>
+        </div>
+      </div>
+      <div class="pc-goodday">
+        <span class="gdl">Good day looks like</span>
+        <span class="gd-text"><strong>Fewer preventable escalations, stronger control visibility</strong> — every decision explainable, every policy application consistent.</span>
+      </div>
+    </div>
+
+    <!-- SECONDARY -->
+    <div id="secondary" class="persona-section-label">Secondary Users &nbsp;·&nbsp; Outcome-Dependent</div>
+
+    <div class="secondary-grid">
+
+      <!-- Risk Ops -->
+      <div class="sec-card sc-ops">
+        <div class="sec-head">
+          <div class="sc-icon">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="4" width="14" height="9" rx="1.5" stroke="currentColor" stroke-width="1.4"/><path d="M5 4V3a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v1M4 8.5h3M4 11h5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+          </div>
+          <div>
+            <div class="sec-name">Risk Operations</div>
+            <div class="sec-role">Pipeline health &amp; queue management</div>
+          </div>
+        </div>
+        <div class="sec-body">
+          <div class="sec-interaction">Monitors queue states, aging cases, escalation volumes, and reviewer throughput. Does not perform case reviews — accountable for operational flow and SLA adherence.</div>
+          <div class="sec-needs-label">Key needs</div>
+          <ul class="sec-needs">
+            <li><span class="sn-dot"></span>Queue visibility by stage, priority, and age</li>
+            <li><span class="sn-dot"></span>SLA breach prediction &amp; bottleneck alerts</li>
+            <li><span class="sn-dot"></span>Throughput &amp; capacity dashboards</li>
+            <li><span class="sn-dot"></span>Escalation &amp; rework trend monitoring</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Onboarding / Sales -->
+      <div class="sec-card sc-sales">
+        <div class="sec-head">
+          <div class="sc-icon">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M2 12c0-3.314 2.686-5 6-5s6 1.686 6 5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><circle cx="8" cy="5" r="3" stroke="currentColor" stroke-width="1.4"/><path d="M13 7l1.5 1.5L16 7" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <div>
+            <div class="sec-name">Onboarding / Sales</div>
+            <div class="sec-role">Upstream funnel &amp; growth-critical dependency</div>
+          </div>
+        </div>
+        <div class="sec-body">
+          <div class="sec-interaction">Not involved in review decisions — but directly affected by KYB turnaround. Depends on predictable timelines, clear status visibility, and minimal applicant friction.</div>
+          <div class="sec-needs-label">Key needs</div>
+          <ul class="sec-needs">
+            <li><span class="sn-dot"></span>Faster, more predictable time-to-onboard</li>
+            <li><span class="sn-dot"></span>Fewer document resubmission loops</li>
+            <li><span class="sn-dot"></span>Application status visibility</li>
+            <li><span class="sn-dot"></span>Reduced drop-off from onboarding friction</li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Design Implication -->
+    <div id="design-impl" class="design-impl">
+      <div class="di-label">
+        <svg width="13" height="13" viewBox="0 0 14 14" fill="none"><path d="M7 1v2M7 11v2M1 7h2M11 7h2M3 3l1.5 1.5M9.5 9.5L11 11M11 3l-1.5 1.5M4.5 9.5L3 11" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><circle cx="7" cy="7" r="2.5" stroke="currentColor" stroke-width="1.3"/></svg>
+        Design Implication
+      </div>
+      <div class="di-body">
+        Design primarily for <strong>the KYB Analyst's point of work</strong> — single workspace, pre-surfaced evidence, policy-grounded AI. Ensure strong controls and traceability for <strong>the Compliance Lead</strong>, operational dashboards for <strong>Risk Operations</strong>, and faster downstream outcomes for <strong>Onboarding</strong>. The workspace must optimize review efficiency without compromising governance, queue visibility, or business throughput.
+      </div>
+      <div class="di-pills">
+        <span class="di-pill dip-analyst">KYB Analyst — Design for</span>
+        <span class="di-pill dip-lead">Compliance Lead — Control &amp; Audit</span>
+        <span class="di-pill dip-ops">Risk Ops — Queue Visibility</span>
+        <span class="di-pill dip-sales">Onboarding — Speed &amp; Outcomes</span>
+      </div>
+    </div>
+
+    <!-- Stakeholder Map -->
+    <div class="smap-wrap">
+      <table class="smap-table">
+        <thead>
+          <tr>
+            <th>Stakeholder</th>
+            <th>Role</th>
+            <th class="th-influence">Influence</th>
+            <th>What They Care About</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <div class="sm-name">
+                <div class="sm-icon smi-analyst"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="5" r="2.5" stroke="currentColor" stroke-width="1.3"/><path d="M2 12c0-2.761 2.239-4 5-4s5 1.239 5 4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg></div>
+                KYB Analyst
+              </div>
+            </td>
+            <td><span class="sm-role">Primary reviewer</span></td>
+            <td class="sm-influence"><span class="inf-pill inf-high"><svg width="8" height="8" viewBox="0 0 8 8" fill="none"><circle cx="4" cy="4" r="3" fill="currentColor"/></svg>High</span></td>
+            <td><span class="sm-cares">Faster reviews, less manual effort, accurate outputs</span></td>
+          </tr>
+          <tr>
+            <td>
+              <div class="sm-name">
+                <div class="sm-icon smi-lead"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 1l1.2 3.2H12L9.2 6.3l1.1 3.2L7 7.5l-3.3 2 1.1-3.2L2 4.2h3.8L7 1z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/></svg></div>
+                Compliance Lead
+              </div>
+            </td>
+            <td><span class="sm-role">Senior reviewer / approver</span></td>
+            <td class="sm-influence"><span class="inf-pill inf-high"><svg width="8" height="8" viewBox="0 0 8 8" fill="none"><circle cx="4" cy="4" r="3" fill="currentColor"/></svg>High</span></td>
+            <td><span class="sm-cares">Explainable decisions, policy compliance, audit trail</span></td>
+          </tr>
+          <tr>
+            <td>
+              <div class="sm-name">
+                <div class="sm-icon smi-ops"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="1" y="3" width="12" height="8" rx="1.5" stroke="currentColor" stroke-width="1.3"/><path d="M4 7h2M8 7h2M4 9.5h1M6 9.5h2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg></div>
+                Risk Operations
+              </div>
+            </td>
+            <td><span class="sm-role">Queue manager</span></td>
+            <td class="sm-influence"><span class="inf-pill inf-medium"><svg width="8" height="8" viewBox="0 0 8 8" fill="none"><circle cx="4" cy="4" r="3" fill="currentColor"/></svg>Medium</span></td>
+            <td><span class="sm-cares">SLA adherence, case flow, capacity visibility</span></td>
+          </tr>
+          <tr>
+            <td>
+              <div class="sm-name">
+                <div class="sm-icon smi-eng"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M5 2L3 7l2 5M9 2l2 5-2 5M4 7h6" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+                Engineering
+              </div>
+            </td>
+            <td><span class="sm-role">Builder / maintainer</span></td>
+            <td class="sm-influence"><span class="inf-pill inf-high"><svg width="8" height="8" viewBox="0 0 8 8" fill="none"><circle cx="4" cy="4" r="3" fill="currentColor"/></svg>High</span></td>
+            <td><span class="sm-cares">Stable architecture, low operational overhead</span></td>
+          </tr>
+          <tr>
+            <td>
+              <div class="sm-name">
+                <div class="sm-icon smi-legal"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 1v12M4 4l3-3 3 3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/><path d="M3 13h8" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><path d="M2 7l2 3M12 7l-2 3M2 7h4M8 7h4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg></div>
+                Legal / Compliance
+              </div>
+            </td>
+            <td><span class="sm-role">Policy authority</span></td>
+            <td class="sm-influence"><span class="inf-pill inf-high"><svg width="8" height="8" viewBox="0 0 8 8" fill="none"><circle cx="4" cy="4" r="3" fill="currentColor"/></svg>High</span></td>
+            <td><span class="sm-cares">Regulatory alignment, defensible controls</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <nav class="section-nav" style="margin-top:40px;">
+      <a href="executive-summary.html" class="nav-btn"><span class="nav-btn-dir">← Previous</span><span class="nav-btn-title">Executive Summary</span></a>
+      <span class="nav-center">6 of 39</span>
+      <a href="current-state.html" class="nav-btn next"><span class="nav-btn-dir">Next →</span><span class="nav-btn-title">Current State Workflow</span></a>
+    </nav>
+  </main>
+</div>
+<footer class="site-footer">Reap AI Platform — KYB Review Copilot &nbsp;·&nbsp; Technical PRD</footer>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script src="../js/main.js"></script>
+</body></html>

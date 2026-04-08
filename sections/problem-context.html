@@ -1,0 +1,992 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>1.1 Problem Statement & Strategic Context — Reap KYB PRD</title>
+  <link rel="stylesheet" href="../css/styles.css" />
+  <style>
+    /* ── Sidebar on-page ── */
+    .sidebar-on-page-title { font-size:10.5px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--text-dim); padding:18px 16px 6px; }
+    .sidebar-on-page { list-style:none; margin:0; padding:0 8px; }
+    .sidebar-on-page li a { display:block; padding:5px 8px; font-size:12.5px; color:var(--text-mid); border-radius:4px; text-decoration:none; }
+    .sidebar-on-page li a:hover { background:var(--bg); color:var(--text); }
+
+    /* ── Business context chips ── */
+    .biz-context { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin:20px 0 36px; }
+    @media(max-width:680px) { .biz-context { grid-template-columns:1fr; } }
+    .biz-chip { border:1px solid var(--border); border-radius:10px; background:var(--surface); padding:16px 18px; }
+    .biz-chip-tag { font-size:10px; font-weight:700; letter-spacing:.09em; text-transform:uppercase; color:var(--text-dim); margin-bottom:6px; }
+    .biz-chip-title { font-size:13.5px; font-weight:700; color:var(--text); margin-bottom:5px; }
+    .biz-chip-body { font-size:12.5px; color:var(--text-mid); line-height:1.5; }
+
+    /* ── Pain table ── */
+    .pain-table-wrap { margin:24px 0; }
+    .pain-col-headers {
+      display:grid;
+      grid-template-columns:36px 1fr 170px 72px 90px 64px 38px;
+      gap:0;
+      padding:0 16px;
+      border-bottom:2px solid var(--border);
+      background:var(--bg);
+      border-radius:10px 10px 0 0;
+      border:1px solid var(--border);
+      border-bottom-color:var(--border-dim);
+    }
+    .pain-col-headers > div { font-size:10.5px; font-weight:700; text-transform:uppercase; letter-spacing:.07em; color:var(--text-dim); padding:10px 8px; }
+    .pain-rows { border:1px solid var(--border); border-top:none; border-radius:0 0 10px 10px; overflow:visible; }
+    .pain-row {
+      display:grid;
+      grid-template-columns:36px 1fr 170px 72px 90px 64px 38px;
+      gap:0;
+      padding:0 16px;
+      border-bottom:1px solid var(--border);
+      align-items:center;
+      position:relative;
+      z-index:1;
+      transition:background .12s;
+      background:var(--surface);
+    }
+    .pain-row:last-child { border-bottom:none; border-radius:0 0 10px 10px; }
+    .pain-row:hover { background:#F8FAFF; z-index:20; }
+    .pain-row.kyb-row { background:#EFF6FF; border-left:3px solid var(--accent); }
+    .pain-row.kyb-row:hover { background:#E0EEFF; }
+    .pr-seq { font-size:11px; font-weight:700; color:var(--text-dim); padding:14px 8px 14px 0; }
+    .pr-name { padding:14px 10px 14px 8px; }
+    .pr-name-text { font-size:13px; font-weight:600; color:var(--text); line-height:1.4; }
+    .pr-name-sub { font-size:11.5px; color:var(--text-dim); margin-top:2px; }
+    .kyb-badge { display:inline-block; font-size:10px; font-weight:700; background:var(--accent); color:#fff; padding:2px 7px; border-radius:20px; margin-left:6px; vertical-align:middle; letter-spacing:.04em; }
+    .pr-type { font-size:12px; color:var(--text-mid); padding:14px 10px; line-height:1.45; }
+    .pr-badge-cell { padding:14px 6px; display:flex; align-items:center; justify-content:center; }
+    .badge { display:inline-block; font-size:11px; font-weight:600; padding:3px 9px; border-radius:20px; white-space:nowrap; }
+    .bh  { background:#DCFCE7; color:#14532D; border:1px solid #86EFAC; }
+    .bmh { background:#EFF6FF; color:#1D4ED8; border:1px solid #BFDBFE; }
+    .bm  { background:#FFFBEB; color:#78350F; border:1px solid #FDE68A; }
+    .blm { background:#F0FDF4; color:#166534; border:1px solid #BBF7D0; }
+    .bhe { background:#FEF2F2; color:#991B1B; border:1px solid #FECACA; }
+    .pr-action { padding:14px 0; display:flex; align-items:center; justify-content:center; }
+    .info-btn {
+      width:24px; height:24px; border-radius:50%;
+      background:var(--bg); border:1px solid var(--border);
+      display:flex; align-items:center; justify-content:center;
+      font-size:11px; font-weight:700; color:var(--text-dim);
+      cursor:default; transition:background .12s, border-color .12s;
+    }
+    .pain-row:hover .info-btn { background:var(--accent); border-color:var(--accent); color:#fff; }
+
+    /* solution tooltip */
+    .pr-solution {
+      position:absolute;
+      right:0;
+      top:calc(100% + 3px);
+      width:310px;
+      background:var(--surface);
+      border:1px solid var(--border);
+      border-radius:10px;
+      box-shadow:0 8px 24px rgba(0,0,0,.13);
+      padding:14px 16px;
+      z-index:100;
+      opacity:0;
+      pointer-events:none;
+      transform:translateY(-4px);
+      transition:opacity .15s, transform .15s;
+    }
+    .pain-row:hover .pr-solution { opacity:1; pointer-events:all; transform:translateY(0); }
+    .psc-label { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.08em; color:var(--accent); margin-bottom:7px; }
+    .psc-summary { font-size:12.5px; color:var(--text); line-height:1.5; margin-bottom:10px; }
+    .psc-caps { display:flex; flex-direction:column; gap:4px; }
+    .psc-cap { font-size:12px; color:var(--text-mid); display:flex; gap:7px; line-height:1.4; }
+    .psc-cap::before { content:"✓"; color:var(--accent); font-weight:700; flex-shrink:0; }
+
+    /* ── KYB selection callout ── */
+    .kyb-selection-box {
+      background:linear-gradient(135deg,#EFF6FF 0%,#F5F3FF 100%);
+      border:1px solid #BFDBFE;
+      border-radius:10px;
+      padding:20px 24px;
+      margin:28px 0;
+      display:flex;
+      align-items:flex-start;
+      gap:20px;
+    }
+    .ksb-icon { font-size:28px; flex-shrink:0; margin-top:2px; }
+    .ksb-body { flex:1; }
+    .ksb-label { font-size:10.5px; font-weight:700; text-transform:uppercase; letter-spacing:.08em; color:var(--accent); margin-bottom:6px; }
+    .ksb-title { font-size:16px; font-weight:700; color:var(--text); margin-bottom:6px; }
+    .ksb-desc { font-size:13.5px; color:var(--text-mid); line-height:1.6; margin-bottom:14px; }
+    .ksb-stats { display:flex; gap:20px; flex-wrap:wrap; }
+    .ksb-stat { text-align:center; }
+    .ksb-stat-num { font-size:28px; font-weight:800; color:var(--accent); line-height:1; }
+    .ksb-stat-label { font-size:11px; color:var(--text-dim); margin-top:3px; line-height:1.3; }
+
+    /* ── Reason grid ── */
+    .reason-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:12px; margin:20px 0; }
+    .reason-card { border:1px solid var(--border); border-radius:9px; background:var(--surface); padding:16px 18px; }
+    .rc-num { font-size:10px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--text-dim); margin-bottom:6px; }
+    .rc-title { font-size:13px; font-weight:700; color:var(--text); margin-bottom:5px; line-height:1.35; }
+    .rc-desc { font-size:12px; color:var(--text-mid); line-height:1.5; }
+
+    /* ── Theme cards (pain map) ── */
+    .theme-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin:20px 0; }
+    .theme-full { grid-column:1 / -1; }
+    @media(max-width:700px) { .theme-grid { grid-template-columns:1fr; } .theme-full { grid-column:unset; } }
+    .theme-card { border:1px solid var(--border); border-radius:10px; background:var(--surface); padding:18px 20px; border-left-width:3px; }
+    .theme-card.tc-data   { border-left-color:#2563EB; }
+    .theme-card.tc-know   { border-left-color:#7C3AED; }
+    .theme-card.tc-flow   { border-left-color:#059669; }
+    .theme-card.tc-plat   { border-left-color:#D97706; }
+    .theme-card.tc-trust  { border-left-color:#DC2626; }
+    .tc-header { display:flex; align-items:center; gap:10px; margin-bottom:10px; }
+    .tc-num { width:26px; height:26px; border-radius:6px; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:800; flex-shrink:0; }
+    .tc-data .tc-num  { background:#EFF6FF; color:#1D4ED8; }
+    .tc-know .tc-num  { background:#F5F3FF; color:#5B21B6; }
+    .tc-flow .tc-num  { background:#ECFDF5; color:#065F46; }
+    .tc-plat .tc-num  { background:#FFFBEB; color:#78350F; }
+    .tc-trust .tc-num { background:#FEF2F2; color:#991B1B; }
+    .tc-title { font-size:14px; font-weight:700; color:var(--text); }
+    .stage-tags { display:flex; flex-wrap:wrap; gap:5px; margin-bottom:14px; }
+    .stag { font-size:10.5px; font-weight:600; padding:2px 9px; border-radius:20px; }
+    .st-pre    { background:#F1F5F9; color:#475569; border:1px solid #CBD5E1; }
+    .st-intake { background:#EFF6FF; color:#1D4ED8; border:1px solid #BFDBFE; }
+    .st-verify { background:#EEF2FF; color:#3730A3; border:1px solid #C7D2FE; }
+    .st-risk   { background:#FEF2F2; color:#991B1B; border:1px solid #FECACA; }
+    .st-ops    { background:#ECFDF5; color:#065F46; border:1px solid #A7F3D0; }
+    .st-dec    { background:#1e293b; color:#f1f5f9; border:1px solid #475569; }
+    .tc-pains { list-style:none; padding:0; margin:0; columns:2; column-gap:16px; }
+    .theme-full .tc-pains { columns:3; }
+    @media(max-width:900px) { .tc-pains, .theme-full .tc-pains { columns:1; } }
+    .tc-pains li { font-size:12px; color:var(--text-mid); padding:4px 0; border-bottom:1px solid var(--border); display:flex; gap:7px; align-items:flex-start; break-inside:avoid; line-height:1.4; }
+    .tc-pains li:last-child { border-bottom:none; }
+    .tc-dash { color:var(--text-dim); flex-shrink:0; }
+
+    /* ── Pain Map intro model ── */
+    .pm-callout { background:var(--bg); border:1px solid var(--border); border-left:3px solid var(--accent); border-radius:8px; padding:14px 18px; font-size:13.5px; color:var(--text-mid); line-height:1.6; margin-bottom:24px; }
+    .pm-callout strong { color:var(--text); }
+    .pm-layer-divider { display:flex; align-items:center; gap:10px; margin:20px 0 12px; }
+    .pm-layer-lbl { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.09em; color:var(--text-dim); white-space:nowrap; }
+    .pm-layer-divider::after { content:''; flex:1; height:1px; background:var(--border); }
+    .pm-core-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; }
+    .pm-enable-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:12px; margin-bottom:28px; }
+    @media(max-width:640px) { .pm-core-grid,.pm-enable-grid { grid-template-columns:1fr; } }
+    .pm-tile { border:1px solid var(--border); border-radius:10px; padding:16px 18px; background:var(--surface); border-top-width:3px; }
+    .pm-tile.pmt-data  { border-top-color:#2563EB; }
+    .pm-tile.pmt-know  { border-top-color:#7C3AED; }
+    .pm-tile.pmt-flow  { border-top-color:#059669; }
+    .pm-tile.pmt-plat  { border-top-color:#D97706; background:var(--bg); }
+    .pm-tile.pmt-trust { border-top-color:#DC2626; background:var(--bg); }
+    .pm-tile-icon { width:32px; height:32px; border-radius:8px; display:flex; align-items:center; justify-content:center; margin-bottom:10px; flex-shrink:0; }
+    .pmt-data .pm-tile-icon  { background:#EFF6FF; color:#2563EB; }
+    .pmt-know .pm-tile-icon  { background:#F5F3FF; color:#7C3AED; }
+    .pmt-flow .pm-tile-icon  { background:#ECFDF5; color:#059669; }
+    .pmt-plat .pm-tile-icon  { background:#FFFBEB; color:#D97706; }
+    .pmt-trust .pm-tile-icon { background:#FEF2F2; color:#DC2626; }
+    .pm-tile-meta { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.07em; color:var(--text-dim); margin-bottom:4px; }
+    .pm-tile-title { font-size:13px; font-weight:700; color:var(--text); margin-bottom:5px; line-height:1.3; }
+    .pm-tile-desc { font-size:12px; color:var(--text-mid); line-height:1.5; margin-bottom:8px; }
+    .pm-tile-tag { display:inline-block; font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.06em; padding:2px 9px; border-radius:20px; }
+    .pmt-data .pm-tile-tag  { background:#EFF6FF; color:#1D4ED8; border:1px solid #BFDBFE; }
+    .pmt-know .pm-tile-tag  { background:#F5F3FF; color:#5B21B6; border:1px solid #DDD6FE; }
+    .pmt-flow .pm-tile-tag  { background:#ECFDF5; color:#065F46; border:1px solid #A7F3D0; }
+    .pmt-plat .pm-tile-tag  { background:#FFFBEB; color:#78350F; border:1px solid #FDE68A; }
+    .pmt-trust .pm-tile-tag { background:#FEF2F2; color:#991B1B; border:1px solid #FECACA; }
+
+    /* ── Journey Matrix ── */
+    .jm-header-row { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px; margin-bottom:14px; }
+    .jm-legend { display:flex; gap:16px; flex-wrap:wrap; }
+    .jm-leg-item { display:flex; align-items:center; gap:6px; font-size:12px; color:var(--text-mid); font-weight:500; }
+    .jm-dot { width:10px; height:10px; border-radius:3px; flex-shrink:0; }
+    .jm-dot-cd { background:#3B82F6; }
+    .jm-dot-kn { background:#8B5CF6; }
+    .jm-dot-wf { background:#10B981; }
+    .jm-scroll-wrap {
+      overflow-x:auto; padding:20px 18px 16px;
+      border:1px solid var(--border); border-radius:10px;
+      background:var(--surface);
+    }
+    .jm-scroll-wrap::-webkit-scrollbar { height:5px; }
+    .jm-scroll-wrap::-webkit-scrollbar-track { background:var(--bg); border-radius:10px; }
+    .jm-scroll-wrap::-webkit-scrollbar-thumb { background:var(--border-dim); border-radius:10px; }
+    .jm-matrix { display:flex; gap:0; min-width:max-content; align-items:flex-start; }
+    .jm-col { width:136px; flex-shrink:0; position:relative; }
+    .jm-col:not(:last-child) { padding-right:22px; }
+    .jm-col:not(:last-child)::after {
+      content:'›'; position:absolute; right:4px; top:14px;
+      color:#93C5FD; font-size:20px; font-weight:700; line-height:1;
+    }
+    .jm-stage {
+      background:linear-gradient(135deg,#1D4ED8 0%,#2563EB 100%);
+      color:#fff; border-radius:8px; padding:9px 10px;
+      font-size:10.5px; font-weight:700; text-align:center;
+      line-height:1.35; min-height:52px;
+      display:flex; align-items:center; justify-content:center;
+      margin-bottom:8px;
+    }
+    .jm-chips { display:flex; flex-direction:column; gap:5px; }
+    .jm-chip { padding:5px 8px; border-radius:6px; font-size:10.5px; line-height:1.4; font-weight:500; }
+    .jm-cd { background:#DBEAFE; color:#1E3A5F; border:1px solid #93C5FD; }
+    .jm-kn { background:#EDE9FE; color:#3B0764; border:1px solid #C4B5FD; }
+    .jm-wf { background:#D1FAE5; color:#064E3B; border:1px solid #6EE7B7; }
+
+    /* ── Platform reasons ── */
+    .plat-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:12px; margin:20px 0; }
+    .plat-card { border:1px solid var(--border); border-radius:9px; background:var(--surface); padding:14px 16px; display:flex; gap:12px; align-items:flex-start; }
+    .plat-num { font-size:18px; font-weight:800; color:var(--border-dim); flex-shrink:0; line-height:1; }
+    .plat-text { font-size:12.5px; color:var(--text-mid); line-height:1.5; }
+    .plat-text strong { color:var(--text); display:block; margin-bottom:2px; font-size:13px; }
+  </style>
+</head>
+<body>
+<header class="site-header">
+  <div class="header-inner">
+    <a href="../index.html" class="site-logo"><div class="logo-mark">R</div><span>Reap AI Platform</span></a>
+    <div class="header-divider"></div><span class="header-subtitle">KYB Review Copilot</span>
+    <nav class="header-nav"><a href="../index.html">Overview</a><a href="solution-architecture.html">Architecture</a><a href="reviewer-workflow.html">Workflow</a></nav>
+  </div>
+</header>
+<div class="page-layout">
+  <aside class="sidebar">
+    <a href="../index.html" class="sidebar-back"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M9 11L5 7l4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg> All Sections</a>
+    <div class="sidebar-section-title">Block 1 — Executive Framing</div>
+    <ul class="sidebar-nav">
+      <li><a href="problem-context.html" class="active">1.1 Problem Statement</a></li>
+      <li><a href="opportunity-sizing.html">1.2 Market Opportunity</a></li>
+      <li><a href="success-criteria.html">1.3 Success Criteria</a></li>
+      <li><a href="strategic-alignment.html">1.4 Strategic Alignment</a></li>
+      <li><a href="executive-summary.html">1.5 Executive Summary</a></li>
+    </ul>
+    <div class="sidebar-on-page-title">On this page</div>
+    <ul class="sidebar-on-page">
+      <li><a href="#context">Business Context</a></li>
+      <li><a href="#pain-points">Customer Pain Landscape</a></li>
+      <li><a href="#why-kyb">Why KYB First</a></li>
+      <li><a href="#pain-map">KYB Pain Map</a></li>
+      <li><a href="#why-platform">Why Platform</a></li>
+    </ul>
+  </aside>
+  <main class="content">
+    <nav class="breadcrumb"><a href="../index.html">Home</a><span class="breadcrumb-sep">›</span><span>Block 1 — Executive Framing</span><span class="breadcrumb-sep">›</span><span class="breadcrumb-current">1.1 Problem Statement &amp; Strategic Context</span></nav>
+    <div class="section-header">
+      <div class="section-block-tag" style="background:var(--b1)">Block 1 — Executive Framing</div>
+      <h1>Problem Statement &amp; Strategic Context</h1>
+      <p class="section-intro">Why KYB is the right first AI investment for Reap, and why solving it requires a platform — not a point solution.</p>
+    </div>
+
+    <!-- ══════════════════════════════════════════════ -->
+    <!-- BUSINESS CONTEXT                               -->
+    <!-- ══════════════════════════════════════════════ -->
+    <h2 id="context">Business Context</h2>
+    <div class="biz-context">
+      <div class="biz-chip">
+        <div class="biz-chip-tag">Company Model</div>
+        <div class="biz-chip-title">FinTech Infrastructure</div>
+        <div class="biz-chip-body">Stablecoin-powered treasury, cross-border payments, and spend management — making business finance faster and more efficient.</div>
+      </div>
+      <div class="biz-chip">
+        <div class="biz-chip-tag">Go-to-Market</div>
+        <div class="biz-chip-title">B2B + Infrastructure Layer</div>
+        <div class="biz-chip-body">Direct B2B: cards, payments, and expense products. Infrastructure: embedded finance APIs for partners building on Reap's rails.</div>
+      </div>
+      <div class="biz-chip">
+        <div class="biz-chip-tag">Positioning</div>
+        <div class="biz-chip-title">Crypto as Rails, Not Identity</div>
+        <div class="biz-chip-body">Stablecoin used as money movement infrastructure — extensible to normal fiat flows. Not a crypto-native product for crypto users.</div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════ -->
+    <!-- CUSTOMER PAIN LANDSCAPE                        -->
+    <!-- ══════════════════════════════════════════════ -->
+    <h2 id="pain-points">Customer Pain Landscape</h2>
+    <p style="font-size:14px;color:var(--text-mid);margin-bottom:16px;">Eleven pain points mapped across Reap's customer journey. Hover any row for the AI intervention approach.</p>
+
+    <div class="pain-table-wrap">
+      <div class="pain-col-headers">
+        <div>#</div>
+        <div>Pain Point / Customer Journey</div>
+        <div>Likely Intervention</div>
+        <div style="text-align:center;">Value</div>
+        <div style="text-align:center;">Biz Impact</div>
+        <div style="text-align:center;">Effort</div>
+        <div></div>
+      </div>
+      <div class="pain-rows">
+
+        <!-- Row 1 — KYB (SELECTED) -->
+        <div class="pain-row kyb-row">
+          <div class="pr-seq">01</div>
+          <div class="pr-name">
+            <div class="pr-name-text">Onboarding / KYB / Account Setup<span class="kyb-badge">Phase 1</span></div>
+            <div class="pr-name-sub">Business verification, doc collection, back-and-forth</div>
+          </div>
+          <div class="pr-type">Workflow automation + Document AI + HITL review</div>
+          <div class="pr-badge-cell"><span class="badge bh">High</span></div>
+          <div class="pr-badge-cell"><span class="badge bh">High</span></div>
+          <div class="pr-badge-cell"><span class="badge bm">Medium</span></div>
+          <div class="pr-action"><div class="info-btn">i</div></div>
+          <div class="pr-solution">
+            <div class="psc-label">AI Approach</div>
+            <div class="psc-summary">Auto-classify uploaded docs, extract key fields, flag missing items, and generate AI-prepared case summaries for human reviewers.</div>
+            <div class="psc-caps">
+              <div class="psc-cap">Document classification + structured field extraction</div>
+              <div class="psc-cap">Missing item detection + open items checklist</div>
+              <div class="psc-cap">AI case summary with policy grounding + evidence links</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Row 2 -->
+        <div class="pain-row">
+          <div class="pr-seq">02</div>
+          <div class="pr-name">
+            <div class="pr-name-text">Stablecoin Treasury for Fiat Spend</div>
+            <div class="pr-name-sub">Funding setup, off-ramp confusion, card mechanics</div>
+          </div>
+          <div class="pr-type">UX/workflow guidance + assistant + rules engine</div>
+          <div class="pr-badge-cell"><span class="badge bh">High</span></div>
+          <div class="pr-badge-cell"><span class="badge bh">High</span></div>
+          <div class="pr-badge-cell"><span class="badge blm">Low–Med</span></div>
+          <div class="pr-action"><div class="info-btn">i</div></div>
+          <div class="pr-solution">
+            <div class="psc-label">AI Approach</div>
+            <div class="psc-summary">In-context assistant guides fund setup, recommends optimal funding paths, and explains stablecoin-to-fiat mechanics at point of action.</div>
+            <div class="psc-caps">
+              <div class="psc-cap">Guided UX + contextual assistant, not full autonomy</div>
+              <div class="psc-cap">Optimal funding path recommendations</div>
+              <div class="psc-cap">Card mechanics explainer at decision points</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Row 3 -->
+        <div class="pain-row">
+          <div class="pr-seq">03</div>
+          <div class="pr-name">
+            <div class="pr-name-text">Card Issuance, Controls &amp; Spend Governance</div>
+            <div class="pr-name-sub">Limit setting, policy assignment, anomaly monitoring</div>
+          </div>
+          <div class="pr-type">Workflow automation + policy engine + recommendations</div>
+          <div class="pr-badge-cell"><span class="badge bh">High</span></div>
+          <div class="pr-badge-cell"><span class="badge bh">High</span></div>
+          <div class="pr-badge-cell"><span class="badge bm">Medium</span></div>
+          <div class="pr-action"><div class="info-btn">i</div></div>
+          <div class="pr-solution">
+            <div class="psc-label">AI Approach</div>
+            <div class="psc-summary">Rules + ML recommend card limits, detect risky spend patterns, suggest card setup templates, and surface anomalies for review.</div>
+            <div class="psc-caps">
+              <div class="psc-cap">Smart limit recommendations based on spend profile</div>
+              <div class="psc-cap">Anomaly detection on usage patterns</div>
+              <div class="psc-cap">Card template suggestions by team/role</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Row 4 -->
+        <div class="pain-row">
+          <div class="pr-seq">04</div>
+          <div class="pr-name">
+            <div class="pr-name-text">Expense Submission, Receipt Matching &amp; Categorization</div>
+            <div class="pr-name-sub">Chasing receipts, manual coding, transaction matching</div>
+          </div>
+          <div class="pr-type">Document processing + OCR/LLM extraction + workflow</div>
+          <div class="pr-badge-cell"><span class="badge bh">High</span></div>
+          <div class="pr-badge-cell"><span class="badge bh">High</span></div>
+          <div class="pr-badge-cell"><span class="badge bm">Medium</span></div>
+          <div class="pr-action"><div class="info-btn">i</div></div>
+          <div class="pr-solution">
+            <div class="psc-label">AI Approach</div>
+            <div class="psc-summary">OCR + LLM extracts merchant, date, amount, and category. Matches receipts to card transactions. Drafts GL coding suggestions.</div>
+            <div class="psc-caps">
+              <div class="psc-cap">Receipt-to-transaction matching with confidence score</div>
+              <div class="psc-cap">Auto-categorization + GL coding drafts</div>
+              <div class="psc-cap">Missing evidence flagging with reviewer prompt</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Row 5 -->
+        <div class="pain-row">
+          <div class="pr-seq">05</div>
+          <div class="pr-name">
+            <div class="pr-name-text">Cross-Border Vendor Payments &amp; Payout Operations</div>
+            <div class="pr-name-sub">Corridor selection, failed transfers, beneficiary setup</div>
+          </div>
+          <div class="pr-type">Workflow automation + payment ops copilot + exception handling</div>
+          <div class="pr-badge-cell"><span class="badge bh">High</span></div>
+          <div class="pr-badge-cell"><span class="badge bh">High</span></div>
+          <div class="pr-badge-cell"><span class="badge bm">Medium</span></div>
+          <div class="pr-action"><div class="info-btn">i</div></div>
+          <div class="pr-solution">
+            <div class="psc-label">AI Approach</div>
+            <div class="psc-summary">Ops copilot assists payment setup, explains required fields per corridor, summarizes failed transfer reasons, routes exceptions to the right playbook.</div>
+            <div class="psc-caps">
+              <div class="psc-cap">Corridor-aware payment setup guidance</div>
+              <div class="psc-cap">Failed transfer summarization + root cause</div>
+              <div class="psc-cap">Exception routing to resolution playbook</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Row 6 -->
+        <div class="pain-row">
+          <div class="pr-seq">06</div>
+          <div class="pr-name">
+            <div class="pr-name-text">Finance Teams Lack a Unified Control View</div>
+            <div class="pr-name-sub">Spend, payments, treasury fragmented across views</div>
+          </div>
+          <div class="pr-type">AI summaries + analytics copilot + dashboard UX</div>
+          <div class="pr-badge-cell"><span class="badge bh">High</span></div>
+          <div class="pr-badge-cell"><span class="badge bmh">Med–High</span></div>
+          <div class="pr-badge-cell"><span class="badge bm">Medium</span></div>
+          <div class="pr-action"><div class="info-btn">i</div></div>
+          <div class="pr-solution">
+            <div class="psc-label">AI Approach</div>
+            <div class="psc-summary">Analytics copilot generates weekly change summaries, surfaces spend anomalies, and creates a control tower view across cards, payments, and treasury.</div>
+            <div class="psc-caps">
+              <div class="psc-cap">Automated "what changed this week" digest</div>
+              <div class="psc-cap">Spend anomaly surfacing + team-level comparisons</div>
+              <div class="psc-cap">Approval queue prioritization</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Row 7 -->
+        <div class="pain-row">
+          <div class="pr-seq">07</div>
+          <div class="pr-name">
+            <div class="pr-name-text">Support &amp; Self-Serve Troubleshooting</div>
+            <div class="pr-name-sub">Failed transactions, declined cards, document requirements</div>
+          </div>
+          <div class="pr-type">RAG + support assistant + guided workflows</div>
+          <div class="pr-badge-cell"><span class="badge bmh">Med–High</span></div>
+          <div class="pr-badge-cell"><span class="badge bh">High</span></div>
+          <div class="pr-badge-cell"><span class="badge blm">Low–Med</span></div>
+          <div class="pr-action"><div class="info-btn">i</div></div>
+          <div class="pr-solution">
+            <div class="psc-label">AI Approach</div>
+            <div class="psc-summary">RAG-grounded assistant answers from policy docs, product rules, and account-specific context — handles "why did this fail?" without human support.</div>
+            <div class="psc-caps">
+              <div class="psc-cap">Knowledge retrieval from policy + product docs</div>
+              <div class="psc-cap">Account-specific context for personalized answers</div>
+              <div class="psc-cap">Guided resolution workflows for common issues</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Row 8 -->
+        <div class="pain-row">
+          <div class="pr-seq">08</div>
+          <div class="pr-name">
+            <div class="pr-name-text">Policy, Compliance &amp; Audit-Readiness</div>
+            <div class="pr-name-sub">Spending policy, evidence attachment, audit trail assembly</div>
+          </div>
+          <div class="pr-type">RAG + policy copilot + case summarization + traceability</div>
+          <div class="pr-badge-cell"><span class="badge bh">High</span></div>
+          <div class="pr-badge-cell"><span class="badge bmh">Med–High</span></div>
+          <div class="pr-badge-cell"><span class="badge bmh">Med–High</span></div>
+          <div class="pr-action"><div class="info-btn">i</div></div>
+          <div class="pr-solution">
+            <div class="psc-label">AI Approach</div>
+            <div class="psc-summary">Policy copilot answers "is this allowed?", assembles evidence with citations, flags cases needing review, and generates complete audit trails.</div>
+            <div class="psc-caps">
+              <div class="psc-cap">Citation-grounded policy Q&amp;A</div>
+              <div class="psc-cap">Automated evidence assembly for audit</div>
+              <div class="psc-cap">Case flagging + review routing</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Row 9 -->
+        <div class="pain-row">
+          <div class="pr-seq">09</div>
+          <div class="pr-name">
+            <div class="pr-name-text">Repetitive Internal Finance Ops Work</div>
+            <div class="pr-name-sub">Ops/risk/support teams manually reviewing and triaging</div>
+          </div>
+          <div class="pr-type">Internal ops copilot + workflow automation + case triage</div>
+          <div class="pr-badge-cell"><span class="badge bmh">Med–High</span></div>
+          <div class="pr-badge-cell"><span class="badge bh">High</span></div>
+          <div class="pr-badge-cell"><span class="badge bm">Medium</span></div>
+          <div class="pr-action"><div class="info-btn">i</div></div>
+          <div class="pr-solution">
+            <div class="psc-label">AI Approach</div>
+            <div class="psc-summary">Ops copilot summarizes tickets, drafts responses, recommends resolutions, and pre-fills case notes — reducing repetitive triage effort.</div>
+            <div class="psc-caps">
+              <div class="psc-cap">Ticket + case summarization for internal ops</div>
+              <div class="psc-cap">Response drafting + resolution recommendation</div>
+              <div class="psc-cap">Case note pre-fill for consistency</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Row 10 -->
+        <div class="pain-row">
+          <div class="pr-seq">10</div>
+          <div class="pr-name">
+            <div class="pr-name-text">API/Integration Complexity for Embedded Finance</div>
+            <div class="pr-name-sub">Error handling, sandbox-to-prod, implementation setup</div>
+          </div>
+          <div class="pr-type">Developer copilot + API RAG + workflow templates</div>
+          <div class="pr-badge-cell"><span class="badge bm">Medium</span></div>
+          <div class="pr-badge-cell"><span class="badge bmh">Med–High</span></div>
+          <div class="pr-badge-cell"><span class="badge bm">Medium</span></div>
+          <div class="pr-action"><div class="info-btn">i</div></div>
+          <div class="pr-solution">
+            <div class="psc-label">AI Approach</div>
+            <div class="psc-summary">Developer copilot with API RAG provides searchable docs, error guidance, sandbox-to-production walkthroughs, and guided integration templates.</div>
+            <div class="psc-caps">
+              <div class="psc-cap">Searchable API documentation with examples</div>
+              <div class="psc-cap">Error code explanation + resolution steps</div>
+              <div class="psc-cap">Integration templates by use case</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Row 11 -->
+        <div class="pain-row">
+          <div class="pr-seq">11</div>
+          <div class="pr-name">
+            <div class="pr-name-text">Complex Multi-Step Tasks Across Products</div>
+            <div class="pr-name-sub">Fund → issue card → set policy → pay → reconcile</div>
+          </div>
+          <div class="pr-type">Agentic workflow — narrowly scoped</div>
+          <div class="pr-badge-cell"><span class="badge bm">Medium</span></div>
+          <div class="pr-badge-cell"><span class="badge bm">Medium</span></div>
+          <div class="pr-badge-cell"><span class="badge bhe">High</span></div>
+          <div class="pr-action"><div class="info-btn">i</div></div>
+          <div class="pr-solution">
+            <div class="psc-label">AI Approach</div>
+            <div class="psc-summary">Constrained, permissioned agents coordinate pre-approved action sequences — not full autonomy. Best introduced after base workflows are mature.</div>
+            <div class="psc-caps">
+              <div class="psc-cap">Permissioned agents for pre-approved sequences</div>
+              <div class="psc-cap">Human confirmation gates on high-impact steps</div>
+              <div class="psc-cap">Phase 2+ once controls are hardened</div>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /pain-rows -->
+    </div><!-- /pain-table-wrap -->
+
+    <!-- ══════════════════════════════════════════════ -->
+    <!-- WHY KYB FIRST                                  -->
+    <!-- ══════════════════════════════════════════════ -->
+    <h2 id="why-kyb">Why KYB First</h2>
+
+    <div class="kyb-selection-box">
+      <div class="ksb-icon">&#10003;</div>
+      <div class="ksb-body">
+        <div class="ksb-label">Phase 1 Selection — Row 01</div>
+        <div class="ksb-title">Onboarding / KYB / Account Setup Friction</div>
+        <div class="ksb-desc">Reap's ops team performs KYB to decide whether a business can be legally and safely onboarded. The current process is manual, document-heavy, and judgment-intensive — a direct bottleneck to revenue, compliance, and scale.</div>
+        <div class="ksb-stats">
+          <div class="ksb-stat">
+            <div class="ksb-stat-num">~40</div>
+            <div class="ksb-stat-label">documents / pages<br>per typical case</div>
+          </div>
+          <div class="ksb-stat">
+            <div class="ksb-stat-num">~40</div>
+            <div class="ksb-stat-label">minutes of human effort<br>across review, follow-ups, re-review</div>
+          </div>
+          <div class="ksb-stat">
+            <div class="ksb-stat-num">1st</div>
+            <div class="ksb-stat-label">lighthouse workflow<br>for the AI platform</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="reason-grid">
+      <div class="reason-card">
+        <div class="rc-num">Reason 01</div>
+        <div class="rc-title">High-friction &amp; high-frequency</div>
+        <div class="rc-desc">Repeated manual work at high volume — the ROI of AI assistance is immediate and measurable.</div>
+      </div>
+      <div class="reason-card">
+        <div class="rc-num">Reason 02</div>
+        <div class="rc-title">Document-heavy by nature</div>
+        <div class="rc-desc">Aligns directly with document intelligence, extraction, and retrieval — Reap's core AI capabilities.</div>
+      </div>
+      <div class="reason-card">
+        <div class="rc-num">Reason 03</div>
+        <div class="rc-title">Cross-functional proving ground</div>
+        <div class="rc-desc">Sits at the intersection of Ops, Compliance, and Policy — a strong test for enterprise AI workflows.</div>
+      </div>
+      <div class="reason-card">
+        <div class="rc-num">Reason 04</div>
+        <div class="rc-title">Clear automation targets</div>
+        <div class="rc-desc">Repeated manual steps: document review, policy lookup, follow-up drafting, re-review, rationale writing — all automatable with AI.</div>
+      </div>
+      <div class="reason-card">
+        <div class="rc-num">Reason 05</div>
+        <div class="rc-title">Measurable success metrics</div>
+        <div class="rc-desc">Handling time, follow-up loops, reviewer adoption, and decision consistency are all trackable with existing ops data.</div>
+      </div>
+      <div class="reason-card">
+        <div class="rc-num">Reason 06</div>
+        <div class="rc-title">Natural HITL requirement</div>
+        <div class="rc-desc">Final decisions always require explicit human review — making KYB a safe and realistic first AI deployment in a regulated setting.</div>
+      </div>
+      <div class="reason-card">
+        <div class="rc-num">Reason 07</div>
+        <div class="rc-title">Reusable platform components</div>
+        <div class="rc-desc">KYB capabilities extend directly to EDD, sanctions/adverse media review, support ops, and payment operations workflows.</div>
+      </div>
+      <div class="reason-card">
+        <div class="rc-num">Reason 08</div>
+        <div class="rc-title">Painful enough, bounded enough</div>
+        <div class="rc-desc">High enough pain to justify investment. Scoped clearly enough to ship in phases without over-engineering.</div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════ -->
+    <!-- PAIN MAP                                       -->
+    <!-- ══════════════════════════════════════════════ -->
+    <h2 id="pain-map" style="margin-top:48px;">KYB &amp; Platform Pain Map</h2>
+    <div class="pm-callout">
+      Pain points across the KYB journey are <strong>not isolated issues</strong> — they cluster into five platform capability themes that translate journey-level friction into <strong>system-level design priorities</strong>.
+    </div>
+
+    <!-- Core Layer -->
+    <div class="pm-layer-divider"><span class="pm-layer-lbl">Core Operational Backbone</span></div>
+    <div class="pm-core-grid">
+      <div class="pm-tile pmt-data">
+        <div class="pm-tile-icon">
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><rect x="3" y="1.5" width="12" height="15" rx="1.5" stroke="currentColor" stroke-width="1.5"/><path d="M6 6h6M6 9h6M6 12h4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </div>
+        <div class="pm-tile-meta">01 &mdash; Core</div>
+        <div class="pm-tile-title">Core Data &amp; Document Foundation</div>
+        <div class="pm-tile-desc">Ingest, classify, and extract structured fields from unstructured documents reliably across every case lifecycle.</div>
+        <span class="pm-tile-tag">Ingest + Extract</span>
+      </div>
+      <div class="pm-tile pmt-know">
+        <div class="pm-tile-icon">
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M9 2a4 4 0 0 1 2.8 6.8c-.4.4-.5.8-.5 1.2v.5a.75.75 0 0 1-.75.75h-3.1A.75.75 0 0 1 6.75 10.5V10c0-.4-.1-.8-.5-1.2A4 4 0 0 1 9 2z" stroke="currentColor" stroke-width="1.5"/><path d="M7 13.5h4M7.5 15.5h3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </div>
+        <div class="pm-tile-meta">02 &mdash; Core</div>
+        <div class="pm-tile-title">Knowledge, Retrieval &amp; Reasoning</div>
+        <div class="pm-tile-desc">Retrieve and apply relevant policy context, cross-reference evidence, and surface decisions grounded in source material.</div>
+        <span class="pm-tile-tag">Retrieve + Reason</span>
+      </div>
+      <div class="pm-tile pmt-flow">
+        <div class="pm-tile-icon">
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="4" cy="5" r="2" stroke="currentColor" stroke-width="1.5"/><circle cx="4" cy="13" r="2" stroke="currentColor" stroke-width="1.5"/><circle cx="14" cy="9" r="2" stroke="currentColor" stroke-width="1.5"/><path d="M6 5.6l6 2.8M6 12.4l6-2.8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </div>
+        <div class="pm-tile-meta">03 &mdash; Core</div>
+        <div class="pm-tile-title">Workflow &amp; Human-in-the-Loop</div>
+        <div class="pm-tile-desc">Orchestrate the review lifecycle with controlled human decision points, escalation paths, and complete auditability.</div>
+        <span class="pm-tile-tag">Orchestrate + Review</span>
+      </div>
+    </div>
+
+    <!-- Enabling Layer -->
+    <div class="pm-layer-divider" style="margin-top:20px;"><span class="pm-layer-lbl">Enabling Architecture — not standalone, but foundational</span></div>
+    <div class="pm-enable-grid">
+      <div class="pm-tile pmt-plat">
+        <div class="pm-tile-icon">
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M9 2L16 6l-7 4-7-4 7-4z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M2 10l7 4 7-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M2 14l7 4 7-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" opacity=".4"/></svg>
+        </div>
+        <div class="pm-tile-meta">04 &mdash; Enabling</div>
+        <div class="pm-tile-title">Platform &amp; Integration Layer</div>
+        <div class="pm-tile-desc">Shared services, multi-model support, and APIs that make core capabilities reusable across workflows — preventing one-off KYB logic from becoming technical debt.</div>
+        <span class="pm-tile-tag">Reuse + Scale</span>
+      </div>
+      <div class="pm-tile pmt-trust">
+        <div class="pm-tile-icon">
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M9 1.5L15.5 4.5v4c0 4.5-2.5 7-6.5 8-4-1-6.5-3.5-6.5-8v-4L9 1.5z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M6.5 9l2 2 3.5-3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div class="pm-tile-meta">05 &mdash; Enabling</div>
+        <div class="pm-tile-title">Trust, Reliability &amp; Governance</div>
+        <div class="pm-tile-desc">Source transparency, feedback loops, quality controls, and observability that ensure AI works safely and consistently within compliance expectations.</div>
+        <span class="pm-tile-tag">Govern + Monitor</span>
+      </div>
+    </div>
+
+    <!-- Journey Stage × Pain Matrix -->
+    <div style="margin-bottom:28px;">
+      <div class="jm-header-row">
+        <p style="font-size:13.5px;color:var(--text-mid);margin:0;">Each pain point mapped to the KYB journey stage where it occurs — scroll to see the full timeline.</p>
+        <div class="jm-legend">
+          <div class="jm-leg-item"><span class="jm-dot jm-dot-cd"></span>Core Data &amp; Document</div>
+          <div class="jm-leg-item"><span class="jm-dot jm-dot-kn"></span>Knowledge &amp; Retrieval</div>
+          <div class="jm-leg-item"><span class="jm-dot jm-dot-wf"></span>Workflow &amp; HITL</div>
+        </div>
+      </div>
+      <div class="jm-scroll-wrap">
+        <div class="jm-matrix">
+          <div class="jm-col">
+            <div class="jm-stage">Lead Qual / Pre-KYB</div>
+            <div class="jm-chips">
+              <div class="jm-chip jm-wf">Vague business info lets bad leads in</div>
+              <div class="jm-chip jm-wf">Sales asks poor follow-up questions before handoff</div>
+              <div class="jm-chip jm-wf">Obvious prohibited use cases missed early</div>
+            </div>
+          </div>
+          <div class="jm-col">
+            <div class="jm-stage">Application Intake</div>
+            <div class="jm-chips">
+              <div class="jm-chip jm-cd">Blurry, unreadable files delay review</div>
+              <div class="jm-chip jm-cd">Wrong document types uploaded</div>
+              <div class="jm-chip jm-cd">Missing docs cause repeated back-and-forth</div>
+              <div class="jm-chip jm-cd">Duplicate uploads waste analyst time</div>
+            </div>
+          </div>
+          <div class="jm-col">
+            <div class="jm-stage">Entity Verification</div>
+            <div class="jm-chips">
+              <div class="jm-chip jm-cd">Facts buried across PDFs, forms, emails</div>
+              <div class="jm-chip jm-cd">Analysts read large unstructured docs manually</div>
+              <div class="jm-chip jm-kn">Data mismatch across name / registry / forms</div>
+              <div class="jm-chip jm-kn">Manual cross-source comparison errors</div>
+            </div>
+          </div>
+          <div class="jm-col">
+            <div class="jm-stage">Ownership / UBO Discovery</div>
+            <div class="jm-chips">
+              <div class="jm-chip jm-kn">Missing upstream proof discovered late</div>
+              <div class="jm-chip jm-kn">Ownership / control hard to compute</div>
+              <div class="jm-chip jm-kn">Ownership chains reconstructed manually</div>
+            </div>
+          </div>
+          <div class="jm-col">
+            <div class="jm-stage">KYC on Individuals</div>
+            <div class="jm-chips">
+              <div class="jm-chip jm-cd">IDs must be read manually and repeatedly</div>
+              <div class="jm-chip jm-cd">Multiple reviewers fragment person records</div>
+              <div class="jm-chip jm-kn">ID detail mismatches missed late</div>
+            </div>
+          </div>
+          <div class="jm-col">
+            <div class="jm-stage">Sanctions / PEP / Adverse Media</div>
+            <div class="jm-chips">
+              <div class="jm-chip jm-wf">Adverse media review slow and noisy</div>
+              <div class="jm-chip jm-wf">Unclear relevance of risk matches</div>
+              <div class="jm-chip jm-wf">Screening tools generate too many false positives</div>
+            </div>
+          </div>
+          <div class="jm-col">
+            <div class="jm-stage">Business Model Assessment</div>
+            <div class="jm-chips">
+              <div class="jm-chip jm-kn">Manual, inconsistent web evidence checks</div>
+              <div class="jm-chip jm-wf">Declared vs actual activity mismatch</div>
+              <div class="jm-chip jm-wf">Transaction flow hard to understand quickly</div>
+            </div>
+          </div>
+          <div class="jm-col">
+            <div class="jm-stage">Policy Fit / Risk Appetite</div>
+            <div class="jm-chips">
+              <div class="jm-chip jm-kn">Policies in docs hard to apply consistently</div>
+              <div class="jm-chip jm-wf">Manual policy-to-check translation</div>
+              <div class="jm-chip jm-wf">Similar cases get different judgments</div>
+            </div>
+          </div>
+          <div class="jm-col">
+            <div class="jm-stage">Enhanced Due Diligence</div>
+            <div class="jm-chips">
+              <div class="jm-chip jm-wf">Poor escalation briefs for senior reviewers</div>
+              <div class="jm-chip jm-wf">EDD dossiers assembled manually and slowly</div>
+            </div>
+          </div>
+          <div class="jm-col">
+            <div class="jm-stage">Follow-up Communication</div>
+            <div class="jm-chips">
+              <div class="jm-chip jm-wf">Customers receive too many unprioritized asks</div>
+              <div class="jm-chip jm-wf">Follow-up questions vague, create more loops</div>
+              <div class="jm-chip jm-wf">Repeated asks for info already provided</div>
+            </div>
+          </div>
+          <div class="jm-col">
+            <div class="jm-stage">Re-review After Response</div>
+            <div class="jm-chips">
+              <div class="jm-chip jm-wf">Prior open issues forgotten in re-review</div>
+              <div class="jm-chip jm-wf">Partial issue resolution missed</div>
+              <div class="jm-chip jm-wf">Hard to compare old and new submissions</div>
+              <div class="jm-chip jm-wf">New contradictions introduced and missed</div>
+            </div>
+          </div>
+          <div class="jm-col">
+            <div class="jm-stage">Final Decisioning</div>
+            <div class="jm-chips">
+              <div class="jm-chip jm-wf">Final rationale weak or inconsistent</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="theme-grid">
+
+      <!-- Theme 1: Core Data -->
+      <div class="theme-card tc-data">
+        <div class="tc-header">
+          <div class="tc-num">01</div>
+          <div class="tc-title">Core Data &amp; Document Foundation</div>
+        </div>
+        <div class="stage-tags">
+          <span class="stag st-intake">App Intake</span>
+          <span class="stag st-verify">Entity Verification</span>
+          <span class="stag st-verify">KYC Individuals</span>
+        </div>
+        <ul class="tc-pains">
+          <li><span class="tc-dash">—</span>Blurry, cutoff, unreadable files delay review</li>
+          <li><span class="tc-dash">—</span>Customers upload wrong document types</li>
+          <li><span class="tc-dash">—</span>Analysts manually read large unstructured document packs</li>
+          <li><span class="tc-dash">—</span>Missing documents cause repeated back-and-forth</li>
+          <li><span class="tc-dash">—</span>Duplicate uploads waste analyst time</li>
+          <li><span class="tc-dash">—</span>Facts buried across PDFs, forms, and emails</li>
+          <li><span class="tc-dash">—</span>IDs must be read manually and repeatedly per case</li>
+          <li><span class="tc-dash">—</span>Multiple people per case create fragmented person records</li>
+        </ul>
+      </div>
+
+      <!-- Theme 2: Knowledge -->
+      <div class="theme-card tc-know">
+        <div class="tc-header">
+          <div class="tc-num">02</div>
+          <div class="tc-title">Knowledge, Retrieval &amp; Reasoning</div>
+        </div>
+        <div class="stage-tags">
+          <span class="stag st-verify">Entity Verification</span>
+          <span class="stag st-verify">UBO Discovery</span>
+          <span class="stag st-verify">KYC Individuals</span>
+          <span class="stag st-risk">Business Model</span>
+          <span class="stag st-risk">Policy Fit</span>
+        </div>
+        <ul class="tc-pains">
+          <li><span class="tc-dash">—</span>Legal name, trade name, registry data don't match cleanly</li>
+          <li><span class="tc-dash">—</span>Missing upstream proof discovered late in review</li>
+          <li><span class="tc-dash">—</span>Manual multi-source comparison still misses discrepancies</li>
+          <li><span class="tc-dash">—</span>Indirect ownership and control hard to calculate</li>
+          <li><span class="tc-dash">—</span>Ownership chains reconstructed manually case by case</li>
+          <li><span class="tc-dash">—</span>Name / DOB / address / expiry mismatches missed late</li>
+          <li><span class="tc-dash">—</span>Website and public evidence review manual and inconsistent</li>
+          <li><span class="tc-dash">—</span>Policies live in docs and are hard to apply consistently</li>
+        </ul>
+      </div>
+
+      <!-- Theme 3: Workflow/HITL — full width -->
+      <div class="theme-card tc-flow theme-full">
+        <div class="tc-header">
+          <div class="tc-num">03</div>
+          <div class="tc-title">Workflow &amp; Human-in-the-Loop</div>
+        </div>
+        <div class="stage-tags">
+          <span class="stag st-pre">Lead Qual</span>
+          <span class="stag st-risk">EDD</span>
+          <span class="stag st-risk">Sanctions / PEP</span>
+          <span class="stag st-risk">Business Model</span>
+          <span class="stag st-risk">Policy Fit</span>
+          <span class="stag st-ops">Follow-up</span>
+          <span class="stag st-ops">Re-review</span>
+          <span class="stag st-dec">Final Decision</span>
+        </div>
+        <ul class="tc-pains">
+          <li><span class="tc-dash">—</span>Sales asks poor follow-up questions before handoff to ops</li>
+          <li><span class="tc-dash">—</span>Senior reviewers receive poor-quality escalation briefs</li>
+          <li><span class="tc-dash">—</span>Customers receive too many unprioritized asks in follow-up</li>
+          <li><span class="tc-dash">—</span>Analysts forget prior open issues during resubmission review</li>
+          <li><span class="tc-dash">—</span>EDD dossiers assembled manually and slowly</li>
+          <li><span class="tc-dash">—</span>Follow-up questions vague — create more clarification loops</li>
+          <li><span class="tc-dash">—</span>Partial issue resolution is missed in re-review</li>
+          <li><span class="tc-dash">—</span>Analysts ask for information already provided in prior round</li>
+          <li><span class="tc-dash">—</span>Hard to compare old and new submissions side by side</li>
+          <li><span class="tc-dash">—</span>New contradictions introduced during re-review go undetected</li>
+          <li><span class="tc-dash">—</span>Obvious prohibited use cases missed early in the process</li>
+          <li><span class="tc-dash">—</span>Adverse media review slow, noisy, and inconsistent</li>
+          <li><span class="tc-dash">—</span>Declared activity often differs from observed activity</li>
+          <li><span class="tc-dash">—</span>Final rationale is weak or inconsistent across reviewers</li>
+          <li><span class="tc-dash">—</span>Screening tools generate too many false positives</li>
+          <li><span class="tc-dash">—</span>Similar cases receive different judgments across reviewers</li>
+          <li><span class="tc-dash">—</span>Analysts manually translate policy into per-case review checks</li>
+          <li><span class="tc-dash">—</span>Transaction flow and use case hard to understand quickly</li>
+        </ul>
+      </div>
+
+      <!-- Theme 4: Platform Integration -->
+      <div class="theme-card tc-plat">
+        <div class="tc-header">
+          <div class="tc-num">04</div>
+          <div class="tc-title">Platform &amp; Integration Layer</div>
+        </div>
+        <div class="stage-tags">
+          <span class="stag st-risk">All Workflows</span>
+        </div>
+        <ul class="tc-pains">
+          <li><span class="tc-dash">—</span>Teams build one-off KYB features that don't scale to other workflows</li>
+          <li><span class="tc-dash">—</span>AI capabilities hard to reuse across teams and use cases</li>
+          <li><span class="tc-dash">—</span>Different use cases need different models and vendors</li>
+          <li><span class="tc-dash">—</span>Costs can spiral in document-heavy, high-volume workflows</li>
+          <li><span class="tc-dash">—</span>Other teams can't adopt unless platform is easy to integrate</li>
+        </ul>
+      </div>
+
+      <!-- Theme 5: Trust & Governance -->
+      <div class="theme-card tc-trust">
+        <div class="tc-header">
+          <div class="tc-num">05</div>
+          <div class="tc-title">Trust, Reliability &amp; Governance</div>
+        </div>
+        <div class="stage-tags">
+          <span class="stag st-risk">All Workflows</span>
+        </div>
+        <ul class="tc-pains">
+          <li><span class="tc-dash">—</span>Reviewers don't trust AI suggestions without source transparency</li>
+          <li><span class="tc-dash">—</span>AI outputs can't be verified without seeing source citations</li>
+          <li><span class="tc-dash">—</span>Reviewer feedback is lost — system doesn't improve over time</li>
+          <li><span class="tc-dash">—</span>Production issues in latency, cost, and quality are hard to diagnose</li>
+        </ul>
+      </div>
+
+    </div><!-- /theme-grid -->
+
+    <!-- ══════════════════════════════════════════════ -->
+    <!-- WHY PLATFORM                                   -->
+    <!-- ══════════════════════════════════════════════ -->
+    <h2 id="why-platform" style="margin-top:48px;">Why Platform, Not Point Solution</h2>
+    <p style="font-size:14px;color:var(--text-mid);margin-bottom:20px;">KYB is the lighthouse workflow — but the right build strategy is shared services first, domain workflows on top.</p>
+
+    <div class="plat-grid">
+      <div class="plat-card">
+        <div class="plat-num">01</div>
+        <div class="plat-text"><strong>KYB pain = broader capability gap</strong>Document ingestion, extraction, retrieval, workflow state, decision support, and auditability are all reusable.</div>
+      </div>
+      <div class="plat-card">
+        <div class="plat-num">02</div>
+        <div class="plat-text"><strong>Narrow solution = brittle + duplicated</strong>KYB-only builds create fragile logic, duplicated infrastructure, and zero leverage for adjacent workflows.</div>
+      </div>
+      <div class="plat-card">
+        <div class="plat-num">03</div>
+        <div class="plat-text"><strong>Core capabilities are horizontal assets</strong>OCR/parsing, policy retrieval, citations, case memory, review workflows, evals, and observability serve every workflow.</div>
+      </div>
+      <div class="plat-card">
+        <div class="plat-num">04</div>
+        <div class="plat-text"><strong>Platform reduces future rebuilds</strong>Common services harden once and reuse many times — no re-engineering for EDD, sanctions, or support ops.</div>
+      </div>
+      <div class="plat-card">
+        <div class="plat-num">05</div>
+        <div class="plat-text"><strong>Consistent AI quality standards</strong>A platform approach enforces consistent standards for safety, traceability, release gating, and monitoring across all use cases.</div>
+      </div>
+      <div class="plat-card">
+        <div class="plat-num">06</div>
+        <div class="plat-text"><strong>KYB is the lighthouse, not the only workflow</strong>Platform components built for KYB extend naturally to EDD, sanctions review, support ops, and payment operations.</div>
+      </div>
+      <div class="plat-card">
+        <div class="plat-num">07</div>
+        <div class="plat-text"><strong>Speeds expansion to adjacent use cases</strong>Once core services are live, new workflow coverage is configuration and domain data — not re-architecture.</div>
+      </div>
+      <div class="plat-card">
+        <div class="plat-num">08</div>
+        <div class="plat-text"><strong>Build shared services first</strong>Right mental model: shared services + domain-specific workflow configuration on top — not isolated point tools.</div>
+      </div>
+    </div>
+
+    <nav class="section-nav" style="margin-top:40px;">
+      <span></span>
+      <span class="nav-center">1 of 39</span>
+      <a href="opportunity-sizing.html" class="nav-btn next"><span class="nav-btn-dir">Next →</span><span class="nav-btn-title">Market Opportunity &amp; Business Case</span></a>
+    </nav>
+  </main>
+</div>
+<footer class="site-footer">Reap AI Platform — KYB Review Copilot &nbsp;·&nbsp; Technical PRD</footer>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script src="../js/main.js"></script>
+</body>
+</html>

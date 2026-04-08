@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>1.2 Market Opportunity &amp; Business Case — Reap KYB PRD</title>
+  <link rel="stylesheet" href="../css/styles.css" />
+<style>
+  /* ── Revenue Vectors ── */
+  .rev-vectors { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin:20px 0 16px; }
+  @media(max-width:600px){ .rev-vectors { grid-template-columns:1fr; } }
+  .rev-vec { border:1px solid var(--border); border-radius:10px; padding:15px 18px; background:var(--surface); display:flex; gap:12px; align-items:flex-start; }
+  .rv-icon { width:34px; height:34px; border-radius:8px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .rvi-delay { background:#EFF6FF; color:#2563EB; }
+  .rvi-lost  { background:#FEF2F2; color:#DC2626; }
+  .rv-title  { font-size:13px; font-weight:700; color:var(--text); margin-bottom:3px; }
+  .rv-desc   { font-size:12px; color:var(--text-mid); line-height:1.55; }
+
+  /* ── Legend ── */
+  .rev-legend { display:flex; align-items:center; gap:20px; margin:0 0 10px; font-size:11px; color:var(--text-dim); }
+  .leg-item { display:flex; align-items:center; gap:5px; }
+  .leg-sw { width:12px; height:12px; border-radius:3px; }
+  .leg-green { background:#D1FAE5; border:1px solid #6EE7B7; }
+  .leg-white { background:var(--surface); border:1px solid var(--border); }
+
+  /* ── Scenario Table ── */
+  .rev-table-wrap { overflow-x:auto; border:1px solid var(--border); border-radius:10px; margin-bottom:24px; }
+  .rev-table { min-width:680px; width:100%; border-collapse:collapse; font-size:12px; }
+  .rev-table thead tr th { background:var(--bg); padding:9px 10px; text-align:center; font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.06em; color:var(--text-dim); border-bottom:2px solid var(--border); border-right:1px solid var(--border); }
+  .rev-table thead tr th:first-child { text-align:left; padding-left:14px; }
+  .rev-table thead tr th:last-child { border-right:none; }
+  .rev-table td { padding:11px 12px; text-align:center; border-bottom:1px solid var(--border); border-right:1px solid var(--border); color:var(--text); white-space:nowrap; }
+  .rev-table tbody tr:last-child td { border-bottom:none; }
+  .rev-table td:first-child { text-align:left; padding-left:14px; border-right:1px solid var(--border); }
+  .rev-table td:last-child { border-right:none; }
+  .td-a { background:#F0FDF4; } /* assumption — green */
+  .td-risk { background:#EFF6FF; font-weight:700; color:#1D4ED8; font-size:13px; }
+  .scen-pill { display:inline-block; padding:2px 9px; border-radius:5px; font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.06em; }
+  .sp-con { background:#F3F4F6; color:#6B7280; }
+  .sp-base { background:#EFF6FF; color:#1D4ED8; }
+  .sp-up  { background:#ECFDF5; color:#059669; }
+
+  /* ── Risk Summary Cards ── */
+  .risk-summary { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin:0 0 36px; }
+  @media(max-width:600px){ .risk-summary { grid-template-columns:1fr; } }
+  .rs-card { border-radius:10px; padding:18px 20px; text-align:center; }
+  .rs-con  { background:#F9FAFB; border:1px solid #E5E7EB; }
+  .rs-base { background:#EFF6FF; border:1px solid #BFDBFE; }
+  .rs-up   { background:#ECFDF5; border:1px solid #6EE7B7; }
+  .rs-label { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.07em; margin-bottom:6px; }
+  .rs-con  .rs-label { color:#9CA3AF; }
+  .rs-base .rs-label { color:#3B82F6; }
+  .rs-up   .rs-label { color:#10B981; }
+  .rs-val { font-size:24px; font-weight:800; letter-spacing:-.5px; }
+  .rs-con  .rs-val { color:#374151; }
+  .rs-base .rs-val { color:#1D4ED8; }
+  .rs-up   .rs-val { color:#059669; }
+  .rs-sub { font-size:11px; color:var(--text-dim); margin-top:4px; }
+  .rs-breakdown { font-size:11px; margin-top:8px; padding-top:8px; border-top:1px solid rgba(0,0,0,.06); display:flex; justify-content:center; gap:12px; }
+  .rsb-item { color:var(--text-dim); }
+  .rsb-item span { font-weight:600; color:var(--text-mid); }
+
+  /* ── Operational Cost Model ── */
+  .ocm-context { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin:20px 0 24px; }
+  @media(max-width:600px){ .ocm-context { grid-template-columns:1fr; } }
+  .ocm-rate-card { border:1px solid var(--border); border-radius:10px; padding:14px 18px; background:var(--surface); }
+  .ocm-rate-title { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.07em; color:var(--text-dim); margin-bottom:10px; }
+  .ocm-rate-item { display:flex; align-items:center; gap:8px; padding:5px 0; }
+  .ocm-rate-item + .ocm-rate-item { border-top:1px solid var(--border); }
+  .ocm-role { font-size:12px; color:var(--text-mid); flex:1; }
+  .ocm-rate { font-size:13px; font-weight:700; color:var(--text); }
+  .ocm-bench { border:1px solid #BFDBFE; border-radius:10px; padding:14px 18px; background:#EFF6FF; display:flex; align-items:center; gap:14px; }
+  .ocm-bench-icon { width:36px; height:36px; border-radius:8px; background:#DBEAFE; color:#1D4ED8; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .ocm-bench-label { font-size:11px; color:#3B82F6; font-weight:600; margin-bottom:3px; }
+  .ocm-bench-val { font-size:18px; font-weight:800; color:#1D4ED8; letter-spacing:-.3px; }
+  .ocm-bench-sub { font-size:11px; color:#3B82F6; margin-top:2px; }
+
+  /* cost driver table */
+  .ocm-table-wrap { border:1px solid var(--border); border-radius:10px; overflow:hidden; margin-bottom:20px; }
+  .ocm-table { width:100%; border-collapse:collapse; font-size:13px; }
+  .ocm-table thead th { background:var(--bg); padding:9px 14px; text-align:left; font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.07em; color:var(--text-dim); border-bottom:2px solid var(--border); }
+  .ocm-table thead th:not(:first-child) { text-align:center; }
+  .ocm-table thead th:last-child { text-align:right; color:#1D4ED8; }
+  .ocm-table td { padding:13px 14px; border-bottom:1px solid var(--border); vertical-align:middle; }
+  .ocm-table tbody tr:last-child td { border-bottom:none; }
+  .ocm-table td:not(:first-child) { text-align:center; }
+  .ocm-table td:last-child { text-align:right; }
+  .ocm-driver { font-weight:600; color:var(--text); font-size:13px; }
+  .ocm-driver-sub { font-size:11px; color:var(--text-dim); margin-top:2px; }
+  .ocm-curr { color:#DC2626; font-size:12px; font-weight:500; }
+  .ocm-tgt  { color:#059669; font-size:12px; font-weight:500; }
+  .ocm-arr  { color:var(--text-dim); font-size:14px; }
+  .ocm-saving { font-weight:800; font-size:14px; color:#1D4ED8; }
+
+  /* total bar */
+  .ocm-total { display:flex; align-items:center; justify-content:space-between; background:var(--navy); border-radius:10px; padding:16px 22px; margin-bottom:8px; }
+  .ocm-total-left { display:flex; align-items:center; gap:10px; }
+  .ocm-total-icon { width:32px; height:32px; border-radius:7px; background:rgba(255,255,255,.1); display:flex; align-items:center; justify-content:center; color:#fff; }
+  .ocm-total-label { font-size:12px; color:rgba(255,255,255,.6); margin-bottom:2px; }
+  .ocm-total-sub { font-size:11px; color:rgba(255,255,255,.4); }
+  .ocm-total-val { font-size:28px; font-weight:800; color:#fff; letter-spacing:-.5px; }
+  .ocm-note { font-size:11px; color:var(--text-dim); margin:4px 0 32px; padding-left:4px; }
+
+  /* ── Competitive Landscape ── */
+  .comp-table-wrap { border:1px solid var(--border); border-radius:10px; overflow:hidden; margin:20px 0 10px; }
+  .comp-table { width:100%; border-collapse:collapse; font-size:13px; }
+  .comp-table thead th { background:var(--bg); padding:9px 16px; text-align:left; font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.07em; color:var(--text-dim); border-bottom:2px solid var(--border); }
+  .comp-table td { padding:14px 16px; border-bottom:1px solid var(--border); vertical-align:top; }
+  .comp-table tbody tr:last-child td { border-bottom:none; }
+  .comp-table tbody tr:hover { background:var(--bg); }
+  .comp-name { font-weight:700; font-size:13px; color:var(--text); }
+  .comp-reap .comp-name { color:var(--accent); }
+  .comp-signal { font-size:13px; color:var(--text-mid); }
+  .comp-signal em { color:#F59E0B; font-style:normal; font-weight:600; }
+  .comp-signal .sig-hi { color:#2563EB; font-weight:600; }
+  .comp-implication { font-size:13px; color:var(--text-mid); }
+  .comp-reap .comp-implication { color:#059669; font-weight:500; }
+  .comp-signal-quote { font-style:italic; color:var(--text-mid); }
+  .comp-signal-quote strong { color:#F59E0B; font-style:normal; }
+
+  .comp-source { display:flex; align-items:center; gap:8px; margin:6px 0 20px; }
+  .comp-src-chip { display:inline-flex; align-items:center; gap:4px; padding:3px 9px; border-radius:5px; font-size:11px; font-weight:600; background:var(--bg); border:1px solid var(--border); color:var(--text-dim); }
+
+  .comp-takeaway { border-radius:10px; padding:18px 22px; background:#0A2540; border-left:4px solid #F59E0B; margin-bottom:32px; }
+  .comp-take-label { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.08em; color:#F59E0B; margin-bottom:8px; display:flex; align-items:center; gap:6px; }
+  .comp-take-body { font-size:13px; color:rgba(255,255,255,.8); line-height:1.65; }
+  .comp-take-body strong { color:#fff; }
+
+  /* ── Investment vs Return ── */
+  .ivr-intro { font-size:14px; color:var(--text-mid); margin-bottom:20px; line-height:1.6; }
+
+  /* P&L table */
+  .pnl-wrap { border:1px solid var(--border); border-radius:10px; overflow:hidden; margin-bottom:20px; }
+  .pnl-grid { display:grid; grid-template-columns:1fr 1px 1fr; }
+  .pnl-divider { background:var(--border); }
+  .pnl-col { }
+  .pnl-head { display:grid; grid-template-columns:1fr auto; align-items:center; padding:9px 16px; background:var(--bg); border-bottom:2px solid var(--border); }
+  .pnl-head-title { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.07em; }
+  .pnl-head-inv .pnl-head-title { color:#DC2626; }
+  .pnl-head-ret .pnl-head-title { color:#059669; }
+  .pnl-head-val { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.06em; color:var(--text-dim); }
+  .pnl-row { display:grid; grid-template-columns:1fr auto; align-items:center; padding:11px 16px; border-bottom:1px solid var(--border); }
+  .pnl-row:last-child { border-bottom:none; }
+  .pnl-row-total { display:grid; grid-template-columns:1fr auto; align-items:center; padding:12px 16px; background:var(--bg); border-top:2px solid var(--border); }
+  .pnl-item { font-size:13px; color:var(--text-mid); }
+  .pnl-total-label { font-size:13px; font-weight:700; color:var(--text); }
+  .tbd-pill { display:inline-block; padding:2px 8px; border-radius:4px; font-size:10px; font-weight:700; background:#F3F4F6; color:#9CA3AF; border:1px solid #E5E7EB; }
+  .tbd-total { display:inline-block; padding:3px 10px; border-radius:5px; font-size:11px; font-weight:700; background:#EFF6FF; color:#1D4ED8; border:1px solid #BFDBFE; }
+
+  /* Roll-up metrics */
+  .rollup-label { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.07em; color:var(--text-dim); margin:24px 0 10px; display:flex; align-items:center; gap:6px; }
+  .rollup-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-bottom:24px; }
+  @media(max-width:720px){ .rollup-grid { grid-template-columns:repeat(2,1fr); } }
+  .rollup-card { border:1px solid var(--border); border-radius:9px; padding:13px 15px; background:var(--surface); }
+  .rollup-metric { font-size:12px; color:var(--text-mid); margin-bottom:6px; }
+  .rollup-val { font-size:15px; font-weight:700; color:#9CA3AF; }
+  .rollup-card.rc-key { border-color:#BFDBFE; background:#EFF6FF; }
+  .rollup-card.rc-key .rollup-metric { color:#3B82F6; }
+  .rollup-card.rc-key .rollup-val { color:#1D4ED8; }
+
+  /* Assumptions + Exclusions */
+  .ivr-bottom { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:8px; }
+  @media(max-width:600px){ .ivr-bottom { grid-template-columns:1fr; } }
+  .ivr-block { border:1px solid var(--border); border-radius:10px; padding:16px 18px; }
+  .ivr-block-title { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.07em; margin-bottom:12px; display:flex; align-items:center; gap:6px; }
+  .ivr-block-assum .ivr-block-title { color:#1D4ED8; }
+  .ivr-block-excl  .ivr-block-title { color:#9CA3AF; }
+  .ivr-list { list-style:none; display:flex; flex-direction:column; gap:8px; }
+  .ivr-list li { font-size:12px; color:var(--text-mid); display:flex; align-items:flex-start; gap:7px; line-height:1.5; }
+  .ivr-list li::before { content:''; flex-shrink:0; margin-top:5px; width:5px; height:5px; border-radius:50%; }
+  .ivr-block-assum .ivr-list li::before { background:#3B82F6; }
+  .ivr-block-excl  .ivr-list li::before { background:#D1D5DB; }
+</style>
+</head>
+<body>
+<header class="site-header">
+  <div class="header-inner">
+    <a href="../index.html" class="site-logo"><div class="logo-mark">R</div><span>Reap AI Platform</span></a>
+    <div class="header-divider"></div><span class="header-subtitle">KYB Review Copilot</span>
+    <nav class="header-nav"><a href="../index.html">Overview</a><a href="solution-architecture.html">Architecture</a><a href="reviewer-workflow.html">Workflow</a></nav>
+  </div>
+</header>
+<div class="page-layout">
+  <aside class="sidebar">
+    <a href="../index.html" class="sidebar-back"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M9 11L5 7l4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg> All Sections</a>
+    <div class="sidebar-section-title">Block 1 — Executive Framing</div>
+    <ul class="sidebar-nav">
+      <li><a href="problem-context.html">1.1 Problem Statement</a></li>
+      <li><a href="opportunity-sizing.html" class="active">1.2 Market Opportunity</a></li>
+      <li><a href="success-criteria.html">1.3 Success Criteria</a></li>
+      <li><a href="strategic-alignment.html">1.4 Strategic Alignment</a></li>
+      <li><a href="executive-summary.html">1.5 Executive Summary</a></li>
+    </ul>
+  </aside>
+  <main class="content">
+    <nav class="breadcrumb"><a href="../index.html">Home</a><span class="breadcrumb-sep">›</span><span>Block 1 — Executive Framing</span><span class="breadcrumb-sep">›</span><span class="breadcrumb-current">1.2 Market Opportunity &amp; Business Case</span></nav>
+    <div class="section-header">
+      <div class="section-block-tag" style="background:var(--b1)">Block 1 — Executive Framing</div>
+      <h1>Market Opportunity &amp; Business Case</h1>
+      <p class="section-intro">Quantifying the revenue unlock, operational savings, and competitive advantage from AI-assisted KYB — and the cost of the status quo.</p>
+    </div>
+    <h2>Revenue at Stake</h2>
+    <p style="font-size:14px;color:var(--text-mid);margin-bottom:16px;">KYB delays create two distinct revenue leaks — deferred activation and permanent abandonment. The model below sizes both across three growth scenarios.</p>
+
+    <!-- Two impact vectors -->
+    <div class="rev-vectors">
+      <div class="rev-vec">
+        <div class="rv-icon rvi-delay">
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="7" stroke="currentColor" stroke-width="1.5"/><path d="M9 5v4l2.5 2.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </div>
+        <div>
+          <div class="rv-title">Delayed Activation Revenue</div>
+          <div class="rv-desc">Approved customers wait for card, payments &amp; treasury access. Every day of avoidable KYB delay defers monthly account revenue from already-qualified accounts.</div>
+        </div>
+      </div>
+      <div class="rev-vec">
+        <div class="rv-icon rvi-lost">
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M4 4l10 10M14 4L4 14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </div>
+        <div>
+          <div class="rv-title">Lost Conversion (Abandonment)</div>
+          <div class="rv-desc">Friction causes applicants to drop off before activation. Unlike deferral, abandonment permanently eliminates customer LTV — with no recovery path.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Legend -->
+    <div class="rev-legend">
+      <div class="leg-item"><div class="leg-sw leg-green"></div> Industry-standard assumption</div>
+      <div class="leg-item"><div class="leg-sw leg-white"></div> Derived calculation</div>
+    </div>
+
+    <!-- Scenario Table -->
+    <div class="rev-table-wrap">
+      <table class="rev-table">
+        <thead>
+          <tr>
+            <th style="text-align:left">Scenario</th>
+            <th class="td-a">Monthly<br>Applicants</th>
+            <th class="td-a">Avg. Annual<br>Value / Customer</th>
+            <th class="td-a">Median<br>Delay</th>
+            <th class="td-a">Monthly<br>Value</th>
+            <th class="td-a">Activation<br>Rate</th>
+            <th class="td-a">Abandonment<br>due to Delay</th>
+            <th>Revenue<br>Delayed</th>
+            <th>Lost to<br>Friction</th>
+            <th style="background:#EFF6FF;color:#1D4ED8;">Est. Monthly<br>Revenue at Risk</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="scen-pill sp-con">Conservative</span></td>
+            <td class="td-a">300</td>
+            <td class="td-a">$3,600</td>
+            <td class="td-a">7 days</td>
+            <td class="td-a">$300</td>
+            <td class="td-a">35%</td>
+            <td class="td-a">2%</td>
+            <td>$7,350</td>
+            <td>$16,200</td>
+            <td class="td-risk">$23,550</td>
+          </tr>
+          <tr>
+            <td><span class="scen-pill sp-base">Base</span></td>
+            <td class="td-a">500</td>
+            <td class="td-a">$4,800</td>
+            <td class="td-a">5 days</td>
+            <td class="td-a">$400</td>
+            <td class="td-a">40%</td>
+            <td class="td-a">3%</td>
+            <td>$13,333</td>
+            <td>$72,000</td>
+            <td class="td-risk">$85,333</td>
+          </tr>
+          <tr>
+            <td><span class="scen-pill sp-up">Upside</span></td>
+            <td class="td-a">800</td>
+            <td class="td-a">$7,200</td>
+            <td class="td-a">3 days</td>
+            <td class="td-a">$600</td>
+            <td class="td-a">45%</td>
+            <td class="td-a">5%</td>
+            <td>$21,600</td>
+            <td>$288,000</td>
+            <td class="td-risk">$309,600</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Summary cards -->
+    <div class="risk-summary">
+      <div class="rs-card rs-con">
+        <div class="rs-label">Conservative</div>
+        <div class="rs-val">$23,550</div>
+        <div class="rs-sub">Est. monthly revenue at risk</div>
+        <div class="rs-breakdown">
+          <div class="rsb-item">Delayed <span>$7,350</span></div>
+          <div class="rsb-item">Lost <span>$16,200</span></div>
+        </div>
+      </div>
+      <div class="rs-card rs-base">
+        <div class="rs-label">Base</div>
+        <div class="rs-val">$85,333</div>
+        <div class="rs-sub">Est. monthly revenue at risk</div>
+        <div class="rs-breakdown">
+          <div class="rsb-item">Delayed <span>$13,333</span></div>
+          <div class="rsb-item">Lost <span>$72,000</span></div>
+        </div>
+      </div>
+      <div class="rs-card rs-up">
+        <div class="rs-label">Upside</div>
+        <div class="rs-val">$309,600</div>
+        <div class="rs-sub">Est. monthly revenue at risk</div>
+        <div class="rs-breakdown">
+          <div class="rsb-item">Delayed <span>$21,600</span></div>
+          <div class="rsb-item">Lost <span>$288,000</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="stub-banner">&#9998; Sections below are structured stubs awaiting full copy.</div>
+
+    <h2 id="op-cost">Operational Cost Model</h2>
+    <p style="font-size:14px;color:var(--text-mid);margin-bottom:16px;">Current cost is driven by manual document reading, fragmented evidence gathering, and poor-quality escalations. The platform reduces analyst burden while keeping humans in control of every decision.</p>
+
+    <!-- Rate card + benchmark -->
+    <div class="ocm-context">
+      <div class="ocm-rate-card">
+        <div class="ocm-rate-title">Benchmark Hourly Rates</div>
+        <div class="ocm-rate-item">
+          <div class="ocm-role">Analyst / Compliance Officer</div>
+          <div class="ocm-rate">~HK$147 / hr</div>
+        </div>
+        <div class="ocm-rate-item">
+          <div class="ocm-role">Senior Reviewer / Compliance Manager</div>
+          <div class="ocm-rate">~HK$312 / hr</div>
+        </div>
+      </div>
+      <div class="ocm-bench">
+        <div class="ocm-bench-icon">
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><rect x="2" y="4" width="14" height="11" rx="2" stroke="currentColor" stroke-width="1.5"/><path d="M6 4V3a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v1" stroke="currentColor" stroke-width="1.5"/><path d="M2 8h14" stroke="currentColor" stroke-width="1.5" stroke-dasharray="2 2"/></svg>
+        </div>
+        <div>
+          <div class="ocm-bench-label">Annual Case Volume (Benchmark)</div>
+          <div class="ocm-bench-val">~6,000 KYB Reviews / year</div>
+          <div class="ocm-bench-sub">Basis for all cost driver calculations below</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Cost driver table -->
+    <div class="ocm-table-wrap">
+      <table class="ocm-table">
+        <thead>
+          <tr>
+            <th>Cost Driver</th>
+            <th>Current State</th>
+            <th></th>
+            <th>Target State</th>
+            <th>Annual Saving</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <div class="ocm-driver">Analyst Time per Case</div>
+              <div class="ocm-driver-sub">Manual doc reading, evidence gathering, follow-ups</div>
+            </td>
+            <td><span class="ocm-curr">95 mins / case</span></td>
+            <td class="ocm-arr">→</td>
+            <td><span class="ocm-tgt">55 mins / case</span></td>
+            <td><span class="ocm-saving">HK$590k</span></td>
+          </tr>
+          <tr>
+            <td>
+              <div class="ocm-driver">Rework Rate</div>
+              <div class="ocm-driver-sub">Incomplete reviews requiring re-open and re-processing</div>
+            </td>
+            <td><span class="ocm-curr">28% of cases</span></td>
+            <td class="ocm-arr">→</td>
+            <td><span class="ocm-tgt">15% of cases</span></td>
+            <td><span class="ocm-saving">HK$67k</span></td>
+          </tr>
+          <tr>
+            <td>
+              <div class="ocm-driver">Escalation Rate</div>
+              <div class="ocm-driver-sub">Low-quality escalations consuming senior reviewer time</div>
+            </td>
+            <td><span class="ocm-curr">18% of cases</span></td>
+            <td class="ocm-arr">→</td>
+            <td><span class="ocm-tgt">10% of cases</span></td>
+            <td><span class="ocm-saving">HK$62k</span></td>
+          </tr>
+          <tr>
+            <td>
+              <div class="ocm-driver">Compliance Incident Cost</div>
+              <div class="ocm-driver-sub">Policy misses, regulatory findings, and remediation effort</div>
+            </td>
+            <td><span class="ocm-curr">6 incidents/yr × HK$150k</span></td>
+            <td class="ocm-arr">→</td>
+            <td><span class="ocm-tgt">3 incidents/yr × HK$150k</span></td>
+            <td><span class="ocm-saving">HK$450k</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Total -->
+    <div class="ocm-total">
+      <div class="ocm-total-left">
+        <div class="ocm-total-icon">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 2v12M3 7l5-5 5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div>
+          <div class="ocm-total-label">Conservative Annual Operating Benefit</div>
+          <div class="ocm-total-sub">6,000 reviews/yr · before revenue acceleration or platform reuse</div>
+        </div>
+      </div>
+      <div class="ocm-total-val">~HK$1.2M</div>
+    </div>
+    <div class="ocm-note">&#42; Excludes revenue unlock from faster activation and platform reuse savings across other Reap products.</div>
+
+    <h2 id="competitive">Competitive Landscape</h2>
+    <p style="font-size:14px;color:var(--text-mid);margin-bottom:16px;">Fast onboarding is becoming table stakes. Where peers set aggressive public SLAs, any gap between Reap's marketed speed and actual KYB throughput directly erodes conversion and trust.</p>
+
+    <div class="comp-table-wrap">
+      <table class="comp-table">
+        <thead>
+          <tr>
+            <th style="width:130px;">Company</th>
+            <th>Public Signal on Onboarding Speed</th>
+            <th>Strategic Implication</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="comp-reap">
+            <td><div class="comp-name">Reap</div></td>
+            <td><span class="comp-signal-quote">"Get started in <strong>72 hours</strong>"</span></td>
+            <td><span class="comp-implication">Sets a fast onboarding expectation publicly — internal KYB must deliver consistently at this SLA</span></td>
+          </tr>
+          <tr>
+            <td><div class="comp-name">Airwallex</div></td>
+            <td><span class="comp-signal"><span class="sig-hi">1–3 business days</span></span></td>
+            <td><span class="comp-implication">Strong benchmark for digital business onboarding</span></td>
+          </tr>
+          <tr>
+            <td><div class="comp-name">Mercury</div></td>
+            <td><span class="comp-signal"><span class="sig-hi">1–2 business days</span></span></td>
+            <td><span class="comp-implication">Reinforces fast-decision expectation in the market</span></td>
+          </tr>
+          <tr>
+            <td><div class="comp-name">Brex</div></td>
+            <td><span class="comp-signal"><em>AI-native onboarding in minutes</em></span></td>
+            <td><span class="comp-implication">Raises the bar on speed + automation — sets AI as the default</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="comp-takeaway">
+      <div class="comp-take-label">
+        <svg width="13" height="13" viewBox="0 0 14 14" fill="none"><path d="M7 1l1.5 4h4l-3.3 2.4 1.3 4L7 9 3.5 11.4l1.3-4L1.5 5h4L7 1z" stroke="#F59E0B" stroke-width="1.3" stroke-linejoin="round"/></svg>
+        Takeaway
+      </div>
+      <div class="comp-take-body">
+        Fast business onboarding is becoming table stakes. <strong>Reap's own 72-hour promise places direct pressure on the internal KYB process</strong> to perform consistently at that level. Any sustained gap between marketed speed and actual operational throughput increases <strong>conversion risk and weakens customer trust</strong>.
+      </div>
+    </div>
+
+    <h2 id="ivr">Investment vs. Return</h2>
+    <p class="ivr-intro">The business case is a structured investment model — not a single efficiency estimate. Investments span build, run, adoption, and contingency. Returns span reviewer efficiency, compliance savings, revenue protection, and platform reuse. This structure lets leadership assess near-term payback and strategic value separately.</p>
+
+    <!-- P&L Summary -->
+    <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--text-dim);margin-bottom:8px;">Executive P&amp;L-Style Summary</div>
+    <div class="pnl-wrap">
+      <div class="pnl-grid">
+
+        <!-- Investment side -->
+        <div class="pnl-col">
+          <div class="pnl-head pnl-head-inv">
+            <div class="pnl-head-title">
+              <svg width="11" height="11" viewBox="0 0 12 12" fill="none" style="display:inline;vertical-align:middle;margin-right:4px"><path d="M6 10V2M2 6l4-4 4 4" stroke="#DC2626" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              Investment
+            </div>
+            <div class="pnl-head-val">Value</div>
+          </div>
+          <div class="pnl-row"><span class="pnl-item">One-Time Build Investment</span><span class="tbd-pill">TBD</span></div>
+          <div class="pnl-row"><span class="pnl-item">Recurring Run Cost</span><span class="tbd-pill">TBD</span></div>
+          <div class="pnl-row"><span class="pnl-item">Change / Adoption Cost</span><span class="tbd-pill">TBD</span></div>
+          <div class="pnl-row"><span class="pnl-item">Risk Reserve / Contingency</span><span class="tbd-pill">TBD</span></div>
+          <div class="pnl-row-total"><span class="pnl-total-label">Total Investment</span><span class="tbd-total">TBD</span></div>
+        </div>
+
+        <div class="pnl-divider"></div>
+
+        <!-- Return side -->
+        <div class="pnl-col">
+          <div class="pnl-head pnl-head-ret">
+            <div class="pnl-head-title">
+              <svg width="11" height="11" viewBox="0 0 12 12" fill="none" style="display:inline;vertical-align:middle;margin-right:4px"><path d="M6 2v8M2 6l4 4 4-4" stroke="#059669" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              Return
+            </div>
+            <div class="pnl-head-val">Value</div>
+          </div>
+          <div class="pnl-row"><span class="pnl-item">Efficiency Gain</span><span class="tbd-pill">TBD</span></div>
+          <div class="pnl-row"><span class="pnl-item">Rework Reduction</span><span class="tbd-pill">TBD</span></div>
+          <div class="pnl-row"><span class="pnl-item">Escalation Reduction</span><span class="tbd-pill">TBD</span></div>
+          <div class="pnl-row"><span class="pnl-item">Compliance Cost Avoidance</span><span class="tbd-pill">TBD</span></div>
+          <div class="pnl-row"><span class="pnl-item">Revenue Protection</span><span class="tbd-pill">TBD</span></div>
+          <div class="pnl-row"><span class="pnl-item">Revenue Acceleration</span><span class="tbd-pill">TBD</span></div>
+          <div class="pnl-row"><span class="pnl-item">Strategic Platform Reuse Value</span><span class="tbd-pill">TBD</span></div>
+          <div class="pnl-row-total"><span class="pnl-total-label">Total Return</span><span class="tbd-total">TBD</span></div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Executive Roll-ups -->
+    <div class="rollup-label">
+      <svg width="12" height="12" viewBox="0 0 14 14" fill="none"><rect x="1" y="1" width="12" height="12" rx="2" stroke="currentColor" stroke-width="1.3"/><path d="M4 7h6M4 4.5h6M4 9.5h4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+      Senior Leadership Roll-ups
+    </div>
+    <div class="rollup-grid">
+      <div class="rollup-card rc-key"><div class="rollup-metric">Annual Net Benefit</div><div class="rollup-val">TBD</div></div>
+      <div class="rollup-card rc-key"><div class="rollup-metric">Payback Period</div><div class="rollup-val">TBD</div></div>
+      <div class="rollup-card rc-key"><div class="rollup-metric">ROI %</div><div class="rollup-val">TBD</div></div>
+      <div class="rollup-card rc-key"><div class="rollup-metric">Breakeven Date</div><div class="rollup-val">TBD</div></div>
+      <div class="rollup-card"><div class="rollup-metric">Cost per Case: Current</div><div class="rollup-val">TBD</div></div>
+      <div class="rollup-card"><div class="rollup-metric">Cost per Case: Target</div><div class="rollup-val">TBD</div></div>
+      <div class="rollup-card"><div class="rollup-metric">Revenue at Risk Today</div><div class="rollup-val">TBD</div></div>
+      <div class="rollup-card"><div class="rollup-metric">Revenue Recovered / Accelerated</div><div class="rollup-val">TBD</div></div>
+    </div>
+
+    <!-- Assumptions + Exclusions -->
+    <div class="ivr-bottom">
+      <div class="ivr-block ivr-block-assum">
+        <div class="ivr-block-title">
+          <svg width="13" height="13" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" stroke="currentColor" stroke-width="1.3"/><path d="M7 6v4M7 4v.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+          Model Assumptions
+        </div>
+        <ul class="ivr-list">
+          <li>All figures to be finalized with Finance, Compliance Ops, and GTM leadership</li>
+          <li>Efficiency benefits modeled on current case volumes, handling times, and blended reviewer costs</li>
+          <li>Revenue protection and acceleration modeled separately to avoid double-counting</li>
+          <li>Strategic reuse value treated as upside unless adjacent use cases are committed in roadmap</li>
+          <li>Compliance cost avoidance estimated conservatively — measurable remediation savings only</li>
+        </ul>
+      </div>
+      <div class="ivr-block ivr-block-excl">
+        <div class="ivr-block-title">
+          <svg width="13" height="13" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" stroke="currentColor" stroke-width="1.3"/><path d="M5 5l4 4M9 5l-4 4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+          Exclusions
+        </div>
+        <ul class="ivr-list">
+          <li>Brand or trust uplift not directly attributable to onboarding speed</li>
+          <li>Long-term enterprise valuation uplift from stronger platform IP</li>
+          <li>Indirect downstream growth from improved customer advocacy</li>
+        </ul>
+      </div>
+    </div>
+
+    <nav class="section-nav">
+      <a href="problem-context.html" class="nav-btn"><span class="nav-btn-dir">← Previous</span><span class="nav-btn-title">Problem Statement</span></a>
+      <span class="nav-center">2 of 39</span>
+      <a href="success-criteria.html" class="nav-btn next"><span class="nav-btn-dir">Next →</span><span class="nav-btn-title">Success Criteria &amp; KPIs</span></a>
+    </nav>
+  </main>
+</div>
+<footer class="site-footer">Reap AI Platform — KYB Review Copilot &nbsp;·&nbsp; Technical PRD</footer>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script src="../js/main.js"></script>
+</body></html>

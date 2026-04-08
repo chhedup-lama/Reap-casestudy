@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>5.4 Knowledge, Retrieval & Policy Grounding — Reap KYB PRD</title>
+  <link rel="stylesheet" href="../css/styles.css" />
+  <style>
+    /* ── Design principle bar ── */
+    .dp-flow {
+      background:var(--navy); border-radius:10px; padding:.9rem 1.3rem;
+      display:flex; align-items:center; gap:.6rem; flex-wrap:wrap;
+      margin-bottom:2rem; font-size:.82rem;
+    }
+    .dp-step  { color:#c7d2fe; font-weight:500; }
+    .dp-arrow { color:#6366f1; font-weight:700; font-size:1rem; }
+
+    /* ── Section number ── */
+    .sec-num {
+      display:inline-flex; align-items:center; justify-content:center;
+      width:24px; height:24px; border-radius:50%; font-size:.68rem; font-weight:800;
+      background:#dbeafe; color:#1e40af; flex-shrink:0; margin-right:.4rem;
+    }
+    h2.numbered { display:flex; align-items:center; margin-top:1.75rem; }
+
+    /* ── Phase modules ── */
+    .phase-modules { display:grid; grid-template-columns:repeat(4,1fr); gap:.65rem; margin-bottom:1.75rem; }
+    .pm-card {
+      background:var(--surface); border:1px solid var(--border); border-radius:9px;
+      padding:.8rem .9rem; text-align:center; border-top:3px solid var(--b5);
+    }
+    .pm-icon { width:32px; height:32px; border-radius:7px; margin:0 auto .45rem;
+      display:flex; align-items:center; justify-content:center; }
+    .pm-name { font-size:.78rem; font-weight:700; color:var(--text); }
+
+    /* ── Role 2col ── */
+    .role-2col { display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-bottom:1.75rem; }
+    .role-block { background:var(--surface); border:1px solid var(--border); border-radius:9px; padding:.9rem 1rem; }
+    .role-block-title { font-size:.7rem; font-weight:700; text-transform:uppercase; letter-spacing:.08em; margin-bottom:.55rem; }
+    .rl { list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:.3rem; }
+    .rl li { display:flex; align-items:flex-start; gap:.45rem; font-size:.79rem; line-height:1.4; }
+    .rl-dot { width:6px; height:6px; border-radius:50%; flex-shrink:0; margin-top:5px; }
+
+    /* ── Flow steps ── */
+    .flow-steps { display:flex; flex-direction:column; gap:.5rem; margin-bottom:1.75rem; }
+    .flow-step {
+      display:flex; align-items:flex-start; gap:.85rem; background:var(--surface);
+      border:1px solid var(--border); border-radius:9px; padding:.65rem .9rem;
+    }
+    .flow-num {
+      width:26px; height:26px; border-radius:50%; display:flex; align-items:center;
+      justify-content:center; font-size:.7rem; font-weight:800; flex-shrink:0; margin-top:1px;
+    }
+    .flow-title { font-size:.82rem; font-weight:700; color:var(--text); }
+    .flow-sub   { font-size:.73rem; color:var(--text-dim); margin-top:2px; line-height:1.45; }
+    .flow-chips { display:flex; flex-wrap:wrap; gap:.3rem; margin-top:.4rem; }
+    .flow-chip  { font-size:.67rem; background:#f1f5f9; color:var(--text-dim); border:1px solid var(--border); border-radius:3px; padding:.1rem .38rem; }
+
+    /* ── Module cards 2×2 ── */
+    .module-grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:.75rem; margin-bottom:1.75rem; }
+    .mod-card { border-radius:10px; padding:1rem 1.1rem; border:1px solid var(--border); }
+    .mod-hdr { display:flex; align-items:center; gap:.55rem; margin-bottom:.65rem; }
+    .mod-icon { width:32px; height:32px; border-radius:7px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+    .mod-name { font-size:.84rem; font-weight:700; }
+    .mod-does { font-size:.68rem; font-weight:700; text-transform:uppercase; letter-spacing:.07em; color:var(--text-dim); margin:.1rem 0 .4rem; }
+    .mod-list { list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:.3rem; }
+    .mod-list li { display:flex; align-items:flex-start; gap:.45rem; font-size:.78rem; color:var(--text-mid); line-height:1.4; }
+    .ml-chk { flex-shrink:0; color:#16a34a; }
+    .mod-why { font-size:.73rem; color:var(--text-dim); margin-top:.55rem; padding-top:.55rem; border-top:1px solid var(--border); font-style:italic; }
+
+    /* ── Metadata grid ── */
+    .meta-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:.5rem; margin-bottom:.9rem; }
+    .meta-item {
+      display:flex; align-items:flex-start; gap:.45rem; background:var(--surface);
+      border:1px solid var(--border); border-radius:7px; padding:.5rem .7rem;
+      font-size:.77rem; color:var(--text-mid); line-height:1.4;
+    }
+    .meta-dot { width:6px; height:6px; border-radius:50%; flex-shrink:0; margin-top:5px; }
+
+    /* ── Policy families ── */
+    .policy-fam { display:flex; flex-wrap:wrap; gap:.4rem; margin:.6rem 0 1rem; }
+    .pf-chip {
+      font-size:.74rem; font-weight:600; background:#f5f3ff; color:#5b21b6;
+      border:1px solid #ddd6fe; border-radius:5px; padding:.25rem .6rem;
+    }
+
+    /* ── Principle box ── */
+    .dp-note {
+      font-size:.78rem; color:#3730a3; background:#eef2ff; border:1px solid #c7d2fe;
+      border-left:3px solid #4338ca; border-radius:0 7px 7px 0;
+      padding:.6rem .9rem; margin-bottom:1.25rem; line-height:1.5;
+    }
+    .dp-note strong { color:#1e40af; }
+
+    /* ── Citation grid ── */
+    .cit-2col { display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-bottom:.9rem; }
+    .cit-block { background:var(--surface); border:1px solid var(--border); border-radius:9px; padding:.9rem 1rem; }
+    .cit-title { font-size:.7rem; font-weight:700; text-transform:uppercase; letter-spacing:.07em; color:var(--text-dim); margin-bottom:.5rem; }
+
+    /* ── Valid/invalid evidence ── */
+    .ev-2col { display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-bottom:1.75rem; }
+    .ev-block { border-radius:10px; padding:.9rem 1rem; border:1px solid var(--border); }
+    .ev-block.good { background:#f0fdf4; border-color:#bbf7d0; }
+    .ev-block.bad  { background:#fff5f5; border-color:#fecaca; }
+    .ev-title { font-size:.7rem; font-weight:700; text-transform:uppercase; letter-spacing:.08em; margin-bottom:.5rem; }
+    .ev-block.good .ev-title { color:#15803d; }
+    .ev-block.bad  .ev-title { color:#b91c1c; }
+
+    /* ── Fail risks / safe-fail ── */
+    .fail-2col { display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-bottom:1.75rem; }
+    .fail-block { border-radius:10px; padding:.9rem 1rem; border:1px solid var(--border); }
+    .fail-risks { background:#fff5f5; border-color:#fecaca; }
+    .fail-safe  { background:#f0fdf4; border-color:#bbf7d0; }
+    .fail-title { font-size:.7rem; font-weight:700; text-transform:uppercase; letter-spacing:.08em; margin-bottom:.5rem; }
+    .fail-risks .fail-title { color:#b91c1c; }
+    .fail-safe  .fail-title { color:#15803d; }
+
+    /* ── Output tiles ── */
+    .output-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:.6rem; margin-bottom:1rem; }
+    .out-item {
+      background:var(--navy); border-radius:8px; padding:.7rem .9rem;
+      display:flex; align-items:flex-start; gap:.55rem;
+    }
+    .out-dot  { width:8px; height:8px; border-radius:50%; background:#6366f1; flex-shrink:0; margin-top:4px; }
+    .out-label { font-size:.79rem; font-weight:700; color:#fff; }
+    .out-sub   { font-size:.69rem; color:#94a3b8; margin-top:1px; }
+    .next-layer {
+      background:#1e1b4b; border:1px solid #4338ca; border-radius:9px;
+      padding:.8rem 1.1rem; text-align:center; font-size:.82rem;
+      color:#c7d2fe; margin-bottom:1.75rem;
+    }
+    .next-layer strong { color:#fff; }
+
+    /* ── Design goals ── */
+    .goals-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:.55rem; margin-bottom:2rem; }
+    .goal-item {
+      display:flex; align-items:flex-start; gap:.5rem; background:#f0fdf4;
+      border:1px solid #bbf7d0; border-radius:7px; padding:.5rem .7rem;
+      font-size:.78rem; color:#15803d; line-height:1.4;
+    }
+    .goal-item svg { flex-shrink:0; margin-top:1px; }
+
+    /* ── Evidence object fields ── */
+    .eo-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:.5rem; margin-bottom:1rem; }
+    .eo-item {
+      background:var(--surface); border:1px solid var(--border); border-radius:7px;
+      padding:.5rem .75rem; font-size:.77rem;
+    }
+    .eo-label { font-weight:700; color:var(--text); }
+    .eo-sub   { font-size:.69rem; color:var(--text-dim); margin-top:1px; }
+
+    /* ── Mermaid diagram wrapper ── */
+    .mermaid-wrap {
+      background:var(--surface); border:1px solid var(--border); border-radius:10px;
+      padding:1.5rem 1rem; overflow-x:auto; margin-bottom:1.75rem;
+    }
+    .mermaid-wrap .mermaid { min-width:640px; }
+
+    @media(max-width:960px){
+      .phase-modules { grid-template-columns:repeat(2,1fr); }
+      .module-grid-2,.role-2col,.cit-2col,.ev-2col,.fail-2col { grid-template-columns:1fr; }
+      .output-grid { grid-template-columns:repeat(2,1fr); }
+      .goals-grid { grid-template-columns:repeat(2,1fr); }
+      .meta-grid,.eo-grid { grid-template-columns:1fr 1fr; }
+    }
+    @media(max-width:540px){
+      .meta-grid,.eo-grid,.output-grid,.goals-grid { grid-template-columns:1fr; }
+    }
+  </style>
+</head>
+<body>
+<header class="site-header">
+  <div class="header-inner">
+    <a href="../index.html" class="site-logo"><div class="logo-mark">R</div><span>Reap AI Platform</span></a>
+    <div class="header-divider"></div><span class="header-subtitle">KYB Review Copilot</span>
+    <nav class="header-nav"><a href="../index.html">Overview</a><a href="solution-architecture.html">Architecture</a><a href="reviewer-workflow.html">Workflow</a></nav>
+  </div>
+</header>
+<div class="page-layout">
+  <aside class="sidebar">
+    <a href="../index.html" class="sidebar-back"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M9 11L5 7l4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg> All Sections</a>
+    <div class="sidebar-section-title">Block 5 — End to End Platform Components enabling KYB</div>
+    <ul class="sidebar-nav">
+      <li><a href="rag-overview.html">5.1 RAG Overview</a></li>
+      <li><a href="ingestion-pipeline.html">5.2 Input &amp; Intake Layer</a></li>
+      <li><a href="retrieval-policy.html">5.3 Document Intelligence</a></li>
+      <li><a href="llm-reasoning.html" class="active">5.4 Knowledge, Retrieval &amp; Policy Grounding</a></li>
+      <li><a href="reviewer-assist.html">5.5 Reviewer Assist</a></li>
+      <li><a href="workflow-orchestration.html">5.6 Workflow Orchestration</a></li>
+      <li><a href="confidence-scoring.html">5.7 Confidence Scoring</a></li>
+    </ul>
+  </aside>
+  <main class="content">
+    <nav class="breadcrumb"><a href="../index.html">Home</a><span class="breadcrumb-sep">›</span><span>Block 5</span><span class="breadcrumb-sep">›</span><span class="breadcrumb-current">5.4 Knowledge, Retrieval &amp; Policy Grounding</span></nav>
+    <div class="section-header">
+      <div class="section-block-tag" style="background:var(--b5)">Block 5 — End to End Platform Components enabling KYB</div>
+      <h1>Knowledge, Retrieval &amp; Policy Grounding <span style="color:var(--text-dim);font-weight:400">— Document Intelligence →</span></h1>
+      <p class="section-intro">Turns structured document outputs into grounded case intelligence — combining case evidence, structured metadata, and applicable policy into reviewable, citation-linked outputs.</p>
+    </div>
+
+    <!-- Design principle -->
+    <div class="dp-flow">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style="flex-shrink:0"><path d="M8 2l1.5 3.5L13 6l-2.5 2.5.5 3.5L8 10.5 5 12l.5-3.5L3 6l3.5-.5L8 2z" stroke="#818cf8" stroke-width="1.3" stroke-linejoin="round"/></svg>
+      <span class="dp-step">Retrieve the right evidence</span><span class="dp-arrow">→</span>
+      <span class="dp-step">Retrieve the right policy</span><span class="dp-arrow">→</span>
+      <span class="dp-step">Assemble grounded context</span><span class="dp-arrow">→</span>
+      <span class="dp-step">Make every claim traceable</span>
+    </div>
+
+    <!-- Phase 1 modules -->
+    <p style="font-size:.74rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text-dim);margin-bottom:.6rem">Phase 1 Core Modules</p>
+    <div class="phase-modules">
+      <div class="pm-card">
+        <div class="pm-icon" style="background:#dbeafe"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="7" cy="7" r="4" stroke="#1e40af" stroke-width="1.3"/><path d="M10 10l3 3" stroke="#1e40af" stroke-width="1.4" stroke-linecap="round"/></svg></div>
+        <div class="pm-name">Knowledge &amp; Retrieval</div>
+      </div>
+      <div class="pm-card">
+        <div class="pm-icon" style="background:#ede9fe"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="3" y="2" width="10" height="12" rx="2" stroke="#6d28d9" stroke-width="1.3"/><path d="M5 6h6M5 9h4" stroke="#6d28d9" stroke-width="1.3" stroke-linecap="round"/></svg></div>
+        <div class="pm-name">Policy Retrieval</div>
+      </div>
+      <div class="pm-card">
+        <div class="pm-icon" style="background:#dcfce7"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 14l3-3m0 0l2-5 2 5m0 0l3 3" stroke="#15803d" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="pm-name">Citation &amp; Evidence</div>
+      </div>
+      <div class="pm-card">
+        <div class="pm-icon" style="background:#fef3c7"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 2v4M2 8h4M8 14v-4M14 8h-4" stroke="#b45309" stroke-width="1.4" stroke-linecap="round"/></svg></div>
+        <div class="pm-name">Rules &amp; Decisioning</div>
+      </div>
+    </div>
+
+    <!-- 1. What this layer does -->
+    <h2 class="numbered"><span class="sec-num">1</span>What This Layer Does</h2>
+    <div class="role-2col">
+      <div class="role-block">
+        <div class="role-block-title" style="color:#15803d">Responsibilities</div>
+        <ul class="rl">
+          <li><span class="rl-dot" style="background:#16a34a"></span>Store retrieval-ready chunks and metadata</li>
+          <li><span class="rl-dot" style="background:#16a34a"></span>Generate embeddings and vector representations</li>
+          <li><span class="rl-dot" style="background:#16a34a"></span>Retrieve relevant case evidence</li>
+          <li><span class="rl-dot" style="background:#16a34a"></span>Retrieve applicable policy clauses</li>
+          <li><span class="rl-dot" style="background:#16a34a"></span>Assemble evidence and policy into bounded context</li>
+          <li><span class="rl-dot" style="background:#16a34a"></span>Attach citations to findings</li>
+          <li><span class="rl-dot" style="background:#16a34a"></span>Support gap detection, drafting, and recommendations</li>
+        </ul>
+      </div>
+      <div class="role-block">
+        <div class="role-block-title" style="color:#b91c1c">Not in Scope Here</div>
+        <ul class="rl">
+          <li><span class="rl-dot" style="background:#dc2626"></span>Final human decisions</li>
+          <li><span class="rl-dot" style="background:#dc2626"></span>Sending applicant communications autonomously</li>
+          <li><span class="rl-dot" style="background:#dc2626"></span>Resolving material ambiguity without reviewer oversight</li>
+        </ul>
+        <div style="font-size:.73rem;color:var(--text-dim);margin-top:.7rem;font-style:italic">Those come later in reviewer assist and workflow control.</div>
+      </div>
+    </div>
+
+    <!-- 2. Flow -->
+    <h2 class="numbered"><span class="sec-num">2</span>Flow Through the Retrieval &amp; Grounding Layer</h2>
+    <div class="flow-steps">
+      <div class="flow-step">
+        <div class="flow-num" style="background:#dbeafe;color:#1e40af">1</div>
+        <div>
+          <div class="flow-title">Build retrieval-ready knowledge objects</div>
+          <div class="flow-sub">Index structured outputs so the system can retrieve them precisely later</div>
+          <div class="flow-chips">
+            <span class="flow-chip">Document chunks</span><span class="flow-chip">Extracted entities</span>
+            <span class="flow-chip">Case metadata</span><span class="flow-chip">Policy clauses</span>
+            <span class="flow-chip">Policy versions &amp; applicability metadata</span>
+          </div>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num" style="background:#dbeafe;color:#1e40af">2</div>
+        <div><div class="flow-title">Add metadata and vector representations</div><div class="flow-sub">Enrich each chunk with metadata and convert to dense vectors for semantic retrieval</div></div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num" style="background:#ede9fe;color:#6d28d9">3</div>
+        <div>
+          <div class="flow-title">Scope retrieval safely</div>
+          <div class="flow-sub">Narrow the search space using metadata filters before semantic retrieval begins</div>
+          <div class="flow-chips">
+            <span class="flow-chip">Case ID</span><span class="flow-chip">Tenant ID</span>
+            <span class="flow-chip">Document type</span><span class="flow-chip">Jurisdiction</span>
+            <span class="flow-chip">Policy status</span><span class="flow-chip">Risk tier</span>
+            <span class="flow-chip">Review stage</span>
+          </div>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num" style="background:#ede9fe;color:#6d28d9">4</div>
+        <div>
+          <div class="flow-title">Retrieve policy and case evidence</div>
+          <div class="flow-sub">For each KYB criterion, retrieve both the relevant policy requirement and supporting/conflicting case evidence</div>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num" style="background:#fef3c7;color:#b45309">5</div>
+        <div><div class="flow-title">Assemble grounded context</div><div class="flow-sub">Combine retrieved evidence, policy clauses, extracted facts, and open questions into a bounded review context</div></div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num" style="background:#fef3c7;color:#b45309">6</div>
+        <div><div class="flow-title">Attach citations and evidence objects</div><div class="flow-sub">Link every material output to the exact case evidence and/or policy clause used</div></div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num" style="background:#dcfce7;color:#15803d">7</div>
+        <div><div class="flow-title">Fail safely where grounding is weak</div><div class="flow-sub">If evidence, policy, or citations are incomplete — degrade gracefully rather than forcing a strong answer</div></div>
+      </div>
+    </div>
+
+    <!-- 3. Core Modules -->
+    <h2 class="numbered"><span class="sec-num">3</span>Core Modules</h2>
+    <div class="module-grid-2">
+      <div class="mod-card" style="background:#eff6ff;border-color:#bfdbfe;">
+        <div class="mod-hdr">
+          <div class="mod-icon" style="background:#dbeafe"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="7" cy="7" r="4" stroke="#1e40af" stroke-width="1.3"/><path d="M10 10l3 3" stroke="#1e40af" stroke-width="1.4" stroke-linecap="round"/></svg></div>
+          <div class="mod-name" style="color:#1e40af">Knowledge &amp; Retrieval</div>
+        </div>
+        <div class="mod-does">Does</div>
+        <ul class="mod-list">
+          <li><span class="ml-chk"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Indexes chunks, entities, and case-level evidence</li>
+          <li><span class="ml-chk"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Stores embeddings and retrieval metadata</li>
+          <li><span class="ml-chk"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Performs semantic and filtered retrieval</li>
+          <li><span class="ml-chk"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Supports case-scoped evidence lookup</li>
+        </ul>
+        <div class="mod-why">Engine that finds the right evidence instead of relying on model memory.</div>
+      </div>
+      <div class="mod-card" style="background:#f5f3ff;border-color:#ddd6fe;">
+        <div class="mod-hdr">
+          <div class="mod-icon" style="background:#ede9fe"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="3" y="2" width="10" height="12" rx="2" stroke="#6d28d9" stroke-width="1.3"/><path d="M5 6h6M5 9h4" stroke="#6d28d9" stroke-width="1.3" stroke-linecap="round"/></svg></div>
+          <div class="mod-name" style="color:#6d28d9">Policy Retrieval</div>
+        </div>
+        <div class="mod-does">Does</div>
+        <ul class="mod-list">
+          <li><span class="ml-chk"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Indexes policies as governed retrievable units</li>
+          <li><span class="ml-chk"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Filters policies by applicability</li>
+          <li><span class="ml-chk"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Selects the relevant rules for the case</li>
+          <li><span class="ml-chk"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Preserves hierarchy, version, and effective dates</li>
+        </ul>
+        <div class="mod-why">Must retrieve the right policy for the right jurisdiction, entity type, and review context — not generically.</div>
+      </div>
+      <div class="mod-card" style="background:#f0fdf4;border-color:#bbf7d0;">
+        <div class="mod-hdr">
+          <div class="mod-icon" style="background:#dcfce7"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 14l3-3m0 0l2-5 2 5m0 0l3 3" stroke="#15803d" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <div class="mod-name" style="color:#15803d">Citation &amp; Evidence</div>
+        </div>
+        <div class="mod-does">Does</div>
+        <ul class="mod-list">
+          <li><span class="ml-chk"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Binds findings to source evidence</li>
+          <li><span class="ml-chk"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Distinguishes case citations from policy citations</li>
+          <li><span class="ml-chk"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Supports reviewer evidence inspection</li>
+          <li><span class="ml-chk"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Preserves provenance for every claim</li>
+        </ul>
+        <div class="mod-why">Makes every output traceable, reviewable, and audit-safe.</div>
+      </div>
+      <div class="mod-card" style="background:#fffbeb;border-color:#fde68a;">
+        <div class="mod-hdr">
+          <div class="mod-icon" style="background:#fef3c7"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 2v4M2 8h4M8 14v-4M14 8h-4" stroke="#b45309" stroke-width="1.4" stroke-linecap="round"/></svg></div>
+          <div class="mod-name" style="color:#b45309">Rules &amp; Decisioning</div>
+        </div>
+        <div class="mod-does">Does</div>
+        <ul class="mod-list">
+          <li><span class="ml-chk"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Applies deterministic applicability logic</li>
+          <li><span class="ml-chk"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Supports policy family selection</li>
+          <li><span class="ml-chk"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Converts evidence + policy into bounded review outputs</li>
+          <li><span class="ml-chk"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Surfaces missing evidence, conflict, or escalation conditions</li>
+        </ul>
+        <div class="mod-why">Keeps retrieval policy-aware and controlled — not open-ended search.</div>
+      </div>
+    </div>
+
+    <!-- 4. Metadata Model -->
+    <h2 class="numbered"><span class="sec-num">4</span>Metadata Model for Retrieval</h2>
+    <p style="font-size:.82rem;color:var(--text-mid);margin-bottom:.75rem">Rich metadata is the control layer that makes retrieval precise and safe. The correct pattern: <strong>metadata scope first → semantic retrieval second → ranking and grounding third.</strong></p>
+    <div class="meta-grid">
+      <div class="meta-item"><span class="meta-dot" style="background:#6366f1"></span>Case ID + Tenant ID</div>
+      <div class="meta-item"><span class="meta-dot" style="background:#6366f1"></span>Document ID + Document type</div>
+      <div class="meta-item"><span class="meta-dot" style="background:#6366f1"></span>Page number + Section / block type</div>
+      <div class="meta-item"><span class="meta-dot" style="background:#6366f1"></span>Language + Jurisdiction</div>
+      <div class="meta-item"><span class="meta-dot" style="background:#6366f1"></span>Extraction timestamp + Processing version</div>
+      <div class="meta-item"><span class="meta-dot" style="background:#6366f1"></span>OCR confidence</div>
+      <div class="meta-item"><span class="meta-dot" style="background:#6366f1"></span>Chunk sequence / parent-child relation</div>
+      <div class="meta-item"><span class="meta-dot" style="background:#6366f1"></span>Source file hash / version</div>
+      <div class="meta-item"><span class="meta-dot" style="background:#6366f1"></span>Review status</div>
+    </div>
+    <div style="display:flex;flex-wrap:wrap;gap:.45rem;margin-bottom:1.75rem;">
+      <span style="font-size:.72rem;font-weight:600;color:var(--text-dim);align-self:center">Enables:</span>
+      <span class="flow-chip" style="background:#e0e7ff;border-color:#c7d2fe;color:#3730a3">Case-scoped retrieval</span>
+      <span class="flow-chip" style="background:#e0e7ff;border-color:#c7d2fe;color:#3730a3">Document type filtering</span>
+      <span class="flow-chip" style="background:#e0e7ff;border-color:#c7d2fe;color:#3730a3">Source-specific citations</span>
+      <span class="flow-chip" style="background:#e0e7ff;border-color:#c7d2fe;color:#3730a3">Lineage reconstruction</span>
+      <span class="flow-chip" style="background:#e0e7ff;border-color:#c7d2fe;color:#3730a3">Targeted reprocessing</span>
+      <span class="flow-chip" style="background:#e0e7ff;border-color:#c7d2fe;color:#3730a3">Safer grounding</span>
+    </div>
+
+    <!-- 5. Embedding -->
+    <h2 class="numbered"><span class="sec-num">5</span>Embedding &amp; Vectorisation</h2>
+    <div class="role-2col">
+      <div class="role-block">
+        <div class="role-block-title" style="color:#1e40af">Embedding Requirements</div>
+        <ul class="rl">
+          <li><span class="rl-dot" style="background:#1e40af"></span>Support for compliance and business language</li>
+          <li><span class="rl-dot" style="background:#1e40af"></span>Stable semantic similarity performance</li>
+          <li><span class="rl-dot" style="background:#1e40af"></span>Multilingual readiness where needed</li>
+          <li><span class="rl-dot" style="background:#1e40af"></span>Consistency across case and policy corpora</li>
+          <li><span class="rl-dot" style="background:#1e40af"></span>Efficient batch throughput</li>
+        </ul>
+      </div>
+      <div class="role-block">
+        <div class="role-block-title" style="color:#6d28d9">Vector Storage Preserves</div>
+        <ul class="rl">
+          <li><span class="rl-dot" style="background:#6d28d9"></span>Chunk vector</li>
+          <li><span class="rl-dot" style="background:#6d28d9"></span>Chunk text</li>
+          <li><span class="rl-dot" style="background:#6d28d9"></span>Chunk metadata</li>
+          <li><span class="rl-dot" style="background:#6d28d9"></span>Provenance references</li>
+          <li><span class="rl-dot" style="background:#6d28d9"></span>Index version + processing timestamp</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 6. Retrieval Design -->
+    <h2 class="numbered"><span class="sec-num">6</span>Retrieval &amp; Policy Grounding Design</h2>
+    <p style="font-size:.82rem;color:var(--text-mid);margin-bottom:.75rem">This layer answers four questions for every case:</p>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:.6rem;margin-bottom:1rem;">
+      <div style="background:var(--navy);border-radius:8px;padding:.7rem .9rem;text-align:center;">
+        <div style="font-size:.65rem;font-weight:700;color:#818cf8;text-transform:uppercase;letter-spacing:.07em;margin-bottom:.3rem">Q1</div>
+        <div style="font-size:.79rem;color:#fff;font-weight:600">What evidence do we have?</div>
+      </div>
+      <div style="background:var(--navy);border-radius:8px;padding:.7rem .9rem;text-align:center;">
+        <div style="font-size:.65rem;font-weight:700;color:#818cf8;text-transform:uppercase;letter-spacing:.07em;margin-bottom:.3rem">Q2</div>
+        <div style="font-size:.79rem;color:#fff;font-weight:600">Which policies apply?</div>
+      </div>
+      <div style="background:var(--navy);border-radius:8px;padding:.7rem .9rem;text-align:center;">
+        <div style="font-size:.65rem;font-weight:700;color:#818cf8;text-transform:uppercase;letter-spacing:.07em;margin-bottom:.3rem">Q3</div>
+        <div style="font-size:.79rem;color:#fff;font-weight:600">What supports or conflicts?</div>
+      </div>
+      <div style="background:var(--navy);border-radius:8px;padding:.7rem .9rem;text-align:center;">
+        <div style="font-size:.65rem;font-weight:700;color:#818cf8;text-transform:uppercase;letter-spacing:.07em;margin-bottom:.3rem">Q4</div>
+        <div style="font-size:.79rem;color:#fff;font-weight:600">What context passes forward?</div>
+      </div>
+    </div>
+    <div class="dp-note" style="margin-bottom:1.75rem">
+      <strong>Separation matters:</strong> Case evidence (what exists) and policy (what is required) must be treated as distinct corpora — not one undifferentiated search space.
+    </div>
+
+    <!-- 7. Retrieval Flow -->
+    <h2 class="numbered"><span class="sec-num">7</span>Retrieval Flow (Per Criterion)</h2>
+    <div class="flow-steps">
+      <div class="flow-step"><div class="flow-num" style="background:#dbeafe;color:#1e40af">1</div><div><div class="flow-title">Identify the review criterion</div><div class="flow-sub">Active workflow step determines which policy checks and evidence fields are in scope</div></div></div>
+      <div class="flow-step"><div class="flow-num" style="background:#dbeafe;color:#1e40af">2</div><div><div class="flow-title">Retrieve applicable policy context</div><div class="flow-sub">Jurisdiction, entity type, risk tier filters applied before semantic retrieval</div></div></div>
+      <div class="flow-step"><div class="flow-num" style="background:#ede9fe;color:#6d28d9">3</div><div><div class="flow-title">Retrieve case-specific evidence</div><div class="flow-sub">Case-scoped semantic search over applicant documents for this criterion only</div></div></div>
+      <div class="flow-step"><div class="flow-num" style="background:#ede9fe;color:#6d28d9">4</div><div><div class="flow-title">Re-rank and assemble context</div><div class="flow-sub">Cross-encoder re-ranks; Context Assembler deduplicates and manages token budget</div></div></div>
+      <div class="flow-step"><div class="flow-num" style="background:#fef3c7;color:#b45309">5</div><div><div class="flow-title">Generate structured finding support</div><div class="flow-sub">Schema-constrained output using only retrieved context — no prior knowledge</div></div></div>
+      <div class="flow-step"><div class="flow-num" style="background:#fef3c7;color:#b45309">6</div><div><div class="flow-title">Attach citations</div><div class="flow-sub">Each claim linked to policy citation (rule applied) and case citation (evidence used)</div></div></div>
+      <div class="flow-step"><div class="flow-num" style="background:#dcfce7;color:#15803d">7</div><div><div class="flow-title">Score evidence completeness and retrieval confidence</div><div class="flow-sub">Multi-signal: retrieval quality, evidence coverage, citation strength, conflict presence</div></div></div>
+      <div class="flow-step"><div class="flow-num" style="background:#fee2e2;color:#b91c1c">8</div><div><div class="flow-title">Abstain or escalate where grounding is weak</div><div class="flow-sub">Surface for manual review rather than return unsupported output</div></div></div>
+    </div>
+
+    <!-- 8. Policy Retrieval & Selection -->
+    <h2 class="numbered"><span class="sec-num">8</span>Policy Retrieval &amp; Selection Logic</h2>
+    <div class="role-2col" style="margin-bottom:.9rem">
+      <div class="role-block">
+        <div class="role-block-title" style="color:#6d28d9">Policy Indexing Preserves</div>
+        <ul class="rl">
+          <li><span class="rl-dot" style="background:#6d28d9"></span>Policy hierarchy + clause-level retrieval units</li>
+          <li><span class="rl-dot" style="background:#6d28d9"></span>Active vs draft / retired status</li>
+          <li><span class="rl-dot" style="background:#6d28d9"></span>Effective dates + jurisdiction</li>
+          <li><span class="rl-dot" style="background:#6d28d9"></span>Entity type + product / onboarding context</li>
+          <li><span class="rl-dot" style="background:#6d28d9"></span>Risk tier + review stage</li>
+          <li><span class="rl-dot" style="background:#6d28d9"></span>Escalation flags</li>
+        </ul>
+      </div>
+      <div class="role-block">
+        <div class="role-block-title" style="color:#1e40af">Selection: Two Steps</div>
+        <ul class="rl">
+          <li><span class="rl-dot" style="background:#1e40af"></span><strong>Step 1:</strong> Deterministic applicability logic</li>
+          <li><span class="rl-dot" style="background:#1e40af"></span><strong>Step 2:</strong> Retrieval-based ranking within the applicable policy family</li>
+        </ul>
+        <div style="margin-top:.6rem;font-size:.72rem;font-weight:700;color:var(--text-dim);text-transform:uppercase;letter-spacing:.07em">Prefer</div>
+        <div class="flow-chips" style="margin-top:.3rem">
+          <span class="flow-chip" style="background:#dcfce7;border-color:#bbf7d0;color:#15803d">Active over inactive</span>
+          <span class="flow-chip" style="background:#dcfce7;border-color:#bbf7d0;color:#15803d">Specific over generic</span>
+          <span class="flow-chip" style="background:#dcfce7;border-color:#bbf7d0;color:#15803d">Mandatory over guidance</span>
+          <span class="flow-chip" style="background:#dcfce7;border-color:#bbf7d0;color:#15803d">Jurisdiction-specific over global</span>
+          <span class="flow-chip" style="background:#dcfce7;border-color:#bbf7d0;color:#15803d">Latest effective version</span>
+        </div>
+      </div>
+    </div>
+    <div style="font-size:.74rem;font-weight:700;color:var(--text-dim);text-transform:uppercase;letter-spacing:.07em;margin-bottom:.4rem">Typical Policy Families</div>
+    <div class="policy-fam">
+      <span class="pf-chip">Onboarding policy</span>
+      <span class="pf-chip">Prohibited / restricted business</span>
+      <span class="pf-chip">Ownership verification</span>
+      <span class="pf-chip">Address validation</span>
+      <span class="pf-chip">Escalation / exception</span>
+      <span class="pf-chip">High-risk jurisdiction</span>
+    </div>
+
+    <!-- 9. Citation Design -->
+    <h2 class="numbered"><span class="sec-num">9</span>Citation &amp; Evidence Design</h2>
+    <div class="cit-2col" style="margin-bottom:.75rem">
+      <div class="cit-block">
+        <div class="cit-title">Citation Requirements</div>
+        <ul class="rl">
+          <li><span class="rl-dot" style="background:#6366f1"></span>Each criterion finding includes a citation where evidence exists</li>
+          <li><span class="rl-dot" style="background:#6366f1"></span>Recommendations link back to all underlying criterion citations</li>
+          <li><span class="rl-dot" style="background:#1e40af"></span><strong>Policy citation</strong> = the rule applied</li>
+          <li><span class="rl-dot" style="background:#6b21a8"></span><strong>Case citation</strong> = the evidence used</li>
+        </ul>
+      </div>
+      <div class="cit-block">
+        <div class="cit-title">Citation Resolves To</div>
+        <ul class="rl">
+          <li><span class="rl-dot" style="background:#15803d"></span>Document name</li>
+          <li><span class="rl-dot" style="background:#15803d"></span>Page / section where possible</li>
+          <li><span class="rl-dot" style="background:#15803d"></span>Chunk ID for auditability</li>
+          <li><span class="rl-dot" style="background:#15803d"></span>Snippet preview in reviewer UI</li>
+        </ul>
+      </div>
+    </div>
+    <div style="background:#fff7ed;border:1px solid #fcd34d;border-left:3px solid #f59e0b;border-radius:0 7px 7px 0;padding:.6rem .9rem;font-size:.78rem;color:#92400e;margin-bottom:1.75rem;">
+      <strong>Guardrail:</strong> No claim is shown as factual unless backed by retrieved evidence. If citation binding fails, the output is marked incomplete or the unsupported claim is withheld.
+    </div>
+
+    <!-- 10. Valid Evidence -->
+    <h2 class="numbered"><span class="sec-num">10</span>Valid Evidence Rules</h2>
+    <div class="ev-2col">
+      <div class="ev-block good">
+        <div class="ev-title">Valid Evidence — Must Be</div>
+        <ul class="rl">
+          <li><span class="rl-dot" style="background:#16a34a"></span>From current case or approved policy corpus</li>
+          <li><span class="rl-dot" style="background:#16a34a"></span>Retrievable and inspectable</li>
+          <li><span class="rl-dot" style="background:#16a34a"></span>Linked to specific source location</li>
+          <li><span class="rl-dot" style="background:#16a34a"></span>Relevant to the criterion</li>
+          <li><span class="rl-dot" style="background:#16a34a"></span>Sufficiently legible / extractable</li>
+          <li><span class="rl-dot" style="background:#16a34a"></span>Not superseded where version matters</li>
+          <li><span class="rl-dot" style="background:#16a34a"></span>Tenant-safe and case-safe</li>
+          <li><span class="rl-dot" style="background:#16a34a"></span>Not inferred only from model memory</li>
+        </ul>
+      </div>
+      <div class="ev-block bad">
+        <div class="ev-title">Weak / Invalid Evidence Examples</div>
+        <ul class="rl">
+          <li><span class="rl-dot" style="background:#dc2626"></span>Unsupported model inference</li>
+          <li><span class="rl-dot" style="background:#dc2626"></span>Vague summary without source</li>
+          <li><span class="rl-dot" style="background:#dc2626"></span>Very low-confidence OCR text</li>
+          <li><span class="rl-dot" style="background:#dc2626"></span>Stale policy version</li>
+          <li><span class="rl-dot" style="background:#dc2626"></span>Retrieval without provenance</li>
+          <li><span class="rl-dot" style="background:#dc2626"></span>Unrelated document snippet</li>
+          <li><span class="rl-dot" style="background:#dc2626"></span>Context-stripped fragment</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 11. Evidence Object -->
+    <h2 class="numbered"><span class="sec-num">11</span>Evidence Object &amp; Reviewer Inspection</h2>
+    <p style="font-size:.82rem;color:var(--text-mid);margin-bottom:.75rem">Canonical evidence objects ensure downstream reviewer experiences are consistent. The reviewer path: <strong>finding → citation → source inspection → judgment.</strong></p>
+    <div class="eo-grid">
+      <div class="eo-item"><div class="eo-label">Evidence ID</div><div class="eo-sub">Unique immutable reference</div></div>
+      <div class="eo-item"><div class="eo-label">Source Type</div><div class="eo-sub">Document, policy, form data</div></div>
+      <div class="eo-item"><div class="eo-label">Source Doc / Policy ID</div><div class="eo-sub">Linked to ingestion record</div></div>
+      <div class="eo-item"><div class="eo-label">Case ID</div><div class="eo-sub">Strict isolation key</div></div>
+      <div class="eo-item"><div class="eo-label">Page / Section / Chunk Ref</div><div class="eo-sub">Source location pointer</div></div>
+      <div class="eo-item"><div class="eo-label">Evidence Snippet</div><div class="eo-sub">Preview text for reviewer</div></div>
+      <div class="eo-item"><div class="eo-label">Extraction Confidence</div><div class="eo-sub">OCR / extraction quality</div></div>
+      <div class="eo-item"><div class="eo-label">Retrieval Score</div><div class="eo-sub">Semantic relevance signal</div></div>
+      <div class="eo-item"><div class="eo-label">Policy Version</div><div class="eo-sub">Where applicable</div></div>
+      <div class="eo-item"><div class="eo-label">Processing Timestamp</div><div class="eo-sub">For lineage and audit</div></div>
+      <div class="eo-item"><div class="eo-label">Reviewer Relevance State</div><div class="eo-sub">Sufficient / insufficient / irrelevant</div></div>
+    </div>
+
+    <!-- 12. Weak / No Evidence -->
+    <h2 class="numbered"><span class="sec-num">12</span>Weak / No Evidence Handling</h2>
+    <div class="ev-2col" style="margin-bottom:.75rem">
+      <div class="ev-block bad">
+        <div class="ev-title">Weak Evidence Examples</div>
+        <ul class="rl">
+          <li><span class="rl-dot" style="background:#dc2626"></span>Partially relevant citation</li>
+          <li><span class="rl-dot" style="background:#dc2626"></span>Low-quality OCR or low-confidence extraction</li>
+          <li><span class="rl-dot" style="background:#dc2626"></span>Evidence supports only part of the claim</li>
+          <li><span class="rl-dot" style="background:#dc2626"></span>Conflicting sources</li>
+        </ul>
+      </div>
+      <div class="ev-block bad">
+        <div class="ev-title">No Evidence Examples</div>
+        <ul class="rl">
+          <li><span class="rl-dot" style="background:#dc2626"></span>Required document absent</li>
+          <li><span class="rl-dot" style="background:#dc2626"></span>Retrieval returns nothing relevant</li>
+          <li><span class="rl-dot" style="background:#dc2626"></span>Citation binding fails</li>
+          <li><span class="rl-dot" style="background:#dc2626"></span>No applicable policy found</li>
+        </ul>
+      </div>
+    </div>
+    <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-left:3px solid #16a34a;border-radius:0 7px 7px 0;padding:.65rem .9rem;font-size:.78rem;color:#15803d;margin-bottom:1.75rem;line-height:1.6">
+      <strong>Required behavior:</strong> Lower confidence · Soften recommendation · State what is missing · Propose follow-up or escalation · Abstain where thresholds require · Prevent unsupported downstream decision support.
+    </div>
+
+    <!-- 13. Retrieval Failure -->
+    <h2 class="numbered"><span class="sec-num">13</span>Retrieval Failure &amp; Safe-Fail</h2>
+    <div class="fail-2col">
+      <div class="fail-block fail-risks">
+        <div class="fail-title">Key Failure Risks</div>
+        <ul class="rl">
+          <li><span class="rl-dot" style="background:#dc2626"></span>Wrong policy retrieved</li>
+          <li><span class="rl-dot" style="background:#dc2626"></span>Relevant policy omitted</li>
+          <li><span class="rl-dot" style="background:#dc2626"></span>Old document version retrieved</li>
+          <li><span class="rl-dot" style="background:#dc2626"></span>Weak chunking hurts retrieval</li>
+          <li><span class="rl-dot" style="background:#dc2626"></span>Semantic similarity returns irrelevant content</li>
+          <li><span class="rl-dot" style="background:#dc2626"></span>Extraction errors propagate into grounding</li>
+          <li><span class="rl-dot" style="background:#dc2626"></span>Too much raw text overloads context</li>
+          <li><span class="rl-dot" style="background:#dc2626"></span>Conflicting evidence not surfaced</li>
+          <li><span class="rl-dot" style="background:#dc2626"></span>Provenance missing</li>
+          <li><span class="rl-dot" style="background:#dc2626"></span>Policy index is stale</li>
+        </ul>
+      </div>
+      <div class="fail-block fail-safe">
+        <div class="fail-title">Safe-Fail Behavior</div>
+        <ul class="rl">
+          <li><span class="rl-dot" style="background:#16a34a"></span>Avoid strong approve/reject language</li>
+          <li><span class="rl-dot" style="background:#16a34a"></span>Mark criterion as insufficiently grounded</li>
+          <li><span class="rl-dot" style="background:#16a34a"></span>Surface missing policy / missing evidence warning</li>
+          <li><span class="rl-dot" style="background:#16a34a"></span>Show confidence / coverage gaps</li>
+          <li><span class="rl-dot" style="background:#16a34a"></span>Route to reviewer or specialist handling</li>
+          <li><span class="rl-dot" style="background:#16a34a"></span>Log failure for monitoring and evals</li>
+        </ul>
+        <div style="font-size:.73rem;font-style:italic;color:#15803d;margin-top:.6rem;border-top:1px solid #bbf7d0;padding-top:.5rem">It is better to return insufficient grounding than a polished but unsafe output.</div>
+      </div>
+    </div>
+
+    <!-- 14. Output -->
+    <h2 class="numbered"><span class="sec-num">14</span>What This Layer Produces</h2>
+    <div class="output-grid">
+      <div class="out-item"><span class="out-dot"></span><div><div class="out-label">Indexed case evidence</div><div class="out-sub">Retrievable with provenance</div></div></div>
+      <div class="out-item"><span class="out-dot"></span><div><div class="out-label">Governed policy clauses</div><div class="out-sub">Version-controlled, scoped</div></div></div>
+      <div class="out-item"><span class="out-dot"></span><div><div class="out-label">Metadata-scoped retrieval</div><div class="out-sub">Safe, precise, case-bound</div></div></div>
+      <div class="out-item"><span class="out-dot"></span><div><div class="out-label">Evidence objects</div><div class="out-sub">With source provenance</div></div></div>
+      <div class="out-item"><span class="out-dot"></span><div><div class="out-label">Policy-grounded context</div><div class="out-sub">Reviewer-ready bundles</div></div></div>
+      <div class="out-item"><span class="out-dot"></span><div><div class="out-label">Citation-linked support</div><div class="out-sub">For downstream findings</div></div></div>
+      <div class="out-item"><span class="out-dot" style="background:#ef4444"></span><div><div class="out-label">Failure signals</div><div class="out-sub">Where grounding is weak</div></div></div>
+    </div>
+    <div class="next-layer">
+      This output is the foundation for the next capability block: <strong>Reviewer Assist / Case Intelligence</strong>
+    </div>
+
+    <!-- 15. Design Goals -->
+    <h2 class="numbered"><span class="sec-num">15</span>Design Goals</h2>
+    <div class="goals-grid">
+      <div class="goal-item"><svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M2 6.5l3 3 6-6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Support precise, case-safe retrieval</div>
+      <div class="goal-item"><svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M2 6.5l3 3 6-6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Separate evidence from policy retrieval</div>
+      <div class="goal-item"><svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M2 6.5l3 3 6-6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Preserve chunk and source provenance</div>
+      <div class="goal-item"><svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M2 6.5l3 3 6-6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Use metadata as safety and precision layer</div>
+      <div class="goal-item"><svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M2 6.5l3 3 6-6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Ground every output in evidence</div>
+      <div class="goal-item"><svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M2 6.5l3 3 6-6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Make citations inspectable in reviewer workflow</div>
+      <div class="goal-item"><svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M2 6.5l3 3 6-6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Fail safely when retrieval is weak</div>
+      <div class="goal-item"><svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M2 6.5l3 3 6-6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Prepare bounded context for downstream reviewer assist</div>
+    </div>
+
+    <!-- 16. Retrieval + Policy Grounding Flow diagram -->
+    <h2 class="numbered"><span class="sec-num">16</span> Retrieval &amp; Policy Grounding Flow</h2>
+    <p style="font-size:.82rem;color:var(--text-dim);margin-bottom:1.1rem;">End-to-end data path from case intake through document parsing, policy retrieval, grounded context assembly, and output to the Reviewer Copilot.</p>
+    <div class="mermaid-wrap">
+      <div class="mermaid">
+flowchart TD
+    A[Case Intake + Uploaded Documents] --> B[Document Storage]
+    A --> C[Case Metadata]
+    B --> D[Document Parsing / OCR / Extraction]
+    D --> E[Document Chunk Index]
+    D --> F[Structured Entity Index]
+
+    G[Policy Repository] --> H[Policy Parsing + Clause Chunking]
+    H --> I[Policy Clause Index]
+
+    C --> J[Applicability Filter Engine]
+    J --> K[Policy Candidate Set]
+
+    K --> L[Policy Retrieval + Ranking]
+    I --> L
+
+    C --> M[Document Retrieval Filters]
+    E --> N[Evidence Retrieval]
+    F --> N
+    M --> N
+
+    L --> O[Selected Policy Clauses]
+    N --> P[Evidence Assembly Layer]
+
+    C --> P
+    O --> Q[Grounded Context Builder]
+    P --> Q
+
+    Q --> R[Reviewer Copilot / Decision Support]
+    Q --> S[Checklist / Missing Info Detection]
+    Q --> T[Escalation / Risk Recommendation]
+
+    U[Retrieval Confidence + Failure Checks] --> Q
+    Q --> V[Audit Log + Trace Store]
+
+    classDef intake    fill:#dbeafe,stroke:#1d4ed8,color:#1e3a5f
+    classDef parse     fill:#ede9fe,stroke:#6d28d9,color:#3b0764
+    classDef index     fill:#f0fdf4,stroke:#16a34a,color:#14532d
+    classDef policy    fill:#fef3c7,stroke:#b45309,color:#78350f
+    classDef assemble  fill:#1e1b4b,stroke:#4338ca,color:#c7d2fe
+    classDef output    fill:#f0fdf4,stroke:#16a34a,color:#14532d
+    classDef audit     fill:#f1f5f9,stroke:#64748b,color:#334155
+    classDef confidence fill:#fee2e2,stroke:#dc2626,color:#7f1d1d
+
+    class A,C intake
+    class B,D parse
+    class E,F,I index
+    class G,H,J,K,L,M,O policy
+    class N,P,Q assemble
+    class R,S,T output
+    class V audit
+    class U confidence
+      </div>
+    </div>
+
+    <nav class="section-nav">
+      <a href="retrieval-policy.html" class="nav-btn"><span class="nav-btn-dir">← Previous</span><span class="nav-btn-title">Document Intelligence</span></a>
+      <span class="nav-center">24 of 39</span>
+      <a href="reviewer-assist.html" class="nav-btn next"><span class="nav-btn-dir">Next →</span><span class="nav-btn-title">Reviewer Assist / Case Intelligence</span></a>
+    </nav>
+  </main>
+</div>
+<footer class="site-footer">Reap AI Platform — KYB Review Copilot &nbsp;·&nbsp; Technical PRD</footer>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({startOnLoad:true,theme:'base',themeVariables:{fontSize:'13px',fontFamily:'Open Sans, sans-serif',primaryColor:'#dbeafe',primaryTextColor:'#1e3a5f',primaryBorderColor:'#1d4ed8',lineColor:'#64748b',edgeLabelBackground:'#f8fafc'}});</script>
+<script src="../js/main.js"></script>
+</body></html>

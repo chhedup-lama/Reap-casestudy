@@ -1,0 +1,1045 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>5.5 Reviewer Assist / Case Intelligence — Reap KYB PRD</title>
+  <link rel="stylesheet" href="../css/styles.css" />
+  <style>
+    /* ── Design principle bar ── */
+    .dp-flow {
+      background:var(--navy); border-radius:10px; padding:.9rem 1.3rem;
+      display:flex; align-items:center; gap:.6rem; flex-wrap:wrap;
+      margin-bottom:2rem; font-size:.82rem;
+    }
+    .dp-step  { color:#c7d2fe; font-weight:500; }
+    .dp-arrow { color:#6366f1; font-weight:700; font-size:1rem; }
+
+    /* ── Section number ── */
+    .sec-num {
+      display:inline-flex; align-items:center; justify-content:center;
+      width:24px; height:24px; border-radius:50%; font-size:.68rem; font-weight:800;
+      background:#dbeafe; color:#1e40af; flex-shrink:0; margin-right:.4rem;
+    }
+    h2.numbered { display:flex; align-items:center; margin-top:1.75rem; }
+
+    /* ── Phase modules ── */
+    .phase-modules { display:grid; grid-template-columns:repeat(4,1fr); gap:.65rem; margin-bottom:1.75rem; }
+    .pm-card {
+      background:var(--surface); border:1px solid var(--border); border-radius:9px;
+      padding:.8rem .9rem; text-align:center; border-top:3px solid var(--b5);
+    }
+    .pm-icon { width:32px; height:32px; border-radius:7px; margin:0 auto .45rem;
+      display:flex; align-items:center; justify-content:center; }
+    .pm-name { font-size:.78rem; font-weight:700; color:var(--text); }
+    .pm-sub  { font-size:.68rem; color:var(--text-dim); margin-top:.2rem; line-height:1.35; }
+
+    /* ── Role 2col ── */
+    .role-2col { display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-bottom:1.75rem; }
+    .role-block { background:var(--surface); border:1px solid var(--border); border-radius:9px; padding:.9rem 1rem; }
+    .role-block-title { font-size:.7rem; font-weight:700; text-transform:uppercase; letter-spacing:.08em; margin-bottom:.55rem; }
+    .rl { list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:.3rem; }
+    .rl li { display:flex; align-items:flex-start; gap:.45rem; font-size:.79rem; line-height:1.4; }
+    .rl-dot { width:6px; height:6px; border-radius:50%; flex-shrink:0; margin-top:5px; }
+
+    /* ── Delivery options ── */
+    .delivery-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:.75rem; margin-bottom:1rem; }
+    .dlv-card {
+      background:var(--surface); border:1px solid var(--border); border-radius:9px; padding:.9rem 1rem;
+    }
+    .dlv-num {
+      width:22px; height:22px; border-radius:50%; background:#dbeafe; color:#1e40af;
+      font-size:.68rem; font-weight:800; display:inline-flex; align-items:center;
+      justify-content:center; margin-bottom:.45rem;
+    }
+    .dlv-name { font-size:.82rem; font-weight:700; color:var(--text); margin-bottom:.3rem; }
+    .dlv-sub  { font-size:.74rem; color:var(--text-dim); line-height:1.45; }
+    .dlv-tag  {
+      display:inline-block; margin-top:.45rem; font-size:.68rem; font-weight:700;
+      padding:.15rem .5rem; border-radius:4px;
+    }
+    .dlv-tag.best { background:#dcfce7; color:#15803d; }
+    .dlv-tag.alt  { background:#fef3c7; color:#92400e; }
+    .dlv-tag.adv  { background:#ede9fe; color:#5b21b6; }
+
+    /* ── Stance callout ── */
+    .stance-bar {
+      background:#1e1b4b; border:1px solid #4338ca; border-radius:9px;
+      padding:.75rem 1.1rem; margin-bottom:.6rem; font-size:.82rem; color:#c7d2fe;
+      display:flex; align-items:center; gap:.7rem;
+    }
+    .stance-label { font-size:.67rem; font-weight:700; text-transform:uppercase; letter-spacing:.08em; color:#818cf8; white-space:nowrap; }
+    .stance-text strong { color:#fff; }
+
+    /* ── Wireframe CTA banner ── */
+    .wf-cta {
+      background:#1e1b4b; border:1px solid #4338ca; border-radius:9px;
+      padding:.7rem 1.1rem; margin-bottom:1.75rem;
+      display:flex; align-items:center; gap:.85rem;
+    }
+    .wf-cta-icon {
+      width:36px; height:36px; border-radius:8px; background:rgba(99,102,241,.25);
+      display:flex; align-items:center; justify-content:center; flex-shrink:0;
+    }
+    .wf-cta-body { flex:1; }
+    .wf-cta-title { font-size:.82rem; font-weight:700; color:#fff; }
+    .wf-cta-sub   { font-size:.72rem; color:#94a3b8; margin-top:1px; }
+    .wf-cta-btn {
+      display:inline-flex; align-items:center; gap:.4rem; flex-shrink:0;
+      background:#6366f1; color:#fff; font-size:.78rem; font-weight:700;
+      border-radius:7px; padding:.45rem 1rem; text-decoration:none;
+      transition:background .15s;
+    }
+    .wf-cta-btn:hover { background:#4f46e5; color:#fff; }
+    .wf-cta-ext { opacity:.65; }
+
+    /* ── Flow steps ── */
+    .flow-steps { display:flex; flex-direction:column; gap:.5rem; margin-bottom:1.75rem; }
+    .flow-step {
+      display:flex; align-items:flex-start; gap:.85rem; background:var(--surface);
+      border:1px solid var(--border); border-radius:9px; padding:.65rem .9rem;
+    }
+    .flow-num {
+      width:26px; height:26px; border-radius:50%; display:flex; align-items:center;
+      justify-content:center; font-size:.7rem; font-weight:800; flex-shrink:0; margin-top:1px;
+    }
+    .flow-title { font-size:.82rem; font-weight:700; color:var(--text); }
+    .flow-sub   { font-size:.73rem; color:var(--text-dim); margin-top:2px; line-height:1.45; }
+    .flow-chips { display:flex; flex-wrap:wrap; gap:.3rem; margin-top:.4rem; }
+    .flow-chip  { font-size:.67rem; background:#f1f5f9; color:var(--text-dim); border:1px solid var(--border); border-radius:3px; padding:.1rem .38rem; }
+
+    /* ── Module cards 2×3 ── */
+    .module-grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:.75rem; margin-bottom:1.75rem; }
+    .mod-card { border-radius:10px; padding:1rem 1.1rem; border:1px solid var(--border); background:var(--surface); }
+    .mod-hdr { display:flex; align-items:center; gap:.55rem; margin-bottom:.6rem; }
+    .mod-icon { width:32px; height:32px; border-radius:7px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+    .mod-name { font-size:.84rem; font-weight:700; }
+    .mod-does { font-size:.68rem; font-weight:700; text-transform:uppercase; letter-spacing:.07em; color:var(--text-dim); margin:.1rem 0 .4rem; }
+    .mod-list { list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:.3rem; }
+    .mod-list li { display:flex; align-items:flex-start; gap:.45rem; font-size:.78rem; color:var(--text-mid); line-height:1.4; }
+    .ml-chk { flex-shrink:0; color:#16a34a; }
+    .mod-why { font-size:.73rem; color:var(--text-dim); margin-top:.55rem; padding-top:.55rem; border-top:1px solid var(--border); font-style:italic; }
+
+    /* ── Panel cards (workspace panels) ── */
+    .panel-grid { display:grid; grid-template-columns:1fr 1fr; gap:.75rem; margin-bottom:1.75rem; }
+    .panel-card {
+      background:var(--surface); border:1px solid var(--border); border-radius:9px; padding:.9rem 1rem;
+    }
+    .panel-hdr { display:flex; align-items:center; gap:.5rem; margin-bottom:.55rem; }
+    .panel-icon {
+      width:28px; height:28px; border-radius:6px; display:flex; align-items:center;
+      justify-content:center; flex-shrink:0;
+    }
+    .panel-name { font-size:.82rem; font-weight:700; color:var(--text); }
+    .panel-exp  { font-size:.68rem; font-weight:700; text-transform:uppercase; letter-spacing:.07em; color:var(--text-dim); margin-bottom:.35rem; }
+    .panel-note { font-size:.7rem; color:var(--text-dim); font-style:italic; margin-top:.4rem; padding-top:.4rem; border-top:1px solid var(--border); }
+
+    /* ── Principle note ── */
+    .dp-note {
+      font-size:.78rem; color:#3730a3; background:#eef2ff; border:1px solid #c7d2fe;
+      border-left:3px solid #4338ca; border-radius:0 7px 7px 0;
+      padding:.6rem .9rem; margin-bottom:1.25rem; line-height:1.5;
+    }
+    .dp-note strong { color:#1e40af; }
+
+    /* ── Copilot does / does not ── */
+    .cop-2col { display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-bottom:1.75rem; }
+    .cop-block { border-radius:10px; padding:.9rem 1rem; border:1px solid var(--border); }
+    .cop-does   { background:#f0fdf4; border-color:#bbf7d0; }
+    .cop-doesnt { background:#fff5f5; border-color:#fecaca; }
+    .cop-title  { font-size:.7rem; font-weight:700; text-transform:uppercase; letter-spacing:.08em; margin-bottom:.5rem; }
+    .cop-does   .cop-title { color:#15803d; }
+    .cop-doesnt .cop-title { color:#b91c1c; }
+
+    /* ── 3-col control cards (confidence / citation / editability) ── */
+    .ctrl-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:.75rem; margin-bottom:1.75rem; }
+    .ctrl-card {
+      background:var(--surface); border:1px solid var(--border); border-radius:9px; padding:.9rem 1rem;
+    }
+    .ctrl-hdr { display:flex; align-items:center; gap:.5rem; margin-bottom:.5rem; }
+    .ctrl-icon { width:28px; height:28px; border-radius:6px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+    .ctrl-name { font-size:.82rem; font-weight:700; color:var(--text); }
+
+    /* ── Support capability cards ── */
+    .supp-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:.6rem; margin-bottom:1.75rem; }
+    .supp-card {
+      background:var(--surface); border:1px solid var(--border); border-radius:9px; padding:.75rem .85rem;
+    }
+    .supp-icon { width:26px; height:26px; border-radius:5px; margin-bottom:.4rem; display:flex; align-items:center; justify-content:center; }
+    .supp-name { font-size:.76rem; font-weight:700; color:var(--text); margin-bottom:.2rem; }
+    .supp-sub  { font-size:.68rem; color:var(--text-dim); line-height:1.35; }
+
+    /* ── Output tiles ── */
+    .output-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:.6rem; margin-bottom:1rem; }
+    .out-item {
+      background:var(--navy); border-radius:8px; padding:.7rem .9rem;
+      display:flex; align-items:flex-start; gap:.55rem;
+    }
+    .out-dot   { width:8px; height:8px; border-radius:50%; background:#6366f1; flex-shrink:0; margin-top:4px; }
+    .out-label { font-size:.79rem; font-weight:700; color:#fff; }
+    .out-sub   { font-size:.69rem; color:#94a3b8; margin-top:1px; }
+    .next-layer {
+      background:#1e1b4b; border:1px solid #4338ca; border-radius:9px;
+      padding:.8rem 1.1rem; text-align:center; font-size:.82rem;
+      color:#c7d2fe; margin-bottom:1.75rem;
+    }
+    .next-layer strong { color:#fff; }
+
+    /* ── Gap type grid ── */
+    .gap-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:.6rem; margin-bottom:1.75rem; }
+    .gap-card {
+      background:var(--surface); border:1px solid var(--border); border-radius:9px; padding:.8rem .9rem;
+      border-left:3px solid #dc2626;
+    }
+    .gap-badge {
+      font-size:.65rem; font-weight:700; text-transform:uppercase; letter-spacing:.07em;
+      background:#fee2e2; color:#b91c1c; border-radius:3px; padding:.1rem .4rem;
+      display:inline-block; margin-bottom:.4rem;
+    }
+    .gap-name { font-size:.8rem; font-weight:700; color:var(--text); margin-bottom:.25rem; }
+    .gap-ex   { font-size:.7rem; color:var(--text-dim); line-height:1.4; }
+
+    /* ── Open item fields ── */
+    .oi-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:.5rem; margin-bottom:1.25rem; }
+    .oi-item {
+      background:var(--surface); border:1px solid var(--border); border-radius:7px;
+      padding:.5rem .75rem; font-size:.77rem;
+    }
+    .oi-label { font-weight:700; color:var(--text); }
+    .oi-sub   { font-size:.69rem; color:var(--text-dim); margin-top:1px; }
+
+    /* ── Open item lifecycle ── */
+    .lifecycle-steps {
+      display:flex; flex-wrap:wrap; gap:.4rem; align-items:center;
+      margin-bottom:1.25rem;
+    }
+    .lc-step {
+      font-size:.73rem; font-weight:600; background:var(--surface); border:1px solid var(--border);
+      border-radius:6px; padding:.3rem .65rem; color:var(--text-mid);
+    }
+    .lc-arrow { color:#94a3b8; font-size:.85rem; }
+
+    /* ── Gap priority tiers ── */
+    .tier-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:.55rem; margin-bottom:1.75rem; }
+    .tier-card {
+      border-radius:8px; padding:.65rem .8rem; border:1px solid;
+    }
+    .tier-label { font-size:.68rem; font-weight:800; text-transform:uppercase; letter-spacing:.07em; margin-bottom:.2rem; }
+    .tier-desc  { font-size:.72rem; line-height:1.4; }
+    .t-crit  { background:#fff5f5; border-color:#fecaca; }
+    .t-crit  .tier-label { color:#b91c1c; }
+    .t-crit  .tier-desc  { color:#7f1d1d; }
+    .t-major { background:#fef3c7; border-color:#fde68a; }
+    .t-major .tier-label { color:#92400e; }
+    .t-major .tier-desc  { color:#78350f; }
+    .t-minor { background:#eff6ff; border-color:#bfdbfe; }
+    .t-minor .tier-label { color:#1d4ed8; }
+    .t-minor .tier-desc  { color:#1e3a5f; }
+    .t-info  { background:#f0fdf4; border-color:#bbf7d0; }
+    .t-info  .tier-label { color:#15803d; }
+    .t-info  .tier-desc  { color:#14532d; }
+
+    /* ── Design goals ── */
+    .goals-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:.55rem; margin-bottom:2rem; }
+    .goal-item {
+      display:flex; align-items:flex-start; gap:.5rem; background:#f0fdf4;
+      border:1px solid #bbf7d0; border-radius:7px; padding:.5rem .7rem;
+      font-size:.78rem; color:#15803d; line-height:1.4;
+    }
+    .goal-item svg { flex-shrink:0; margin-top:1px; }
+
+    /* ── Section divider ── */
+    .sec-divider {
+      border:none; border-top:2px dashed var(--border);
+      margin:2rem 0 1.75rem;
+    }
+
+    @media(max-width:960px){
+      .phase-modules,.supp-grid,.output-grid { grid-template-columns:repeat(2,1fr); }
+      .module-grid-2,.role-2col,.cop-2col,.cit-2col,.panel-grid,.delivery-grid { grid-template-columns:1fr; }
+      .ctrl-grid,.gap-grid,.oi-grid { grid-template-columns:1fr 1fr; }
+      .goals-grid,.tier-grid { grid-template-columns:repeat(2,1fr); }
+    }
+    @media(max-width:540px){
+      .ctrl-grid,.gap-grid,.oi-grid,.goals-grid,.tier-grid,.supp-grid,.output-grid { grid-template-columns:1fr; }
+    }
+  </style>
+</head>
+<body>
+<header class="site-header">
+  <div class="header-inner">
+    <a href="../index.html" class="site-logo"><div class="logo-mark">R</div><span>Reap AI Platform</span></a>
+    <div class="header-divider"></div><span class="header-subtitle">KYB Review Copilot</span>
+    <nav class="header-nav"><a href="../index.html">Overview</a><a href="solution-architecture.html">Architecture</a><a href="reviewer-workflow.html">Workflow</a></nav>
+  </div>
+</header>
+<div class="page-layout">
+  <aside class="sidebar">
+    <a href="../index.html" class="sidebar-back"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M9 11L5 7l4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg> All Sections</a>
+    <div class="sidebar-section-title">Block 5 — End to End Platform Components enabling KYB</div>
+    <ul class="sidebar-nav">
+      <li><a href="rag-overview.html">5.1 RAG Overview</a></li>
+      <li><a href="ingestion-pipeline.html">5.2 Input &amp; Intake Layer</a></li>
+      <li><a href="retrieval-policy.html">5.3 Document Intelligence</a></li>
+      <li><a href="llm-reasoning.html">5.4 Knowledge, Retrieval &amp; Policy Grounding</a></li>
+      <li><a href="reviewer-assist.html" class="active">5.5 Reviewer Assist</a></li>
+      <li><a href="workflow-orchestration.html">5.6 Workflow Orchestration</a></li>
+      <li><a href="confidence-scoring.html">5.7 Confidence Scoring</a></li>
+    </ul>
+  </aside>
+  <main class="content">
+    <nav class="breadcrumb"><a href="../index.html">Home</a><span class="breadcrumb-sep">›</span><span>Block 5 — End to End Platform Components enabling KYB</span><span class="breadcrumb-sep">›</span><span class="breadcrumb-current">5.5 Reviewer Assist / Case Intelligence</span></nav>
+    <div class="section-header">
+      <div class="section-block-tag" style="background:var(--b5)">Block 5 — End to End Platform Components enabling KYB</div>
+      <h1>Reviewer Assist / Case Intelligence</h1>
+      <p class="section-intro">Converts grounded case evidence and policy context into a reviewer-facing intelligence surface — summaries, structured findings, gap detection, draft support, and governed decision controls.</p>
+    </div>
+
+    <!-- Design principle -->
+    <div class="dp-flow">
+      <span class="dp-step">Grounded evidence in</span>
+      <span class="dp-arrow">→</span>
+      <span class="dp-step">Orient reviewer</span>
+      <span class="dp-arrow">→</span>
+      <span class="dp-step">Summarise case</span>
+      <span class="dp-arrow">→</span>
+      <span class="dp-step">Surface gaps &amp; open items</span>
+      <span class="dp-arrow">→</span>
+      <span class="dp-step">Assist next action</span>
+      <span class="dp-arrow">→</span>
+      <span class="dp-step">Human decides</span>
+    </div>
+
+    <!-- Phase 1 modules -->
+    <div class="phase-modules">
+      <div class="pm-card">
+        <div class="pm-icon" style="background:#dbeafe;">
+          <svg width="16" height="16" viewBox="0 0 18 18" fill="none"><rect x="3" y="3" width="12" height="13" rx="2" stroke="#1d4ed8" stroke-width="1.5"/><path d="M6 7h6M6 10h4" stroke="#1d4ed8" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </div>
+        <div class="pm-name">Case Summary</div>
+        <div class="pm-sub">Grounded overview of entity, findings &amp; status</div>
+      </div>
+      <div class="pm-card">
+        <div class="pm-icon" style="background:#ede9fe;">
+          <svg width="16" height="16" viewBox="0 0 18 18" fill="none"><path d="M4 5h10M4 9h10M4 13h6" stroke="#6d28d9" stroke-width="1.5" stroke-linecap="round"/><circle cx="15" cy="13" r="2.5" stroke="#6d28d9" stroke-width="1.3"/><path d="M15 12v1.5" stroke="#6d28d9" stroke-width="1.3" stroke-linecap="round"/></svg>
+        </div>
+        <div class="pm-name">Checklisting</div>
+        <div class="pm-sub">Policy &amp; case-state requirements as review checks</div>
+      </div>
+      <div class="pm-card">
+        <div class="pm-icon" style="background:#fee2e2;">
+          <svg width="16" height="16" viewBox="0 0 18 18" fill="none"><path d="M9 2L2 15h14L9 2z" stroke="#dc2626" stroke-width="1.5" stroke-linejoin="round"/><path d="M9 7v4M9 13v.5" stroke="#dc2626" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </div>
+        <div class="pm-name">Gap Detection</div>
+        <div class="pm-sub">Missing docs, fields, conflicts &amp; open items</div>
+      </div>
+      <div class="pm-card">
+        <div class="pm-icon" style="background:#dcfce7;">
+          <svg width="16" height="16" viewBox="0 0 18 18" fill="none"><path d="M5 9h8M9 5l4 4-4 4" stroke="#16a34a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div class="pm-name">Action Assist</div>
+        <div class="pm-sub">Draft support, delta analysis &amp; next-best actions</div>
+      </div>
+    </div>
+
+    <!-- Section 1: What this layer does -->
+    <h2 class="numbered"><span class="sec-num">1</span> What This Layer Does</h2>
+    <div class="role-2col">
+      <div class="role-block">
+        <div class="role-block-title" style="color:#15803d;">This Layer Does</div>
+        <ul class="rl">
+          <li><span class="rl-dot" style="background:#16a34a;"></span>Summarise the case in reviewer-friendly form</li>
+          <li><span class="rl-dot" style="background:#16a34a;"></span>Present extracted fields and evidence clearly</li>
+          <li><span class="rl-dot" style="background:#16a34a;"></span>Highlight missing, low-confidence, or conflicting items</li>
+          <li><span class="rl-dot" style="background:#16a34a;"></span>Generate actionable checklists and open items</li>
+          <li><span class="rl-dot" style="background:#16a34a;"></span>Support draft notes and follow-up requests</li>
+          <li><span class="rl-dot" style="background:#16a34a;"></span>Suggest next-best actions with visible uncertainty</li>
+          <li><span class="rl-dot" style="background:#16a34a;"></span>Preserve human judgment and explicit decision control</li>
+        </ul>
+      </div>
+      <div class="role-block">
+        <div class="role-block-title" style="color:#b91c1c;">Not in Scope</div>
+        <ul class="rl">
+          <li><span class="rl-dot" style="background:#dc2626;"></span>Does not replace the system of record</li>
+          <li><span class="rl-dot" style="background:#dc2626;"></span>Does not make final autonomous decisions</li>
+          <li><span class="rl-dot" style="background:#dc2626;"></span>Does not hide uncertainty or unsupported reasoning</li>
+          <li><span class="rl-dot" style="background:#dc2626;"></span>Does not bypass role-based workflow controls</li>
+          <li><span class="rl-dot" style="background:#dc2626;"></span>Does not replace the enterprise CRM / case management stack</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Section 2: Product delivery model -->
+    <h2 class="numbered"><span class="sec-num">2</span> Product Delivery Model</h2>
+    <p style="font-size:.82rem;color:var(--text-dim);margin-bottom:.9rem;">This layer is a <strong>review experience layer</strong>, not a net-new end-to-end case system. Three practical delivery options:</p>
+    <div class="delivery-grid">
+      <div class="dlv-card">
+        <div class="dlv-num">1</div>
+        <div class="dlv-name">Embedded Workspace</div>
+        <div class="dlv-sub">AI-assisted panels added inside existing ops tooling. Reviewers stay in familiar systems.</div>
+        <span class="dlv-tag best">Best MVP assumption</span>
+      </div>
+      <div class="dlv-card">
+        <div class="dlv-num">2</div>
+        <div class="dlv-name">Lightweight Dedicated Console</div>
+        <div class="dlv-sub">Standalone review UI when existing systems are too rigid for the required UX.</div>
+        <span class="dlv-tag alt">Fallback delivery</span>
+      </div>
+      <div class="dlv-card">
+        <div class="dlv-num">3</div>
+        <div class="dlv-name">Headless Platform + Reference Workspace</div>
+        <div class="dlv-sub">Core product stays as APIs and embeddable components; UI is a thin optional consumption layer.</div>
+        <span class="dlv-tag adv">Advanced / API-first</span>
+      </div>
+    </div>
+    <div class="stance-bar">
+      <span class="stance-label">Recommended PRD Stance</span>
+      <span class="stance-text"><strong>Platform-first · UI-light · Human-in-the-loop · Existing-system compatible</strong></span>
+    </div>
+    <!-- Section 3: Flow through reviewer assist -->
+    <h2 class="numbered"><span class="sec-num">3</span> Flow Through the Reviewer Assist Layer</h2>
+    <div class="flow-steps">
+      <div class="flow-step">
+        <div class="flow-num" style="background:#dbeafe;color:#1e40af;">1</div>
+        <div>
+          <div class="flow-title">Orient the reviewer</div>
+          <div class="flow-sub">Case identity, workflow status, owner / queue, risk / priority signals, review stage — visible immediately on landing.</div>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num" style="background:#dbeafe;color:#1e40af;">2</div>
+        <div>
+          <div class="flow-title">Summarise the case</div>
+          <div class="flow-sub">Concise AI-assisted case summary built from grounded evidence — not freeform model output.</div>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num" style="background:#dbeafe;color:#1e40af;">3</div>
+        <div>
+          <div class="flow-title">Present structured fields and source evidence</div>
+          <div class="flow-sub">Extracted fields, original documents, and evidence links displayed side by side.</div>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num" style="background:#fee2e2;color:#b91c1c;">4</div>
+        <div>
+          <div class="flow-title">Surface unresolved issues</div>
+          <div class="flow-sub">Missing documents, missing fields, low-confidence outputs, conflicts, policy blockers, and follow-up needs — surfaced explicitly.</div>
+          <div class="flow-chips">
+            <span class="flow-chip">Missing documents</span>
+            <span class="flow-chip">Missing fields</span>
+            <span class="flow-chip">Low confidence</span>
+            <span class="flow-chip">Conflicts</span>
+            <span class="flow-chip">Policy blockers</span>
+          </div>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num" style="background:#fef3c7;color:#92400e;">5</div>
+        <div>
+          <div class="flow-title">Assist the next action</div>
+          <div class="flow-sub">Checklisting, follow-up drafting, delta analysis on re-review, recommendation support.</div>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num" style="background:#dcfce7;color:#15803d;">6</div>
+        <div>
+          <div class="flow-title">Preserve human control</div>
+          <div class="flow-sub">Reviewer can edit, override, escalate, request follow-up, save progress, or make the final decision — always explicit.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="wf-cta">
+      <div class="wf-cta-icon">
+        <svg width="18" height="18" viewBox="0 0 20 20" fill="none"><rect x="2" y="2" width="7" height="7" rx="1.5" stroke="#818cf8" stroke-width="1.5"/><rect x="11" y="2" width="7" height="7" rx="1.5" stroke="#818cf8" stroke-width="1.5"/><rect x="2" y="11" width="7" height="7" rx="1.5" stroke="#818cf8" stroke-width="1.5"/><rect x="11" y="11" width="7" height="7" rx="1.5" stroke="#818cf8" stroke-width="1.5"/></svg>
+      </div>
+      <div class="wf-cta-body">
+        <div class="wf-cta-title">View Wireframes for the Workbench</div>
+        <div class="wf-cta-sub">Interactive reviewer workspace prototype — explore panels, flows, and case intelligence UI</div>
+      </div>
+      <a href="https://persona-flow-workbench.lovable.app" target="_blank" rel="noopener" class="wf-cta-btn">
+        Open Workbench →
+        <svg class="wf-cta-ext" width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M5 2H2a1 1 0 00-1 1v7a1 1 0 001 1h7a1 1 0 001-1V7M7 1h4m0 0v4m0-4L5 7" stroke="#fff" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+    </div>
+
+    <!-- Section 4: Core modules -->
+    <h2 class="numbered"><span class="sec-num">4</span> Core Modules</h2>
+    <div class="module-grid-2">
+      <div class="mod-card">
+        <div class="mod-hdr">
+          <div class="mod-icon" style="background:#dbeafe;">
+            <svg width="16" height="16" viewBox="0 0 18 18" fill="none"><rect x="3" y="3" width="12" height="13" rx="2" stroke="#1d4ed8" stroke-width="1.5"/><path d="M6 7h6M6 10h4" stroke="#1d4ed8" stroke-width="1.5" stroke-linecap="round"/></svg>
+          </div>
+          <span class="mod-name" style="color:#1d4ed8;">KYB Case Summary</span>
+        </div>
+        <div class="mod-does">What it does</div>
+        <ul class="mod-list">
+          <li><svg class="ml-chk" width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#16a34a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Concise case overview with known facts and major issues</li>
+          <li><svg class="ml-chk" width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#16a34a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Surfaces missing items and unresolved checks</li>
+          <li><svg class="ml-chk" width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#16a34a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Links key statements back to underlying evidence</li>
+        </ul>
+        <div class="mod-why">Helps reviewer understand the case in seconds without replacing evidence inspection.</div>
+      </div>
+      <div class="mod-card">
+        <div class="mod-hdr">
+          <div class="mod-icon" style="background:#ede9fe;">
+            <svg width="16" height="16" viewBox="0 0 18 18" fill="none"><path d="M4 5h10M4 9h8M4 13h5" stroke="#6d28d9" stroke-width="1.5" stroke-linecap="round"/></svg>
+          </div>
+          <span class="mod-name" style="color:#6d28d9;">Checklisting</span>
+        </div>
+        <div class="mod-does">What it does</div>
+        <ul class="mod-list">
+          <li><svg class="ml-chk" width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#16a34a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Converts policy and case-state requirements into visible review checks</li>
+          <li><svg class="ml-chk" width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#16a34a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Shows satisfied, unresolved, and pending items</li>
+          <li><svg class="ml-chk" width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#16a34a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Supports reviewer modification or override</li>
+        </ul>
+        <div class="mod-why">Turns grounded intelligence into actionable operational review state.</div>
+      </div>
+      <div class="mod-card">
+        <div class="mod-hdr">
+          <div class="mod-icon" style="background:#fee2e2;">
+            <svg width="16" height="16" viewBox="0 0 18 18" fill="none"><path d="M9 2L2 15h14L9 2z" stroke="#dc2626" stroke-width="1.5" stroke-linejoin="round"/><path d="M9 7v4M9 13v.5" stroke="#dc2626" stroke-width="1.5" stroke-linecap="round"/></svg>
+          </div>
+          <span class="mod-name" style="color:#b91c1c;">Gap Detection / Open Items</span>
+        </div>
+        <div class="mod-does">What it does</div>
+        <ul class="mod-list">
+          <li><svg class="ml-chk" width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#16a34a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Highlights missing docs, fields, inconsistencies, and unresolved issues</li>
+          <li><svg class="ml-chk" width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#16a34a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Groups issues by category; preserves history across review cycles</li>
+          <li><svg class="ml-chk" width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#16a34a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Supports system-generated and reviewer-created open items</li>
+        </ul>
+        <div class="mod-why">Helps reviewer know exactly what is still blocking progress.</div>
+      </div>
+      <div class="mod-card">
+        <div class="mod-hdr">
+          <div class="mod-icon" style="background:#fef3c7;">
+            <svg width="16" height="16" viewBox="0 0 18 18" fill="none"><path d="M4 4h7l3 3v7H4V4z" stroke="#b45309" stroke-width="1.5" stroke-linejoin="round"/><path d="M11 4v3h3M6 10h6M6 13h4" stroke="#b45309" stroke-width="1.5" stroke-linecap="round"/></svg>
+          </div>
+          <span class="mod-name" style="color:#b45309;">Drafting</span>
+        </div>
+        <div class="mod-does">What it does</div>
+        <ul class="mod-list">
+          <li><svg class="ml-chk" width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#16a34a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Internal notes, follow-up request drafting, escalation summaries</li>
+          <li><svg class="ml-chk" width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#16a34a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Distinguishes AI-generated draft text from reviewer-authored text</li>
+          <li><svg class="ml-chk" width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#16a34a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Full reviewer editing before any content is sent or committed</li>
+        </ul>
+        <div class="mod-why">Reduces effort while keeping outbound content editable and controlled.</div>
+      </div>
+      <div class="mod-card">
+        <div class="mod-hdr">
+          <div class="mod-icon" style="background:#f0fdf4;">
+            <svg width="16" height="16" viewBox="0 0 18 18" fill="none"><path d="M3 5h12M3 9h12" stroke="#16a34a" stroke-width="1.5" stroke-linecap="round"/><path d="M3 13h6" stroke="#16a34a" stroke-width="1.5" stroke-linecap="round"/><path d="M13 12l2 2 2-2" stroke="#16a34a" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <span class="mod-name" style="color:#15803d;">Delta Analysis</span>
+        </div>
+        <div class="mod-does">What it does</div>
+        <ul class="mod-list">
+          <li><svg class="ml-chk" width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#16a34a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Compares current review state with prior submissions or review cycles</li>
+          <li><svg class="ml-chk" width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#16a34a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Highlights what changed; shows what remains unresolved</li>
+          <li><svg class="ml-chk" width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#16a34a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Essential for re-review and follow-up handling</li>
+        </ul>
+        <div class="mod-why">Prevents reviewers manually reconstructing what changed between iterations.</div>
+      </div>
+      <div class="mod-card">
+        <div class="mod-hdr">
+          <div class="mod-icon" style="background:#dbeafe;">
+            <svg width="16" height="16" viewBox="0 0 18 18" fill="none"><path d="M9 3v4l3 2" stroke="#1d4ed8" stroke-width="1.5" stroke-linecap="round"/><circle cx="9" cy="9" r="6.5" stroke="#1d4ed8" stroke-width="1.5"/></svg>
+          </div>
+          <span class="mod-name" style="color:#1d4ed8;">Action Recommendation</span>
+        </div>
+        <div class="mod-does">What it does</div>
+        <ul class="mod-list">
+          <li><svg class="ml-chk" width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#16a34a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Suggests next-best actions (proceed / request follow-up / hold / escalate)</li>
+          <li><svg class="ml-chk" width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#16a34a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Uses grounded evidence and policy context</li>
+          <li><svg class="ml-chk" width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#16a34a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Presented as <em>assistive</em>, not authoritative</li>
+        </ul>
+        <div class="mod-why">Supports speed and consistency on routine cases without replacing human accountability.</div>
+      </div>
+    </div>
+
+    <!-- Section 5: Workspace design goals -->
+    <h2 class="numbered"><span class="sec-num">5</span> Reviewer Workspace — Design Goals</h2>
+    <p style="font-size:.82rem;color:var(--text-dim);margin-bottom:.9rem;">The workspace is the single primary operating surface for AI-assisted KYB review. It optimises for:</p>
+    <div class="goals-grid" style="margin-bottom:1.75rem;">
+      <div class="goal-item"><svg width="14" height="14" viewBox="0 0 18 18" fill="none"><path d="M3 9l4 4 8-8" stroke="#16a34a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Speed on routine cases</div>
+      <div class="goal-item"><svg width="14" height="14" viewBox="0 0 18 18" fill="none"><path d="M3 9l4 4 8-8" stroke="#16a34a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Clarity on ambiguous cases</div>
+      <div class="goal-item"><svg width="14" height="14" viewBox="0 0 18 18" fill="none"><path d="M3 9l4 4 8-8" stroke="#16a34a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Traceability on material decisions</div>
+      <div class="goal-item"><svg width="14" height="14" viewBox="0 0 18 18" fill="none"><path d="M3 9l4 4 8-8" stroke="#16a34a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Low context switching</div>
+      <div class="goal-item"><svg width="14" height="14" viewBox="0 0 18 18" fill="none"><path d="M3 9l4 4 8-8" stroke="#16a34a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Inspectable AI support</div>
+      <div class="goal-item"><svg width="14" height="14" viewBox="0 0 18 18" fill="none"><path d="M3 9l4 4 8-8" stroke="#16a34a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Strong human control</div>
+      <div class="goal-item"><svg width="14" height="14" viewBox="0 0 18 18" fill="none"><path d="M3 9l4 4 8-8" stroke="#16a34a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Embeddable in existing ops tooling</div>
+      <div class="goal-item"><svg width="14" height="14" viewBox="0 0 18 18" fill="none"><path d="M3 9l4 4 8-8" stroke="#16a34a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Auditability of all AI vs human actions</div>
+    </div>
+
+    <!-- Section 6: Core panels -->
+    <h2 class="numbered"><span class="sec-num">6</span> Core Panels &amp; Controls</h2>
+    <div class="panel-grid">
+      <div class="panel-card">
+        <div class="panel-hdr">
+          <div class="panel-icon" style="background:#dbeafe;">
+            <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6.5" stroke="#1d4ed8" stroke-width="1.3"/><path d="M8 5v3l2 1.5" stroke="#1d4ed8" stroke-width="1.3" stroke-linecap="round"/></svg>
+          </div>
+          <span class="panel-name">Case Header</span>
+        </div>
+        <div class="panel-exp">What it shows</div>
+        <ul class="rl">
+          <li><span class="rl-dot" style="background:#1d4ed8;"></span>Case ID, legal entity name, workflow status, assigned queue</li>
+          <li><span class="rl-dot" style="background:#1d4ed8;"></span>Key timestamps, risk tier, review type</li>
+          <li><span class="rl-dot" style="background:#1d4ed8;"></span>Intake source where relevant</li>
+        </ul>
+        <div class="panel-note">Reviewer should understand operational context within seconds.</div>
+      </div>
+      <div class="panel-card">
+        <div class="panel-hdr">
+          <div class="panel-icon" style="background:#ede9fe;">
+            <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><rect x="2" y="2" width="12" height="12" rx="2" stroke="#6d28d9" stroke-width="1.3"/><path d="M4 6h8M4 9h6" stroke="#6d28d9" stroke-width="1.3" stroke-linecap="round"/></svg>
+          </div>
+          <span class="panel-name">Summary Panel</span>
+        </div>
+        <div class="panel-exp">What it shows</div>
+        <ul class="rl">
+          <li><span class="rl-dot" style="background:#6d28d9;"></span>Concise AI-assisted case summary — facts distinct from interpretation</li>
+          <li><span class="rl-dot" style="background:#6d28d9;"></span>Submitted documents, major issues, missing items</li>
+          <li><span class="rl-dot" style="background:#6d28d9;"></span>Refreshes when material case inputs change</li>
+        </ul>
+        <div class="panel-note">Accelerates orientation — does not replace evidence review.</div>
+      </div>
+      <div class="panel-card">
+        <div class="panel-hdr">
+          <div class="panel-icon" style="background:#fef3c7;">
+            <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><rect x="2" y="2" width="12" height="12" rx="2" stroke="#b45309" stroke-width="1.3"/><path d="M5 5h6M5 8h4" stroke="#b45309" stroke-width="1.3" stroke-linecap="round"/><circle cx="11" cy="11" r="2" stroke="#b45309" stroke-width="1.2"/></svg>
+          </div>
+          <span class="panel-name">Extracted Fields Panel</span>
+        </div>
+        <div class="panel-exp">What it shows</div>
+        <ul class="rl">
+          <li><span class="rl-dot" style="background:#b45309;"></span>Fields grouped by section: entity, registration, address, ownership</li>
+          <li><span class="rl-dot" style="background:#b45309;"></span>Source evidence link per field; editable by authorised reviewers</li>
+          <li><span class="rl-dot" style="background:#b45309;"></span>Missing, low-confidence, and conflicting fields marked</li>
+        </ul>
+        <div class="panel-note">Reviewer edits captured as explicit overrides — not silent replacements.</div>
+      </div>
+      <div class="panel-card">
+        <div class="panel-hdr">
+          <div class="panel-icon" style="background:#dcfce7;">
+            <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M4 2h8v12H4z" stroke="#15803d" stroke-width="1.3" stroke-linejoin="round"/><path d="M6 6h4M6 9h2" stroke="#15803d" stroke-width="1.3" stroke-linecap="round"/></svg>
+          </div>
+          <span class="panel-name">Evidence Panel</span>
+        </div>
+        <div class="panel-exp">What it shows</div>
+        <ul class="rl">
+          <li><span class="rl-dot" style="background:#15803d;"></span>Original documents with navigation from finding to source</li>
+          <li><span class="rl-dot" style="background:#15803d;"></span>Side-by-side evidence and extracted field review</li>
+          <li><span class="rl-dot" style="background:#15803d;"></span>Policy evidence vs document evidence clearly distinguished</li>
+        </ul>
+        <div class="panel-note">Essential for trust, speed, and auditability.</div>
+      </div>
+      <div class="panel-card">
+        <div class="panel-hdr">
+          <div class="panel-icon" style="background:#fee2e2;">
+            <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M2 4h12M4 7h8M6 10h4" stroke="#dc2626" stroke-width="1.3" stroke-linecap="round"/></svg>
+          </div>
+          <span class="panel-name">Checklist / Open Items Panel</span>
+        </div>
+        <div class="panel-exp">What it shows</div>
+        <ul class="rl">
+          <li><span class="rl-dot" style="background:#dc2626;"></span>Missing docs, fields, incomplete submissions, unresolved checks</li>
+          <li><span class="rl-dot" style="background:#dc2626;"></span>Items grouped by category with links to evidence or policy</li>
+          <li><span class="rl-dot" style="background:#dc2626;"></span>Reviewer can resolve, reopen, or add manual items</li>
+        </ul>
+        <div class="panel-note">Reviewer knows exactly what remains before a decision can be made.</div>
+      </div>
+      <div class="panel-card">
+        <div class="panel-hdr">
+          <div class="panel-icon" style="background:#fef3c7;">
+            <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M3 3h10v8H3z" stroke="#b45309" stroke-width="1.3" stroke-linejoin="round"/><path d="M5 13h6" stroke="#b45309" stroke-width="1.3" stroke-linecap="round"/><path d="M5 6h6M5 8.5h4" stroke="#b45309" stroke-width="1.2" stroke-linecap="round"/></svg>
+          </div>
+          <span class="panel-name">Drafting Panel</span>
+        </div>
+        <div class="panel-exp">What it supports</div>
+        <ul class="rl">
+          <li><span class="rl-dot" style="background:#b45309;"></span>Internal notes, follow-up request drafts, escalation summaries</li>
+          <li><span class="rl-dot" style="background:#b45309;"></span>AI-generated vs reviewer-authored content clearly labelled</li>
+          <li><span class="rl-dot" style="background:#b45309;"></span>Templates for common requests; save without final decision</li>
+        </ul>
+        <div class="panel-note">MVP: structured notes and follow-up draft support only.</div>
+      </div>
+      <div class="panel-card">
+        <div class="panel-hdr">
+          <div class="panel-icon" style="background:#dcfce7;">
+            <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M3 9l4 4 6-6" stroke="#15803d" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <span class="panel-name">Decision Controls</span>
+        </div>
+        <div class="panel-exp">Actions available</div>
+        <ul class="rl">
+          <li><span class="rl-dot" style="background:#15803d;"></span>Approve, Reject, Request Follow-up — explicit user action required</li>
+          <li><span class="rl-dot" style="background:#15803d;"></span>Warnings shown for unresolved critical items</li>
+          <li><span class="rl-dot" style="background:#15803d;"></span>Outcome, actor, timestamp, and rationale persisted</li>
+        </ul>
+        <div class="panel-note">Final case disposition remains a human action — always.</div>
+      </div>
+      <div class="panel-card">
+        <div class="panel-hdr">
+          <div class="panel-icon" style="background:#f5f3ff;">
+            <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M8 2v5l3 2" stroke="#6d28d9" stroke-width="1.3" stroke-linecap="round"/><path d="M13.5 10a6 6 0 01-11 0" stroke="#6d28d9" stroke-width="1.3" stroke-linecap="round"/></svg>
+          </div>
+          <span class="panel-name">Escalation Controls</span>
+        </div>
+        <div class="panel-exp">Actions available</div>
+        <ul class="rl">
+          <li><span class="rl-dot" style="background:#6d28d9;"></span>Escalate to senior reviewer, specialist queue, or compliance team</li>
+          <li><span class="rl-dot" style="background:#6d28d9;"></span>Requires escalation reason; carries forward case context</li>
+          <li><span class="rl-dot" style="background:#6d28d9;"></span>Preserves escalation history; supports return-from-escalation</li>
+        </ul>
+        <div class="panel-note">Structured escalation — not ad hoc.</div>
+      </div>
+    </div>
+
+    <!-- Section 7: Copilot behavior -->
+    <h2 class="numbered"><span class="sec-num">7</span> Copilot Behaviour &amp; Interaction Model</h2>
+    <div class="dp-note">
+      <strong>Design principle:</strong> The copilot is an embedded reviewer-assist layer — not a freeform chatbot. It should reduce reviewer effort, not replace accountable reviewer judgment.
+    </div>
+    <div class="cop-2col">
+      <div class="cop-block cop-does">
+        <div class="cop-title">Copilot Does</div>
+        <ul class="rl">
+          <li><span class="rl-dot" style="background:#16a34a;"></span>Parse and surface structured information</li>
+          <li><span class="rl-dot" style="background:#16a34a;"></span>Summarise the case</li>
+          <li><span class="rl-dot" style="background:#16a34a;"></span>Highlight missing and conflicting evidence</li>
+          <li><span class="rl-dot" style="background:#16a34a;"></span>Retrieve relevant policy content</li>
+          <li><span class="rl-dot" style="background:#16a34a;"></span>Link all outputs to citations</li>
+          <li><span class="rl-dot" style="background:#16a34a;"></span>Suggest next-best actions</li>
+          <li><span class="rl-dot" style="background:#16a34a;"></span>Support drafting of notes, follow-ups, and escalation summaries</li>
+        </ul>
+      </div>
+      <div class="cop-block cop-doesnt">
+        <div class="cop-title">Copilot Does Not</div>
+        <ul class="rl">
+          <li><span class="rl-dot" style="background:#dc2626;"></span>Approve or reject cases autonomously in MVP</li>
+          <li><span class="rl-dot" style="background:#dc2626;"></span>Present suggestions as final decisions</li>
+          <li><span class="rl-dot" style="background:#dc2626;"></span>Invent unsupported facts</li>
+          <li><span class="rl-dot" style="background:#dc2626;"></span>Hide uncertainty or low-confidence signals</li>
+          <li><span class="rl-dot" style="background:#dc2626;"></span>Take irreversible workflow actions without reviewer confirmation</li>
+          <li><span class="rl-dot" style="background:#dc2626;"></span>Bypass enterprise permissions or governance</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Section 8: Confidence, citations, editability -->
+    <h2 class="numbered"><span class="sec-num">8</span> Confidence, Citations &amp; Editability</h2>
+    <p style="font-size:.82rem;color:var(--text-dim);margin-bottom:.9rem;">Three controls must be visible in every AI-assisted workspace interaction.</p>
+    <div class="ctrl-grid">
+      <div class="ctrl-card">
+        <div class="ctrl-hdr">
+          <div class="ctrl-icon" style="background:#dbeafe;">
+            <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="#1d4ed8" stroke-width="1.3"/><path d="M8 5v4M8 11v.5" stroke="#1d4ed8" stroke-width="1.3" stroke-linecap="round"/></svg>
+          </div>
+          <span class="ctrl-name">Confidence Display</span>
+        </div>
+        <ul class="rl">
+          <li><span class="rl-dot" style="background:#1d4ed8;"></span>Show indicators where available; avoid false precision</li>
+          <li><span class="rl-dot" style="background:#1d4ed8;"></span>Distinguish high, low, and unavailable confidence</li>
+          <li><span class="rl-dot" style="background:#1d4ed8;"></span>Allow reviewers to filter to low-confidence items</li>
+          <li><span class="rl-dot" style="background:#1d4ed8;"></span>Explain confidence in reviewer-friendly language</li>
+        </ul>
+      </div>
+      <div class="ctrl-card">
+        <div class="ctrl-hdr">
+          <div class="ctrl-icon" style="background:#dcfce7;">
+            <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M3 5h10M3 8h7" stroke="#15803d" stroke-width="1.3" stroke-linecap="round"/><path d="M3 11h4M10 9l2 2 2-4" stroke="#15803d" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <span class="ctrl-name">Citation Behaviour</span>
+        </div>
+        <ul class="rl">
+          <li><span class="rl-dot" style="background:#15803d;"></span>Link material factual outputs to document evidence</li>
+          <li><span class="rl-dot" style="background:#15803d;"></span>Link policy-grounded suggestions to policy source</li>
+          <li><span class="rl-dot" style="background:#15803d;"></span>Distinguish document, policy, and reviewer-note citations</li>
+          <li><span class="rl-dot" style="background:#15803d;"></span>Evidence easy to inspect — not buried</li>
+        </ul>
+      </div>
+      <div class="ctrl-card">
+        <div class="ctrl-hdr">
+          <div class="ctrl-icon" style="background:#fef3c7;">
+            <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M4 12l7.5-7.5a1.5 1.5 0 012 2L6 14l-3 1 1-3z" stroke="#b45309" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <span class="ctrl-name">Editable Outputs</span>
+        </div>
+        <ul class="rl">
+          <li><span class="rl-dot" style="background:#b45309;"></span>Allow authorised field edits and draft text editing</li>
+          <li><span class="rl-dot" style="background:#b45309;"></span>AI-generated and reviewer-authored content kept distinguishable</li>
+          <li><span class="rl-dot" style="background:#b45309;"></span>Preserve original system output when reviewer edits matter</li>
+          <li><span class="rl-dot" style="background:#b45309;"></span>Version and audit all material edits</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Section 9: Supporting capabilities -->
+    <h2 class="numbered"><span class="sec-num">9</span> Supporting Workspace Capabilities</h2>
+    <div class="supp-grid">
+      <div class="supp-card">
+        <div class="supp-icon" style="background:#ede9fe;">
+          <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><rect x="2" y="3" width="12" height="10" rx="2" stroke="#6d28d9" stroke-width="1.3"/><path d="M5 6h6M5 9h4" stroke="#6d28d9" stroke-width="1.3" stroke-linecap="round"/></svg>
+        </div>
+        <div class="supp-name">Policy Guidance Panel</div>
+        <div class="supp-sub">Relevant policy text, version used, ambiguity surfaced — distinct from model interpretation</div>
+      </div>
+      <div class="supp-card">
+        <div class="supp-icon" style="background:#dbeafe;">
+          <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="#1d4ed8" stroke-width="1.3"/><path d="M8 5v3l2 1.5" stroke="#1d4ed8" stroke-width="1.3" stroke-linecap="round"/></svg>
+        </div>
+        <div class="supp-name">Case History &amp; Timeline</div>
+        <div class="supp-sub">Uploads, edits, follow-up requests, escalations, outcomes — with timestamps and actor identity</div>
+      </div>
+      <div class="supp-card">
+        <div class="supp-icon" style="background:#dcfce7;">
+          <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><circle cx="6" cy="5" r="2.5" stroke="#15803d" stroke-width="1.3"/><circle cx="11" cy="5" r="2.5" stroke="#15803d" stroke-width="1.3"/><path d="M2 14c0-2.2 1.8-4 4-4M10 11c1.1 0 2 .9 2 2v1" stroke="#15803d" stroke-width="1.3" stroke-linecap="round"/></svg>
+        </div>
+        <div class="supp-name">Tasking &amp; Collaboration</div>
+        <div class="supp-sub">Queue/reviewer assignment, internal handoff notes, ownership clearly shown</div>
+      </div>
+      <div class="supp-card">
+        <div class="supp-icon" style="background:#fee2e2;">
+          <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M8 2L2 13h12L8 2z" stroke="#dc2626" stroke-width="1.3" stroke-linejoin="round"/><path d="M8 6v3M8 11v.5" stroke="#dc2626" stroke-width="1.3" stroke-linecap="round"/></svg>
+        </div>
+        <div class="supp-name">Alerts &amp; Exceptions</div>
+        <div class="supp-sub">Critical blockers prioritised; blocking vs informational alerts distinguished; banners for overdue/escalated cases</div>
+      </div>
+      <div class="supp-card">
+        <div class="supp-icon" style="background:#f5f3ff;">
+          <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><rect x="3" y="7" width="10" height="6" rx="1.5" stroke="#6d28d9" stroke-width="1.3"/><path d="M5 7V5a3 3 0 016 0v2" stroke="#6d28d9" stroke-width="1.3" stroke-linecap="round"/></svg>
+        </div>
+        <div class="supp-name">Permissions &amp; Role Controls</div>
+        <div class="supp-sub">Edit, override, escalation, and decision controls restricted by role; read-only views for audit roles</div>
+      </div>
+      <div class="supp-card">
+        <div class="supp-icon" style="background:#fef3c7;">
+          <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M8 2v6l3 2" stroke="#b45309" stroke-width="1.3" stroke-linecap="round"/><circle cx="8" cy="9" r="6.5" stroke="#b45309" stroke-width="1.3"/></svg>
+        </div>
+        <div class="supp-name">Save State &amp; Session Continuity</div>
+        <div class="supp-sub">Save without final disposition; restore context on return; protects against accidental data loss</div>
+      </div>
+      <div class="supp-card">
+        <div class="supp-icon" style="background:#dcfce7;">
+          <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M4 8h8M10 5l3 3-3 3" stroke="#15803d" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div class="supp-name">Reviewer Productivity</div>
+        <div class="supp-sub">Minimal clicks on routine cases; fast navigation; filter to unresolved/high-priority; no duplicate entry</div>
+      </div>
+      <div class="supp-card">
+        <div class="supp-icon" style="background:#dbeafe;">
+          <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M3 4h10M3 7h7M3 10h5" stroke="#1d4ed8" stroke-width="1.3" stroke-linecap="round"/><path d="M11 9l1.5 1.5L15 8" stroke="#1d4ed8" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div class="supp-name">Auditability in Workspace</div>
+        <div class="supp-sub">AI-generated vs reviewer-authored visible; field edits logged; evidence links preserved; full review trail</div>
+      </div>
+    </div>
+
+    <!-- Section 10: What this layer produces -->
+    <h2 class="numbered"><span class="sec-num">10</span> What This Layer Produces</h2>
+    <div class="output-grid">
+      <div class="out-item">
+        <div class="out-dot"></div>
+        <div>
+          <div class="out-label">Grounded Case Summary</div>
+          <div class="out-sub">Evidence-backed, not freeform LLM output</div>
+        </div>
+      </div>
+      <div class="out-item">
+        <div class="out-dot"></div>
+        <div>
+          <div class="out-label">Structured Extracted Fields</div>
+          <div class="out-sub">Grouped, editable, source-linked</div>
+        </div>
+      </div>
+      <div class="out-item">
+        <div class="out-dot"></div>
+        <div>
+          <div class="out-label">Evidence &amp; Policy Links</div>
+          <div class="out-sub">Inspectable citations for every material claim</div>
+        </div>
+      </div>
+      <div class="out-item">
+        <div class="out-dot"></div>
+        <div>
+          <div class="out-label">Actionable Open Items</div>
+          <div class="out-sub">Checklist with category, priority &amp; links</div>
+        </div>
+      </div>
+      <div class="out-item">
+        <div class="out-dot"></div>
+        <div>
+          <div class="out-label">Draft Follow-up Support</div>
+          <div class="out-sub">Editable, AI-assisted, reviewer-confirmed</div>
+        </div>
+      </div>
+      <div class="out-item">
+        <div class="out-dot"></div>
+        <div>
+          <div class="out-label">Delta / Re-review View</div>
+          <div class="out-sub">Change-aware between submission cycles</div>
+        </div>
+      </div>
+      <div class="out-item">
+        <div class="out-dot"></div>
+        <div>
+          <div class="out-label">Recommendation with Uncertainty</div>
+          <div class="out-sub">Next-best action, visibly assistive</div>
+        </div>
+      </div>
+      <div class="out-item">
+        <div class="out-dot"></div>
+        <div>
+          <div class="out-label">Decision &amp; Escalation Controls</div>
+          <div class="out-sub">Explicit, governed, always human-confirmed</div>
+        </div>
+      </div>
+    </div>
+    <div class="next-layer">
+      Outputs feed into <strong>Workflow Orchestration &amp; Human Review (5.6)</strong> — case state, open items, and reviewer actions drive queue management, SLA handling, and final disposition.
+    </div>
+
+    <!-- ─── Part 2: Gap Detection ─── -->
+    <hr class="sec-divider" />
+    <h2 class="numbered"><span class="sec-num">11</span> Gap Detection &amp; Open Item Logic</h2>
+    <div class="dp-note">
+      <strong>Design principle:</strong> The copilot should not only assess what is present — it must systematically detect what is missing, incomplete, inconsistent, or unresolved, then convert those gaps into actionable review items. This is where the platform provides real workflow value.
+    </div>
+
+    <!-- Gap types -->
+    <p style="font-size:.82rem;font-weight:700;color:var(--text);margin-bottom:.7rem;">Six Gap Classes Detected</p>
+    <div class="gap-grid">
+      <div class="gap-card">
+        <span class="gap-badge">Missing Document</span>
+        <div class="gap-name">Required document absent</div>
+        <div class="gap-ex">e.g. Certificate of incorporation, ownership declaration, director ID, proof of address</div>
+      </div>
+      <div class="gap-card">
+        <span class="gap-badge">Missing Field</span>
+        <div class="gap-name">Document present but data absent</div>
+        <div class="gap-ex">e.g. Registration number missing, address blank, issue date illegible, shareholding % absent</div>
+      </div>
+      <div class="gap-card">
+        <span class="gap-badge">Inconsistency</span>
+        <div class="gap-name">Two or more sources conflict materially</div>
+        <div class="gap-ex">e.g. Name mismatch, address differs across docs, UBO % don't reconcile, registration date conflicts</div>
+      </div>
+      <div class="gap-card">
+        <span class="gap-badge">Sufficiency</span>
+        <div class="gap-name">Evidence exists but too weak to conclude</div>
+        <div class="gap-ex">e.g. Partial ownership proof, outdated address, low-quality scan, unsigned declaration</div>
+      </div>
+      <div class="gap-card">
+        <span class="gap-badge">Policy Coverage</span>
+        <div class="gap-name">Case outside supported policy logic</div>
+        <div class="gap-ex">e.g. Jurisdiction not in policy store, entity type without a matching rule set</div>
+      </div>
+      <div class="gap-card">
+        <span class="gap-badge">External Verification</span>
+        <div class="gap-name">Cannot resolve without external result</div>
+        <div class="gap-ex">e.g. Internal doc claim needs registry or adverse media verification (when integrations exist)</div>
+      </div>
+    </div>
+
+    <!-- Missing document detection nuance -->
+    <div class="dp-note" style="border-color:#fde68a;background:#fffbeb;color:#78350f;border-left-color:#f59e0b;">
+      <strong>Important nuance — missing document detection</strong> should distinguish: <em>not uploaded</em> · <em>uploaded but unsupported format</em> · <em>uploaded but failed ingestion</em> · <em>uploaded but wrongly classified</em> · <em>uploaded but insufficient</em>. This improves reviewer clarity and downstream ops handling.
+    </div>
+
+    <!-- Open item schema -->
+    <p style="font-size:.82rem;font-weight:700;color:var(--text);margin-bottom:.7rem;">Open Item — Required Fields</p>
+    <div class="oi-grid">
+      <div class="oi-item"><div class="oi-label">Open Item ID</div><div class="oi-sub">Unique reference for tracking</div></div>
+      <div class="oi-item"><div class="oi-label">Gap Type</div><div class="oi-sub">Missing doc / field / inconsistency / etc.</div></div>
+      <div class="oi-item"><div class="oi-label">Severity / Priority</div><div class="oi-sub">Critical → Informational (see tiers below)</div></div>
+      <div class="oi-item"><div class="oi-label">Trigger Source</div><div class="oi-sub">System rule or reviewer-created</div></div>
+      <div class="oi-item"><div class="oi-label">Plain-language Description</div><div class="oi-sub">Reviewer-readable explanation</div></div>
+      <div class="oi-item"><div class="oi-label">Linked Criterion</div><div class="oi-sub">KYB criterion this gap affects</div></div>
+      <div class="oi-item"><div class="oi-label">Evidence Reference</div><div class="oi-sub">Supporting or missing evidence link</div></div>
+      <div class="oi-item"><div class="oi-label">Recommended Action</div><div class="oi-sub">e.g. Request document, confirm field, escalate</div></div>
+      <div class="oi-item"><div class="oi-label">Status + Owner</div><div class="oi-sub">Current lifecycle state &amp; assigned party</div></div>
+    </div>
+
+    <!-- Reviewer-confirmed vs auto -->
+    <p style="font-size:.82rem;font-weight:700;color:var(--text);margin:1.25rem 0 .7rem;">AI-Proposed vs Reviewer-Confirmed Open Items</p>
+    <div class="cop-2col" style="margin-bottom:1.25rem;">
+      <div class="cop-block cop-does">
+        <div class="cop-title">Auto-Generated (AI Proposes)</div>
+        <ul class="rl">
+          <li><span class="rl-dot" style="background:#16a34a;"></span>System produces gap items from detection logic</li>
+          <li><span class="rl-dot" style="background:#16a34a;"></span>Surfaced to reviewer as suggestions, not confirmed items</li>
+          <li><span class="rl-dot" style="background:#16a34a;"></span>Labelled as AI-generated throughout lifecycle</li>
+        </ul>
+      </div>
+      <div class="cop-block" style="background:#eff6ff;border-color:#bfdbfe;">
+        <div class="cop-title" style="color:#1d4ed8;">Reviewer-Confirmed (Human Confirms)</div>
+        <ul class="rl">
+          <li><span class="rl-dot" style="background:#1d4ed8;"></span>Reviewer accepts, edits, merges, rejects, or creates manually</li>
+          <li><span class="rl-dot" style="background:#1d4ed8;"></span>Becomes the official workflow action item</li>
+          <li><span class="rl-dot" style="background:#1d4ed8;"></span>Wording edits and confirmation tracked in audit log</li>
+        </ul>
+      </div>
+    </div>
+    <div class="dp-note"><strong>Strong design pattern:</strong> AI proposes → Human confirms → System tracks both.</div>
+
+    <!-- Open item lifecycle -->
+    <p style="font-size:.82rem;font-weight:700;color:var(--text);margin:1.25rem 0 .65rem;">Open Item Lifecycle</p>
+    <div class="lifecycle-steps">
+      <span class="lc-step">Drafted by system</span><span class="lc-arrow">→</span>
+      <span class="lc-step">Reviewed by analyst</span><span class="lc-arrow">→</span>
+      <span class="lc-step">Sent to applicant / ops</span><span class="lc-arrow">→</span>
+      <span class="lc-step">Awaiting response</span><span class="lc-arrow">→</span>
+      <span class="lc-step">Response received</span><span class="lc-arrow">→</span>
+      <span class="lc-step">Re-opened</span><span class="lc-arrow">→</span>
+      <span class="lc-step">Resolved</span><span class="lc-arrow">·</span>
+      <span class="lc-step">Closed — not required</span><span class="lc-arrow">·</span>
+      <span class="lc-step">Superseded / merged</span>
+    </div>
+
+    <!-- Gap priority tiers -->
+    <p style="font-size:.82rem;font-weight:700;color:var(--text);margin:1.25rem 0 .7rem;">Gap Priority Tiers</p>
+    <div class="tier-grid">
+      <div class="tier-card t-crit">
+        <div class="tier-label">Critical</div>
+        <div class="tier-desc">Blocks decision until resolved — must be cleared before any final action</div>
+      </div>
+      <div class="tier-card t-major">
+        <div class="tier-label">Major</div>
+        <div class="tier-desc">Likely requires follow-up — decision possible but reviewer must annotate rationale</div>
+      </div>
+      <div class="tier-card t-minor">
+        <div class="tier-label">Minor</div>
+        <div class="tier-desc">Reviewer should inspect — may not block decision; can be overridden with note</div>
+      </div>
+      <div class="tier-card t-info">
+        <div class="tier-label">Informational</div>
+        <div class="tier-desc">Surfaced for awareness only — no action required to proceed</div>
+      </div>
+    </div>
+
+    <!-- Section 12: Design goals -->
+    <h2 class="numbered"><span class="sec-num">12</span> Design Goals</h2>
+    <div class="goals-grid">
+      <div class="goal-item"><svg width="14" height="14" viewBox="0 0 18 18" fill="none"><path d="M3 9l4 4 8-8" stroke="#16a34a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Reduce reviewer orientation time on every case</div>
+      <div class="goal-item"><svg width="14" height="14" viewBox="0 0 18 18" fill="none"><path d="M3 9l4 4 8-8" stroke="#16a34a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Make grounded evidence easy to inspect and verify</div>
+      <div class="goal-item"><svg width="14" height="14" viewBox="0 0 18 18" fill="none"><path d="M3 9l4 4 8-8" stroke="#16a34a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Convert intelligence into actionable review tasks</div>
+      <div class="goal-item"><svg width="14" height="14" viewBox="0 0 18 18" fill="none"><path d="M3 9l4 4 8-8" stroke="#16a34a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Preserve reviewer control over edits, escalation, and final decisions</div>
+      <div class="goal-item"><svg width="14" height="14" viewBox="0 0 18 18" fill="none"><path d="M3 9l4 4 8-8" stroke="#16a34a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Distinguish system suggestions from human-authored outcomes</div>
+      <div class="goal-item"><svg width="14" height="14" viewBox="0 0 18 18" fill="none"><path d="M3 9l4 4 8-8" stroke="#16a34a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Surface uncertainty and blockers clearly — never hide them</div>
+      <div class="goal-item"><svg width="14" height="14" viewBox="0 0 18 18" fill="none"><path d="M3 9l4 4 8-8" stroke="#16a34a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Support embedding into existing operational tools</div>
+      <div class="goal-item"><svg width="14" height="14" viewBox="0 0 18 18" fill="none"><path d="M3 9l4 4 8-8" stroke="#16a34a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Improve productivity without weakening governance</div>
+    </div>
+
+    <nav class="section-nav">
+      <a href="llm-reasoning.html" class="nav-btn"><span class="nav-btn-dir">← Previous</span><span class="nav-btn-title">Knowledge, Retrieval &amp; Policy Grounding</span></a>
+      <span class="nav-center">25 of 39</span>
+      <a href="workflow-orchestration.html" class="nav-btn next"><span class="nav-btn-dir">Next →</span><span class="nav-btn-title">Workflow Orchestration &amp; Human Review</span></a>
+    </nav>
+  </main>
+</div>
+<footer class="site-footer">Reap AI Platform — KYB Review Copilot &nbsp;·&nbsp; Technical PRD</footer>
+<script src="../js/main.js"></script>
+</body>
+</html>

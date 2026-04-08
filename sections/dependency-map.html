@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>7.5 Dependency &amp; Risk Map — Reap KYB PRD</title>
+  <link rel="stylesheet" href="../css/styles.css" />
+  <style>
+    /* ── Summary strip ── */
+    .dr-summary { display:grid; grid-template-columns:repeat(4,1fr); gap:.75rem; margin-bottom:2rem; }
+    .dr-stat {
+      background:var(--surface); border:1px solid var(--border); border-radius:10px;
+      padding:.9rem 1.1rem; display:flex; align-items:center; gap:.75rem;
+    }
+    .dr-stat-icon {
+      width:36px; height:36px; border-radius:8px; display:flex; align-items:center;
+      justify-content:center; flex-shrink:0;
+    }
+    .dr-stat-val { font-size:1.5rem; font-weight:700; color:var(--text); line-height:1; }
+    .dr-stat-lbl { font-size:.72rem; color:var(--text-dim); margin-top:2px; }
+
+    /* ── Legend ── */
+    .dr-legend { display:flex; gap:1rem; flex-wrap:wrap; margin-bottom:1.25rem; font-size:.78rem; }
+    .dr-leg { display:flex; align-items:center; gap:.4rem; color:var(--text-mid); }
+    .dr-leg-dot { width:10px; height:10px; border-radius:50%; flex-shrink:0; }
+
+    /* ── Phase group header ── */
+    .dr-group-hdr {
+      display:flex; align-items:center; gap:.6rem; padding:.5rem .9rem;
+      border-radius:7px; margin:1.5rem 0 .5rem; font-size:.73rem; font-weight:700;
+      text-transform:uppercase; letter-spacing:.07em;
+    }
+
+    /* ── Main table ── */
+    .dr-wrap { overflow-x:auto; margin-bottom:.5rem; }
+    .dr-table { width:100%; border-collapse:collapse; min-width:700px; font-size:.8rem; }
+    .dr-table thead th {
+      background:var(--navy); color:#fff; font-weight:600; text-transform:uppercase;
+      letter-spacing:.05em; font-size:.69rem; padding:.5rem .7rem; border:1px solid rgba(255,255,255,.08);
+      text-align:left;
+    }
+    .dr-table thead th.area-col { min-width:170px; }
+    .dr-table tbody td {
+      padding:.55rem .7rem; border:1px solid var(--border); vertical-align:top;
+      color:var(--text); line-height:1.45;
+    }
+    .dr-table tbody tr:hover { background:#f8faff; }
+    .dr-table .area-name { font-weight:600; color:var(--text); display:block; margin-bottom:2px; }
+    .dr-table .area-why { color:var(--text-dim); font-size:.74rem; }
+
+    /* Impact / Mitigation / Fallback micro-labels */
+    .cell-imp  { color:#b91c1c; }
+    .cell-mit  { color:#15803d; }
+    .cell-fb   { color:#92400e; }
+
+    /* Type badge */
+    .type-dep { background:#dbeafe; color:#1e40af; border:1px solid #bfdbfe; border-radius:4px; padding:.15rem .45rem; font-size:.68rem; font-weight:700; white-space:nowrap; }
+    .type-risk { background:#fee2e2; color:#b91c1c; border:1px solid #fecaca; border-radius:4px; padding:.15rem .45rem; font-size:.68rem; font-weight:700; white-space:nowrap; }
+
+    /* Phase badge */
+    .phase-badge {
+      background:var(--navy); color:#94a3b8; border-radius:4px;
+      padding:.15rem .45rem; font-size:.67rem; font-weight:600; white-space:nowrap;
+    }
+    .badges-cell { display:flex; flex-direction:column; gap:.35rem; align-items:flex-start; }
+
+    /* Phase group color themes */
+    .grp-02  { background:#eff6ff; color:#1e40af; border-left:3px solid #3b82f6; }
+    .grp-03  { background:#f5f3ff; color:#4338ca; border-left:3px solid #6d28d9; }
+    .grp-04  { background:#fff7ed; color:#92400e; border-left:3px solid #f59e0b; }
+    .grp-12  { background:#f0fdf4; color:#14532d; border-left:3px solid #22c55e; }
+    .grp-13  { background:#fdf4ff; color:#6b21a8; border-left:3px solid #a855f7; }
+    .grp-14  { background:#fff1f2; color:#9f1239; border-left:3px solid #f43f5e; }
+    .grp-24  { background:#f8fafc; color:#475569; border-left:3px solid #94a3b8; }
+
+    /* ── Medium risks ── */
+    .med-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:.6rem; margin-top:1rem; }
+    .med-item {
+      background:var(--surface); border:1px solid var(--border); border-radius:8px;
+      padding:.65rem .85rem; display:flex; align-items:flex-start; gap:.55rem;
+    }
+    .med-num {
+      font-size:.68rem; font-weight:800; color:#64748b; background:#f1f5f9;
+      border-radius:4px; padding:.1rem .35rem; flex-shrink:0; margin-top:1px;
+    }
+    .med-txt { font-size:.79rem; color:var(--text-mid); line-height:1.4; }
+
+    @media(max-width:800px){
+      .dr-summary { grid-template-columns:repeat(2,1fr); }
+      .med-grid { grid-template-columns:1fr 1fr; }
+    }
+    @media(max-width:540px){
+      .dr-summary { grid-template-columns:1fr; }
+      .med-grid { grid-template-columns:1fr; }
+    }
+  </style>
+</head>
+<body>
+<header class="site-header">
+  <div class="header-inner">
+    <a href="../index.html" class="site-logo"><div class="logo-mark">R</div><span>Reap AI Platform</span></a>
+    <div class="header-divider"></div><span class="header-subtitle">KYB Review Copilot</span>
+    <nav class="header-nav"><a href="../index.html">Overview</a><a href="solution-architecture.html">Architecture</a><a href="reviewer-workflow.html">Workflow</a></nav>
+  </div>
+</header>
+<div class="page-layout">
+  <aside class="sidebar">
+    <a href="../index.html" class="sidebar-back"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M9 11L5 7l4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg> All Sections</a>
+    <div class="sidebar-section-title">Block 7 — Delivery Strategy</div>
+    <ul class="sidebar-nav">
+      <li><a href="workflow-state.html">7.1 Workflow State</a></li>
+      <li><a href="platform-reuse.html">7.2 Platform Reuse Map</a></li>
+      <li><a href="go-to-market.html">7.3 Go-to-Market</a></li>
+      <li><a href="team-resourcing.html">7.4 Team &amp; Resourcing</a></li>
+      <li><a href="dependency-map.html" class="active">7.5 Dependency Map</a></li>
+    </ul>
+  </aside>
+  <main class="content">
+    <nav class="breadcrumb"><a href="../index.html">Home</a><span class="breadcrumb-sep">›</span><span>Block 7 — Delivery Strategy</span><span class="breadcrumb-sep">›</span><span class="breadcrumb-current">7.5 Dependency &amp; Risk Map</span></nav>
+    <div class="section-header">
+      <div class="section-block-tag" style="background:var(--b7)">Block 7 — Delivery Strategy</div>
+      <h1>Dependency &amp; Risk Map</h1>
+      <p class="section-intro">23 primary blockers and risks across phases — each with impact, mitigation, and fallback. Resolve early or gate delivery.</p>
+    </div>
+
+    <!-- Summary strip -->
+    <div class="dr-summary">
+      <div class="dr-stat">
+        <div class="dr-stat-icon" style="background:#dbeafe">
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M9 3v6l4 2" stroke="#1e40af" stroke-width="1.6" stroke-linecap="round"/><circle cx="9" cy="9" r="7" stroke="#1e40af" stroke-width="1.5"/></svg>
+        </div>
+        <div><div class="dr-stat-val">12</div><div class="dr-stat-lbl">Dependencies</div></div>
+      </div>
+      <div class="dr-stat">
+        <div class="dr-stat-icon" style="background:#fee2e2">
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M9 6v4m0 3h.01M3.5 15h11L9 3 3.5 15z" stroke="#b91c1c" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div><div class="dr-stat-val">11</div><div class="dr-stat-lbl">Risks</div></div>
+      </div>
+      <div class="dr-stat">
+        <div class="dr-stat-icon" style="background:#f0fdf4">
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M5 9l3 3 5-5" stroke="#16a34a" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="9" cy="9" r="7" stroke="#16a34a" stroke-width="1.5"/></svg>
+        </div>
+        <div><div class="dr-stat-val">P0–P4</div><div class="dr-stat-lbl">Phases Covered</div></div>
+      </div>
+      <div class="dr-stat">
+        <div class="dr-stat-icon" style="background:#fff7ed">
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><rect x="3" y="3" width="12" height="12" rx="2" stroke="#b45309" stroke-width="1.5"/><path d="M9 7v4m0 2h.01" stroke="#b45309" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </div>
+        <div><div class="dr-stat-val">11</div><div class="dr-stat-lbl">Medium Risks</div></div>
+      </div>
+    </div>
+
+    <!-- Legend -->
+    <div class="dr-legend">
+      <span class="dr-leg"><span class="dr-leg-dot" style="background:#3b82f6"></span>Dependency — must be resolved before work begins</span>
+      <span class="dr-leg"><span class="dr-leg-dot" style="background:#ef4444"></span>Risk — may materialise; needs active mitigation</span>
+    </div>
+
+    <!-- ── Phase 0–2 ── -->
+    <div class="dr-group-hdr grp-02">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" stroke="currentColor" stroke-width="1.4"/><path d="M7 4v3.5L9 9" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+      Phase 0 – 2 &nbsp;·&nbsp; 4 items
+    </div>
+    <div class="dr-wrap">
+      <table class="dr-table">
+        <thead><tr>
+          <th class="area-col">Area</th>
+          <th>Impact if unresolved</th>
+          <th>Mitigation</th>
+          <th>Fallback</th>
+          <th>Type / Phase</th>
+        </tr></thead>
+        <tbody>
+          <tr>
+            <td><span class="area-name">Policy tagging &amp; structuring</span><span class="area-why">Jurisdiction, entity type, risk tier metadata needed for retrieval</span></td>
+            <td class="cell-imp">Wrong policy retrieved; low reviewer trust</td>
+            <td class="cell-mit">Define taxonomy + metadata model early; curate top policies first</td>
+            <td class="cell-fb">Start with limited high-volume policies, manual mapping</td>
+            <td><div class="badges-cell"><span class="type-dep">Dependency</span><span class="phase-badge">P0–2</span></div></td>
+          </tr>
+          <tr>
+            <td><span class="area-name">Internal workflow ambiguity</span><span class="area-why">Current-state process varies by team / reviewer</span></td>
+            <td class="cell-imp">Rework, scope churn, conflicting requirements</td>
+            <td class="cell-mit">Map canonical happy path + top exception paths before build</td>
+            <td class="cell-fb">Standardise MVP on one team / one geography first</td>
+            <td><div class="badges-cell"><span class="type-risk">Risk</span><span class="phase-badge">P0–2</span></div></td>
+          </tr>
+          <tr>
+            <td><span class="area-name">Lack of clear MVP boundaries</span><span class="area-why">Teams try to solve all of KYB at once</span></td>
+            <td class="cell-imp">Delivery slips, diluted quality, architecture sprawl</td>
+            <td class="cell-mit">Define must-have vs later by stage; write explicit non-goals</td>
+            <td class="cell-fb">Limit MVP to review acceleration, not full automation</td>
+            <td><div class="badges-cell"><span class="type-risk">Risk</span><span class="phase-badge">P0–2</span></div></td>
+          </tr>
+          <tr>
+            <td><span class="area-name">Reviewer performance baseline</span><span class="area-why">No baseline = no provable ROI on time saved</span></td>
+            <td class="cell-imp">Hard to prove ROI or productivity gains</td>
+            <td class="cell-mit">Run time study before rollout begins</td>
+            <td class="cell-fb">Retrospective manual sample baseline</td>
+            <td><div class="badges-cell"><span class="type-dep">Dependency</span><span class="phase-badge">P0–2</span></div></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ── Phase 0–3 ── -->
+    <div class="dr-group-hdr grp-03">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" stroke="currentColor" stroke-width="1.4"/><path d="M7 4v3.5L9 9" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+      Phase 0 – 3 &nbsp;·&nbsp; 5 items
+    </div>
+    <div class="dr-wrap">
+      <table class="dr-table">
+        <thead><tr>
+          <th class="area-col">Area</th>
+          <th>Impact if unresolved</th>
+          <th>Mitigation</th>
+          <th>Fallback</th>
+          <th>Type / Phase</th>
+        </tr></thead>
+        <tbody>
+          <tr>
+            <td><span class="area-name">Data access permissions</span><span class="area-why">Historical cases, docs, policies, reviewer decisions needed for eval</span></td>
+            <td class="cell-imp">Weak tuning, slow development, no benchmark</td>
+            <td class="cell-mit">Secure access approvals early; define least-privilege data env</td>
+            <td class="cell-fb">Redacted samples or synthetic data temporarily</td>
+            <td><div class="badges-cell"><span class="type-dep">Dependency</span><span class="phase-badge">P0–3</span></div></td>
+          </tr>
+          <tr>
+            <td><span class="area-name">Historical case quality</span><span class="area-why">Records may be incomplete, inconsistent, or poorly labelled</span></td>
+            <td class="cell-imp">Weak eval signals, misleading metrics</td>
+            <td class="cell-mit">Audit quality before relying on it; classify usable vs unusable</td>
+            <td class="cell-fb">Curated gold set instead of full history</td>
+            <td><div class="badges-cell"><span class="type-risk">Risk</span><span class="phase-badge">P0–3</span></div></td>
+          </tr>
+          <tr>
+            <td><span class="area-name">Reviewer bandwidth</span><span class="area-why">SMEs needed for workflow validation, acceptance criteria, eval labelling</span></td>
+            <td class="cell-imp">Product built in the abstract; low adoption later</td>
+            <td class="cell-mit">Reserve named SME bandwidth; weekly structured reviews</td>
+            <td class="cell-fb">1–2 dedicated reviewer champions vs broad group input</td>
+            <td><div class="badges-cell"><span class="type-dep">Dependency</span><span class="phase-badge">P0–3</span></div></td>
+          </tr>
+          <tr>
+            <td><span class="area-name">Compliance SME availability</span><span class="area-why">Policy interpretation, escalation rules, audit expectations require direct input</span></td>
+            <td class="cell-imp">Recommendation logic may be unusable or unsafe</td>
+            <td class="cell-mit">Lock compliance partner into program cadence early</td>
+            <td class="cell-fb">Narrow to assistive-only features until decisions are clarified</td>
+            <td><div class="badges-cell"><span class="type-dep">Dependency</span><span class="phase-badge">P0–3</span></div></td>
+          </tr>
+          <tr>
+            <td><span class="area-name">Eval set creation</span><span class="area-why">Benchmark cases, labelled outcomes, failure-mode coverage needed for launch</span></td>
+            <td class="cell-imp">No quality bar; regressions go unnoticed</td>
+            <td class="cell-mit">Create gold set in Phase 0 with diverse case types</td>
+            <td class="cell-fb">Start small high-quality set, expand continuously</td>
+            <td><div class="badges-cell"><span class="type-dep">Dependency</span><span class="phase-badge">P0–3</span></div></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ── Phase 0–4 ── -->
+    <div class="dr-group-hdr grp-04">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" stroke="currentColor" stroke-width="1.4"/><path d="M7 4v3.5L9 9" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+      Phase 0 – 4 &nbsp;·&nbsp; 2 items
+    </div>
+    <div class="dr-wrap">
+      <table class="dr-table">
+        <thead><tr>
+          <th class="area-col">Area</th>
+          <th>Impact if unresolved</th>
+          <th>Mitigation</th>
+          <th>Fallback</th>
+          <th>Type / Phase</th>
+        </tr></thead>
+        <tbody>
+          <tr>
+            <td><span class="area-name">Data privacy / PII constraints</span><span class="area-why">Model use, vendor routing, retention, and access must be governed</span></td>
+            <td class="cell-imp">Security / compliance blocks launch</td>
+            <td class="cell-mit">Review data flows and vendor exposure early; define redaction</td>
+            <td class="cell-fb">Restricted deployment, masked fields, no-external-retention vendors</td>
+            <td><div class="badges-cell"><span class="type-risk">Risk</span><span class="phase-badge">P0–4</span></div></td>
+          </tr>
+          <tr>
+            <td><span class="area-name">Labelling bottleneck</span><span class="area-why">Benchmark labels consume scarce reviewer / compliance capacity</span></td>
+            <td class="cell-imp">Eval quality stalls</td>
+            <td class="cell-mit">Lightweight rubric; small high-value set first; stagger labelling</td>
+            <td class="cell-fb">Prioritise critical fields and highest-risk scenarios only</td>
+            <td><div class="badges-cell"><span class="type-risk">Risk</span><span class="phase-badge">P0–4</span></div></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ── Phase 1–2 ── -->
+    <div class="dr-group-hdr grp-12">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" stroke="currentColor" stroke-width="1.4"/><path d="M7 4v3.5L9 9" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+      Phase 1 – 2 &nbsp;·&nbsp; 2 items
+    </div>
+    <div class="dr-wrap">
+      <table class="dr-table">
+        <thead><tr>
+          <th class="area-col">Area</th>
+          <th>Impact if unresolved</th>
+          <th>Mitigation</th>
+          <th>Fallback</th>
+          <th>Type / Phase</th>
+        </tr></thead>
+        <tbody>
+          <tr>
+            <td><span class="area-name">OCR quality on real documents</span><span class="area-why">Scans, stamps, multilingual, low-quality uploads degrade extraction</span></td>
+            <td class="cell-imp">Missing fields, poor summaries, reviewer frustration</td>
+            <td class="cell-mit">Benchmark OCR on actual document mix; add low-confidence flags</td>
+            <td class="cell-fb">Restrict early scope to supported document classes</td>
+            <td><div class="badges-cell"><span class="type-risk">Risk</span><span class="phase-badge">P1–2</span></div></td>
+          </tr>
+          <tr>
+            <td><span class="area-name">Document variability / edge cases</span><span class="area-why">Different formats, templates, jurisdictions break parsers</span></td>
+            <td class="cell-imp">High edit burden, weak automation</td>
+            <td class="cell-mit">Prioritise top-volume docs first; design explicit unsupported-doc fallback</td>
+            <td class="cell-fb">Route unsupported classes to manual flow</td>
+            <td><div class="badges-cell"><span class="type-risk">Risk</span><span class="phase-badge">P1–2</span></div></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ── Phase 1–3 ── -->
+    <div class="dr-group-hdr grp-13">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" stroke="currentColor" stroke-width="1.4"/><path d="M7 4v3.5L9 9" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+      Phase 1 – 3 &nbsp;·&nbsp; 7 items
+    </div>
+    <div class="dr-wrap">
+      <table class="dr-table">
+        <thead><tr>
+          <th class="area-col">Area</th>
+          <th>Impact if unresolved</th>
+          <th>Mitigation</th>
+          <th>Fallback</th>
+          <th>Type / Phase</th>
+        </tr></thead>
+        <tbody>
+          <tr>
+            <td><span class="area-name">Insufficient UI / HITL design</span><span class="area-why">Poor workspace undermines extraction and recommendation value</span></td>
+            <td class="cell-imp">High edit friction, slow reviews, low trust</td>
+            <td class="cell-mit">Treat reviewer UX as core product, not a wrapper</td>
+            <td class="cell-fb">Simplify to evidence-first, task-first UI patterns</td>
+            <td><div class="badges-cell"><span class="type-risk">Risk</span><span class="phase-badge">P1–3</span></div></td>
+          </tr>
+          <tr>
+            <td><span class="area-name">Tenant isolation / access control</span><span class="area-why">Multi-tenant or segregated access essential for safe operation</span></td>
+            <td class="cell-imp">Data leakage risk, deployment blocker</td>
+            <td class="cell-mit">Build RBAC and tenant model early — not late hardening</td>
+            <td class="cell-fb">Limit pilot to smaller isolated tenant/user group</td>
+            <td><div class="badges-cell"><span class="type-dep">Dependency</span><span class="phase-badge">P1–3</span></div></td>
+          </tr>
+          <tr>
+            <td><span class="area-name">Metadata quality for retrieval</span><span class="area-why">Clean entity, market, policy type, effective date needed for precision</span></td>
+            <td class="cell-imp">Low retrieval precision, poor evidence grounding</td>
+            <td class="cell-mit">Define metadata schema before indexing; backfill manually</td>
+            <td class="cell-fb">Use curated subsets with richer metadata before full indexing</td>
+            <td><div class="badges-cell"><span class="type-dep">Dependency</span><span class="phase-badge">P1–3</span></div></td>
+          </tr>
+          <tr>
+            <td><span class="area-name">Citation quality &amp; snippet fidelity</span><span class="area-why">Bad citations destroy trust even when answers sound plausible</span></td>
+            <td class="cell-imp">Reviewer rejection, compliance concern</td>
+            <td class="cell-mit">Build citation QA into acceptance tests; require evidence span validation</td>
+            <td class="cell-fb">Disable recommendations without usable citations</td>
+            <td><div class="badges-cell"><span class="type-risk">Risk</span><span class="phase-badge">P1–3</span></div></td>
+          </tr>
+          <tr>
+            <td><span class="area-name">Upstream case quality</span><span class="area-why">Bad intake data reduces everything downstream</span></td>
+            <td class="cell-imp">More exceptions, weak extraction, poor summaries</td>
+            <td class="cell-mit">Add intake validation and minimum completeness checks early</td>
+            <td class="cell-fb">Gate early use to cleaner intake channels first</td>
+            <td><div class="badges-cell"><span class="type-risk">Risk</span><span class="phase-badge">P1–3</span></div></td>
+          </tr>
+          <tr>
+            <td><span class="area-name">Over-indexing on model quality</span><span class="area-why">Team chases better prompts while ignoring review UX and operational gaps</span></td>
+            <td class="cell-imp">Nice demos, poor production value</td>
+            <td class="cell-mit">Balance roadmap: AI quality + workflow usability + controls</td>
+            <td class="cell-fb">Shift sprint capacity toward workflow/UI and exceptions</td>
+            <td><div class="badges-cell"><span class="type-risk">Risk</span><span class="phase-badge">P1–3</span></div></td>
+          </tr>
+          <tr>
+            <td><span class="area-name">No clear pilot cohort</span><span class="area-why">Success requires a defined set of users, cases, and review types</span></td>
+            <td class="cell-imp">Unclear results, weak adoption conclusions</td>
+            <td class="cell-mit">Define pilot cohort, case volume, goals, and comparison baseline</td>
+            <td class="cell-fb">Limit rollout to 1 team, 1 case segment, 1 workflow slice</td>
+            <td><div class="badges-cell"><span class="type-dep">Dependency</span><span class="phase-badge">P1–3</span></div></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ── Phase 1–4 ── -->
+    <div class="dr-group-hdr grp-14">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" stroke="currentColor" stroke-width="1.4"/><path d="M7 4v3.5L9 9" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+      Phase 1 – 4 &nbsp;·&nbsp; 2 items
+    </div>
+    <div class="dr-wrap">
+      <table class="dr-table">
+        <thead><tr>
+          <th class="area-col">Area</th>
+          <th>Impact if unresolved</th>
+          <th>Mitigation</th>
+          <th>Fallback</th>
+          <th>Type / Phase</th>
+        </tr></thead>
+        <tbody>
+          <tr>
+            <td><span class="area-name">Internal tool integration readiness</span><span class="area-why">KYB workflow depends on CRM, case systems, ticketing, storage, email</span></td>
+            <td class="cell-imp">Delays in ingestion, duplicate work, broken end-to-end flow</td>
+            <td class="cell-mit">Map all upstream/downstream integrations before build; define API contracts</td>
+            <td class="cell-fb">Staged / manual imports for MVP while APIs are built</td>
+            <td><div class="badges-cell"><span class="type-dep">Dependency</span><span class="phase-badge">P1–4</span></div></td>
+          </tr>
+          <tr>
+            <td><span class="area-name">Reviewer trust / adoption risk</span><span class="area-why">Technically good outputs still unused if reviewers don't understand them</span></td>
+            <td class="cell-imp">Low realised value despite working system</td>
+            <td class="cell-mit">Prioritise editability, citations, transparency, and pilot champions</td>
+            <td class="cell-fb">Keep assistive mode; avoid forced workflow changes</td>
+            <td><div class="badges-cell"><span class="type-risk">Risk</span><span class="phase-badge">P1–4</span></div></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ── Phase 2–4 ── -->
+    <div class="dr-group-hdr grp-24">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" stroke="currentColor" stroke-width="1.4"/><path d="M7 4v3.5L9 9" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+      Phase 2 – 4 &nbsp;·&nbsp; 1 item
+    </div>
+    <div class="dr-wrap">
+      <table class="dr-table">
+        <thead><tr>
+          <th class="area-col">Area</th>
+          <th>Impact if unresolved</th>
+          <th>Mitigation</th>
+          <th>Fallback</th>
+          <th>Type / Phase</th>
+        </tr></thead>
+        <tbody>
+          <tr>
+            <td><span class="area-name">Release gating not agreed</span><span class="area-why">Teams need agreed thresholds for what can launch vs stay manual</span></td>
+            <td class="cell-imp">Endless debate or unsafe launch</td>
+            <td class="cell-mit">Define launch criteria by feature type: extraction, drafting, recommendations, automation</td>
+            <td class="cell-fb">Launch assistive-only without automation gates</td>
+            <td><div class="badges-cell"><span class="type-dep">Dependency</span><span class="phase-badge">P2–4</span></div></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Medium risks -->
+    <h2 style="margin-top:2rem">Other Medium Risks &amp; Dependencies</h2>
+    <p style="color:var(--text-dim);font-size:.83rem;margin-bottom:.85rem">Lower-severity items requiring awareness and periodic review — not blockers but worth tracking.</p>
+    <div class="med-grid">
+      <div class="med-item"><span class="med-num">01</span><span class="med-txt">Ground-truth definition ambiguity</span></div>
+      <div class="med-item"><span class="med-num">02</span><span class="med-txt">Engineering architecture coherence</span></div>
+      <div class="med-item"><span class="med-num">03</span><span class="med-txt">Ambiguous ownership — Product / Engineering / Ops / Compliance</span></div>
+      <div class="med-item"><span class="med-num">04</span><span class="med-txt">Executive sponsorship drift</span></div>
+      <div class="med-item"><span class="med-num">05</span><span class="med-txt">Policy versioning discipline</span></div>
+      <div class="med-item"><span class="med-num">06</span><span class="med-txt">Retrieval latency and cost</span></div>
+      <div class="med-item"><span class="med-num">07</span><span class="med-txt">Incomplete audit model</span></div>
+      <div class="med-item"><span class="med-num">08</span><span class="med-txt">Existing workflow tools may resist change</span></div>
+      <div class="med-item"><span class="med-num">09</span><span class="med-txt">Vendor dependency / lock-in</span></div>
+      <div class="med-item"><span class="med-num">10</span><span class="med-txt">Cost model uncertainty</span></div>
+      <div class="med-item"><span class="med-num">11</span><span class="med-txt">Scope coupling between platform hardening and feature delivery</span></div>
+    </div>
+
+    <nav class="section-nav" style="margin-top:2.5rem">
+      <a href="team-resourcing.html" class="nav-btn"><span class="nav-btn-dir">← Previous</span><span class="nav-btn-title">Team &amp; Resourcing</span></a>
+      <span class="nav-center">35 of 39</span>
+      <a href="metrics-framework.html" class="nav-btn next"><span class="nav-btn-dir">Next →</span><span class="nav-btn-title">Metrics Framework</span></a>
+    </nav>
+  </main>
+</div>
+<footer class="site-footer">Reap AI Platform — KYB Review Copilot &nbsp;·&nbsp; Technical PRD</footer>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script src="../js/main.js"></script>
+</body></html>

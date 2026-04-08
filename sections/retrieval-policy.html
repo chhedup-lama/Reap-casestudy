@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>5.3 Document Intelligence — Reap KYB PRD</title>
+  <link rel="stylesheet" href="../css/styles.css" />
+  <style>
+    /* ── Design principle bar ── */
+    .dp-flow {
+      background:var(--navy); border-radius:10px; padding:.9rem 1.3rem;
+      display:flex; align-items:center; gap:.6rem; flex-wrap:wrap;
+      margin-bottom:2rem; font-size:.82rem;
+    }
+    .dp-step  { color:#c7d2fe; font-weight:500; }
+    .dp-arrow { color:#6366f1; font-weight:700; font-size:1rem; }
+
+    /* ── Section number ── */
+    .sec-num {
+      display:inline-flex; align-items:center; justify-content:center;
+      width:24px; height:24px; border-radius:50%; font-size:.68rem; font-weight:800;
+      background:#dbeafe; color:#1e40af; flex-shrink:0; margin-right:.4rem;
+    }
+    h2.numbered { display:flex; align-items:center; }
+
+    /* ── Phase module chips ── */
+    .phase-modules { display:grid; grid-template-columns:repeat(4,1fr); gap:.65rem; margin-bottom:1.75rem; }
+    .pm-card {
+      background:var(--surface); border:1px solid var(--border); border-radius:9px;
+      padding:.8rem .9rem; text-align:center; border-top:3px solid var(--b5);
+    }
+    .pm-icon { width:32px; height:32px; border-radius:7px; margin:0 auto .45rem;
+      display:flex; align-items:center; justify-content:center; }
+    .pm-name { font-size:.78rem; font-weight:700; color:var(--text); }
+
+    /* ── Role lists ── */
+    .role-2col { display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-bottom:1.75rem; }
+    .role-block { background:var(--surface); border:1px solid var(--border); border-radius:9px; padding:.9rem 1rem; }
+    .role-block-title { font-size:.7rem; font-weight:700; text-transform:uppercase; letter-spacing:.08em; margin-bottom:.55rem; }
+    .rl { list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:.3rem; }
+    .rl li { display:flex; align-items:flex-start; gap:.45rem; font-size:.79rem; line-height:1.4; }
+    .rl-dot  { width:6px; height:6px; border-radius:50%; flex-shrink:0; margin-top:5px; }
+
+    /* ── Flow steps ── */
+    .flow-steps { display:flex; flex-direction:column; gap:.5rem; margin-bottom:1.75rem; }
+    .flow-step {
+      display:flex; align-items:flex-start; gap:.85rem; background:var(--surface);
+      border:1px solid var(--border); border-radius:9px; padding:.65rem .9rem;
+    }
+    .flow-num {
+      width:26px; height:26px; border-radius:50%; display:flex; align-items:center;
+      justify-content:center; font-size:.7rem; font-weight:800; flex-shrink:0; margin-top:1px;
+    }
+    .flow-title { font-size:.82rem; font-weight:700; color:var(--text); }
+    .flow-sub   { font-size:.73rem; color:var(--text-dim); margin-top:2px; line-height:1.45; }
+    .flow-chips { display:flex; flex-wrap:wrap; gap:.3rem; margin-top:.4rem; }
+    .flow-chip  { font-size:.67rem; background:#f1f5f9; color:var(--text-dim); border:1px solid var(--border); border-radius:3px; padding:.1rem .38rem; }
+
+    /* ── Module cards ── */
+    .module-grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:.75rem; margin-bottom:1.75rem; }
+    .mod-card { border-radius:10px; padding:1rem 1.1rem; border:1px solid var(--border); }
+    .mod-hdr { display:flex; align-items:center; gap:.55rem; margin-bottom:.65rem; }
+    .mod-icon { width:32px; height:32px; border-radius:7px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+    .mod-name { font-size:.84rem; font-weight:700; }
+    .mod-does { font-size:.68rem; font-weight:700; text-transform:uppercase; letter-spacing:.07em; color:var(--text-dim); margin:.1rem 0 .4rem; }
+    .mod-list { list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:.3rem; }
+    .mod-list li { display:flex; align-items:flex-start; gap:.45rem; font-size:.78rem; color:var(--text-mid); line-height:1.4; }
+    .ml-chk { flex-shrink:0; color:#16a34a; }
+    .mod-why { font-size:.73rem; color:var(--text-dim); margin-top:.55rem; padding-top:.55rem; border-top:1px solid var(--border); font-style:italic; }
+    .dp-note { font-size:.73rem; font-weight:600; color:var(--text-mid); margin:.55rem 0 0; padding:.5rem .7rem; background:#f8fafc; border-radius:5px; border-left:3px solid #6366f1; }
+
+    /* ── Requirements grid ── */
+    .req-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:.55rem; margin-bottom:1.75rem; }
+    .req-item {
+      display:flex; align-items:flex-start; gap:.5rem; background:var(--surface);
+      border:1px solid var(--border); border-radius:7px; padding:.55rem .75rem;
+      font-size:.78rem; color:var(--text-mid); line-height:1.4;
+    }
+    .req-dot { width:6px; height:6px; border-radius:50%; flex-shrink:0; margin-top:5px; }
+
+    /* ── Chunk strategy ── */
+    .chunk-2col { display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-bottom:1.75rem; }
+    .chunk-block { background:var(--surface); border:1px solid var(--border); border-radius:9px; padding:.9rem 1rem; }
+    .chunk-title { font-size:.7rem; font-weight:700; text-transform:uppercase; letter-spacing:.07em; color:var(--text-dim); margin-bottom:.5rem; }
+
+    /* ── Quality checks ── */
+    .qc-cols { display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-bottom:1.75rem; }
+    .qc-block { border-radius:10px; padding:.9rem 1rem; border:1px solid var(--border); }
+    .qc-block.sys { background:#f0fdf4; border-color:#bbf7d0; }
+    .qc-block.rev { background:#fff7ed; border-color:#fcd34d; }
+    .qc-title { font-size:.7rem; font-weight:700; text-transform:uppercase; letter-spacing:.08em; margin-bottom:.5rem; }
+    .qc-block.sys .qc-title { color:#15803d; }
+    .qc-block.rev .qc-title { color:#b45309; }
+    .qc-list { list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:.3rem; }
+    .qc-list li { display:flex; align-items:flex-start; gap:.45rem; font-size:.78rem; line-height:1.4; }
+    .qc-chk { flex-shrink:0; }
+
+    /* ── Output produces ── */
+    .output-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:.6rem; margin-bottom:1rem; }
+    .out-item {
+      background:var(--navy); border-radius:8px; padding:.7rem .9rem;
+      display:flex; align-items:flex-start; gap:.55rem;
+    }
+    .out-dot { width:8px; height:8px; border-radius:50%; background:#6366f1; flex-shrink:0; margin-top:4px; }
+    .out-label { font-size:.8rem; font-weight:700; color:#fff; }
+    .out-sub   { font-size:.7rem; color:#94a3b8; margin-top:1px; }
+    .next-layer {
+      background:#1e1b4b; border:1px solid #4338ca; border-radius:9px;
+      padding:.8rem 1.1rem; text-align:center; font-size:.82rem;
+      color:#c7d2fe; margin-bottom:1.75rem;
+    }
+    .next-layer strong { color:#fff; }
+
+    /* ── Design goals ── */
+    .goals-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:.55rem; margin-bottom:2rem; }
+    .goal-item {
+      display:flex; align-items:flex-start; gap:.5rem; background:#f0fdf4;
+      border:1px solid #bbf7d0; border-radius:7px; padding:.5rem .7rem;
+      font-size:.78rem; color:#15803d; line-height:1.4;
+    }
+    .goal-item svg { flex-shrink:0; margin-top:1px; }
+
+    @media(max-width:900px){
+      .phase-modules { grid-template-columns:repeat(2,1fr); }
+      .module-grid-2,.role-2col,.chunk-2col,.qc-cols { grid-template-columns:1fr; }
+      .req-grid,.output-grid,.goals-grid { grid-template-columns:1fr 1fr; }
+    }
+    @media(max-width:540px){
+      .req-grid,.output-grid,.goals-grid { grid-template-columns:1fr; }
+      .phase-modules { grid-template-columns:1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+<header class="site-header">
+  <div class="header-inner">
+    <a href="../index.html" class="site-logo"><div class="logo-mark">R</div><span>Reap AI Platform</span></a>
+    <div class="header-divider"></div><span class="header-subtitle">KYB Review Copilot</span>
+    <nav class="header-nav"><a href="../index.html">Overview</a><a href="solution-architecture.html">Architecture</a><a href="reviewer-workflow.html">Workflow</a></nav>
+  </div>
+</header>
+<div class="page-layout">
+  <aside class="sidebar">
+    <a href="../index.html" class="sidebar-back"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M9 11L5 7l4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg> All Sections</a>
+    <div class="sidebar-section-title">Block 5 — End to End Platform Components enabling KYB</div>
+    <ul class="sidebar-nav">
+      <li><a href="rag-overview.html">5.1 RAG Overview</a></li>
+      <li><a href="ingestion-pipeline.html">5.2 Input &amp; Intake Layer</a></li>
+      <li><a href="retrieval-policy.html" class="active">5.3 Document Intelligence</a></li>
+      <li><a href="llm-reasoning.html">5.4 Knowledge, Retrieval &amp; Policy Grounding</a></li>
+      <li><a href="reviewer-assist.html">5.5 Reviewer Assist</a></li>
+      <li><a href="workflow-orchestration.html">5.6 Workflow Orchestration</a></li>
+      <li><a href="confidence-scoring.html">5.7 Confidence Scoring</a></li>
+    </ul>
+  </aside>
+  <main class="content">
+    <nav class="breadcrumb"><a href="../index.html">Home</a><span class="breadcrumb-sep">›</span><span>Block 5 — End to End Platform Components enabling KYB</span><span class="breadcrumb-sep">›</span><span class="breadcrumb-current">5.3 Document Intelligence</span></nav>
+    <div class="section-header">
+      <div class="section-block-tag" style="background:var(--b5)">Block 5 — End to End Platform Components enabling KYB</div>
+      <h1>Document Intelligence <span style="color:var(--text-dim);font-weight:400">— Ingestion &amp; Storage →</span></h1>
+      <p class="section-intro">How stored case files are transformed into structured, quality-checked document intelligence that downstream retrieval, reasoning, and reviewer workflows can rely on.</p>
+    </div>
+
+    <!-- Design principle -->
+    <div class="dp-flow">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style="flex-shrink:0"><path d="M8 2l1.5 3.5L13 6l-2.5 2.5.5 3.5L8 10.5 5 12l.5-3.5L3 6l3.5-.5L8 2z" stroke="#818cf8" stroke-width="1.3" stroke-linejoin="round"/></svg>
+      <span class="dp-step">Extract accurately</span><span class="dp-arrow">→</span>
+      <span class="dp-step">Structure meaningfully</span><span class="dp-arrow">→</span>
+      <span class="dp-step">Validate early</span><span class="dp-arrow">→</span>
+      <span class="dp-step">Prepare for retrieval &amp; review</span>
+    </div>
+
+    <!-- Phase 1 modules -->
+    <p style="font-size:.74rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text-dim);margin-bottom:.6rem">Phase 1 Core Modules</p>
+    <div class="phase-modules">
+      <div class="pm-card">
+        <div class="pm-icon" style="background:#dbeafe;margin:0 auto .45rem"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="2" y="2" width="12" height="12" rx="2" stroke="#1e40af" stroke-width="1.3"/><path d="M5 6h6M5 9h4M5 12h2" stroke="#1e40af" stroke-width="1.3" stroke-linecap="round"/></svg></div>
+        <div class="pm-name">OCR &amp; Parsing</div>
+      </div>
+      <div class="pm-card">
+        <div class="pm-icon" style="background:#ede9fe;margin:0 auto .45rem"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 2l1.5 3.5L13 6l-2.5 2.5.5 3.5L8 10.5 5 12l.5-3.5L3 6l3.5-.5L8 2z" stroke="#6d28d9" stroke-width="1.3" stroke-linejoin="round"/></svg></div>
+        <div class="pm-name">Doc Classification</div>
+      </div>
+      <div class="pm-card">
+        <div class="pm-icon" style="background:#dcfce7;margin:0 auto .45rem"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8l3.5 3.5L13 5" stroke="#15803d" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="pm-name">Validation &amp; Completeness</div>
+      </div>
+      <div class="pm-card">
+        <div class="pm-icon" style="background:#fef3c7;margin:0 auto .45rem"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="3" y="2" width="10" height="12" rx="2" stroke="#b45309" stroke-width="1.3"/><path d="M6 5h4M6 8h3M6 11h2" stroke="#b45309" stroke-width="1.3" stroke-linecap="round"/></svg></div>
+        <div class="pm-name">Field Extraction</div>
+      </div>
+    </div>
+
+    <!-- 1. What this layer does -->
+    <h2 class="numbered"><span class="sec-num">1</span>What This Layer Does</h2>
+    <div class="role-2col">
+      <div class="role-block">
+        <div class="role-block-title" style="color:#15803d">Responsibilities</div>
+        <ul class="rl">
+          <li><span class="rl-dot" style="background:#16a34a"></span>Read scanned and digital documents</li>
+          <li><span class="rl-dot" style="background:#16a34a"></span>Extract text and preserve layout</li>
+          <li><span class="rl-dot" style="background:#16a34a"></span>Identify document type</li>
+          <li><span class="rl-dot" style="background:#16a34a"></span>Detect important structural elements</li>
+          <li><span class="rl-dot" style="background:#16a34a"></span>Extract key fields and entities</li>
+          <li><span class="rl-dot" style="background:#16a34a"></span>Prepare retrieval-friendly chunks</li>
+          <li><span class="rl-dot" style="background:#16a34a"></span>Run quality checks before downstream use</li>
+        </ul>
+      </div>
+      <div class="role-block">
+        <div class="role-block-title" style="color:#b91c1c">Not in Scope Here</div>
+        <ul class="rl">
+          <li><span class="rl-dot" style="background:#dc2626"></span>Apply policy rules</li>
+          <li><span class="rl-dot" style="background:#dc2626"></span>Generate recommendations</li>
+          <li><span class="rl-dot" style="background:#dc2626"></span>Perform case-level reasoning</li>
+          <li><span class="rl-dot" style="background:#dc2626"></span>Make workflow decisions</li>
+        </ul>
+        <div style="font-size:.73rem;color:var(--text-dim);margin-top:.7rem;font-style:italic">These come in the next layer — Knowledge, Retrieval &amp; Policy Grounding.</div>
+      </div>
+    </div>
+
+    <!-- 2. Flow -->
+    <h2 class="numbered"><span class="sec-num">2</span>Flow Through Document Intelligence</h2>
+    <div class="flow-steps">
+      <div class="flow-step">
+        <div class="flow-num" style="background:#dbeafe;color:#1e40af">1</div>
+        <div>
+          <div class="flow-title">OCR &amp; Text Extraction</div>
+          <div class="flow-sub">Read source document and extract text — supports both native digital files and scanned/image-based files</div>
+          <div class="flow-chips">
+            <span class="flow-chip">Native digital → direct text read</span>
+            <span class="flow-chip">Scanned / image → OCR required</span>
+          </div>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num" style="background:#ede9fe;color:#6d28d9">2</div>
+        <div>
+          <div class="flow-title">Document Classification</div>
+          <div class="flow-sub">Determine document type so correct parsing and extraction logic can be applied</div>
+          <div class="flow-chips">
+            <span class="flow-chip">Incorporation certificate</span><span class="flow-chip">Proof of address</span>
+            <span class="flow-chip">Director ID</span><span class="flow-chip">Bank statement</span>
+            <span class="flow-chip">UBO declaration</span>
+          </div>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num" style="background:#ede9fe;color:#6d28d9">3</div>
+        <div>
+          <div class="flow-title">Structure Extraction</div>
+          <div class="flow-sub">Detect meaningful layout and structural elements inside the document</div>
+          <div class="flow-chips">
+            <span class="flow-chip">Headers / section titles</span><span class="flow-chip">Key-value regions</span>
+            <span class="flow-chip">Ownership tables</span><span class="flow-chip">Address blocks</span>
+            <span class="flow-chip">Dates &amp; reg numbers</span><span class="flow-chip">Director / UBO names</span>
+            <span class="flow-chip">Issuing authority</span><span class="flow-chip">Issue / expiry fields</span>
+          </div>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num" style="background:#fef3c7;color:#b45309">4</div>
+        <div><div class="flow-title">Field Extraction</div><div class="flow-sub">Convert structured sections into normalised fields and entities available for downstream use</div></div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num" style="background:#fef3c7;color:#b45309">5</div>
+        <div><div class="flow-title">Chunking</div><div class="flow-sub">Split document into retrieval-ready chunks preserving meaning, source location, and citation quality</div></div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num" style="background:#dcfce7;color:#15803d">6</div>
+        <div><div class="flow-title">Quality Checks</div><div class="flow-sub">Validate extraction quality is sufficient for downstream retrieval and reviewer use before the document proceeds</div></div>
+      </div>
+    </div>
+
+    <!-- 3. Core Modules -->
+    <h2 class="numbered"><span class="sec-num">3</span>Core Modules</h2>
+    <div class="module-grid-2">
+      <div class="mod-card" style="background:#eff6ff;border-color:#bfdbfe;">
+        <div class="mod-hdr">
+          <div class="mod-icon" style="background:#dbeafe"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="2" y="2" width="12" height="12" rx="2" stroke="#1e40af" stroke-width="1.3"/><path d="M5 6h6M5 9h4M5 12h2" stroke="#1e40af" stroke-width="1.3" stroke-linecap="round"/></svg></div>
+          <div class="mod-name" style="color:#1e40af">OCR &amp; Parsing</div>
+        </div>
+        <div class="mod-does">Does</div>
+        <ul class="mod-list">
+          <li><span class="ml-chk"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Extracts text from native and scanned documents</li>
+          <li><span class="ml-chk"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Preserves page and layout structure</li>
+          <li><span class="ml-chk"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Detects tables and key-value regions</li>
+          <li><span class="ml-chk"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Orientation correction and image pre-processing</li>
+          <li><span class="ml-chk"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Confidence scoring at page / block level</li>
+        </ul>
+        <div class="dp-note">Output preserves layout-aware structure — not flat text only — so findings trace back to source location.</div>
+        <div class="mod-why">Foundation for field extraction, chunking, citations, evidence inspection, and reviewer trust.</div>
+      </div>
+      <div class="mod-card" style="background:#f5f3ff;border-color:#ddd6fe;">
+        <div class="mod-hdr">
+          <div class="mod-icon" style="background:#ede9fe"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 2l1.5 3.5L13 6l-2.5 2.5.5 3.5L8 10.5 5 12l.5-3.5L3 6l3.5-.5L8 2z" stroke="#6d28d9" stroke-width="1.3" stroke-linejoin="round"/></svg></div>
+          <div class="mod-name" style="color:#6d28d9">Doc Classification</div>
+        </div>
+        <div class="mod-does">Does</div>
+        <ul class="mod-list">
+          <li><span class="ml-chk"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Identifies document type</li>
+          <li><span class="ml-chk"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Routes file to the appropriate extraction schema</li>
+          <li><span class="ml-chk"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Distinguishes document-specific handling logic</li>
+        </ul>
+        <div class="mod-why">A certificate of incorporation, bank statement, and director ID should not use the same extraction logic. Classification is the control point that makes the pipeline intelligent rather than generic.</div>
+      </div>
+      <div class="mod-card" style="background:#fffbeb;border-color:#fde68a;">
+        <div class="mod-hdr">
+          <div class="mod-icon" style="background:#fef3c7"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="3" y="2" width="10" height="12" rx="2" stroke="#b45309" stroke-width="1.3"/><path d="M6 5h4M6 8h3M6 11h2" stroke="#b45309" stroke-width="1.3" stroke-linecap="round"/></svg></div>
+          <div class="mod-name" style="color:#b45309">Field Extraction</div>
+        </div>
+        <div class="mod-does">Does</div>
+        <ul class="mod-list">
+          <li><span class="ml-chk"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Extracts key fields from classified documents</li>
+          <li><span class="ml-chk"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Normalises business and compliance attributes</li>
+          <li><span class="ml-chk"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Converts layout-aware content into structured signals</li>
+        </ul>
+        <div class="flow-chips" style="margin-top:.55rem">
+          <span class="flow-chip">Company name</span><span class="flow-chip">Registration number</span>
+          <span class="flow-chip">Incorporation date</span><span class="flow-chip">Address</span>
+          <span class="flow-chip">Director names</span><span class="flow-chip">UBO names</span>
+          <span class="flow-chip">Ownership %</span><span class="flow-chip">Issue / expiry dates</span>
+        </div>
+        <div class="mod-why">Converts documents from readable files into usable case evidence.</div>
+      </div>
+      <div class="mod-card" style="background:#f0fdf4;border-color:#bbf7d0;">
+        <div class="mod-hdr">
+          <div class="mod-icon" style="background:#dcfce7"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8l3.5 3.5L13 5" stroke="#15803d" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <div class="mod-name" style="color:#15803d">Validation &amp; Completeness</div>
+        </div>
+        <div class="mod-does">Does</div>
+        <ul class="mod-list">
+          <li><span class="ml-chk"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Checks whether the document is usable</li>
+          <li><span class="ml-chk"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Validates expected fields are present</li>
+          <li><span class="ml-chk"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Flags low-confidence or incomplete outputs</li>
+          <li><span class="ml-chk"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Gates documents before downstream retrieval and review</li>
+        </ul>
+        <div class="mod-why">Prevents weak extraction from silently degrading retrieval, reasoning, and reviewer outputs.</div>
+      </div>
+    </div>
+
+    <!-- 4. OCR Requirements -->
+    <h2 class="numbered"><span class="sec-num">4</span>OCR &amp; Text Extraction Requirements</h2>
+    <div class="req-grid">
+      <div class="req-item"><span class="req-dot" style="background:#1e40af"></span>Page-level extraction</div>
+      <div class="req-item"><span class="req-dot" style="background:#1e40af"></span>Layout preservation</div>
+      <div class="req-item"><span class="req-dot" style="background:#1e40af"></span>Table and key-value block detection</div>
+      <div class="req-item"><span class="req-dot" style="background:#1e40af"></span>Multi-language support where relevant</div>
+      <div class="req-item"><span class="req-dot" style="background:#1e40af"></span>Orientation correction</div>
+      <div class="req-item"><span class="req-dot" style="background:#1e40af"></span>Image pre-processing for poor scans</div>
+      <div class="req-item"><span class="req-dot" style="background:#1e40af"></span>Signature / stamp region preservation</div>
+      <div class="req-item"><span class="req-dot" style="background:#1e40af"></span>Confidence scoring at page / block level</div>
+    </div>
+    <div style="background:#eff6ff;border:1px solid #bfdbfe;border-left:3px solid #1D4ED8;border-radius:0 7px 7px 0;padding:.6rem .9rem;font-size:.78rem;color:#1e40af;margin-bottom:1.75rem;">
+      Output must preserve structural fidelity so downstream modules can extract fields accurately, map findings to source, support citations, and improve reviewer inspection.
+    </div>
+
+    <!-- 5. Structure Extraction -->
+    <h2 class="numbered"><span class="sec-num">5</span>Structure Extraction</h2>
+    <p style="font-size:.82rem;color:var(--text-mid);margin-bottom:.75rem">After OCR, the system detects document-aware structure — not a flat page of text. This is the bridge between raw OCR output and meaningful document understanding.</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.75rem;">
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:9px;padding:.9rem 1rem;">
+        <div style="font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--text-dim);margin-bottom:.5rem">Structures Detected</div>
+        <div class="flow-chips" style="margin:0">
+          <span class="flow-chip">Section headers</span><span class="flow-chip">Ownership tables</span>
+          <span class="flow-chip">Address blocks</span><span class="flow-chip">Dates &amp; identifiers</span>
+          <span class="flow-chip">Authority &amp; registration details</span>
+          <span class="flow-chip">Signatures / seals</span><span class="flow-chip">Document-specific field regions</span>
+        </div>
+      </div>
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:9px;padding:.9rem 1rem;">
+        <div style="font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--text-dim);margin-bottom:.5rem">Improves</div>
+        <ul class="rl">
+          <li><span class="rl-dot" style="background:#6366f1"></span>Extraction accuracy</li>
+          <li><span class="rl-dot" style="background:#6366f1"></span>Schema validation</li>
+          <li><span class="rl-dot" style="background:#6366f1"></span>Chunking quality</li>
+          <li><span class="rl-dot" style="background:#6366f1"></span>Retrieval precision</li>
+          <li><span class="rl-dot" style="background:#6366f1"></span>Reviewer usability</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 6. Chunking Strategy -->
+    <h2 class="numbered"><span class="sec-num">6</span>Chunking Strategy</h2>
+    <p style="font-size:.82rem;color:var(--text-mid);margin-bottom:.75rem">Chunking is the handoff point from Document Intelligence to Knowledge, Retrieval, and Policy Grounding. Poor chunking cascades into every downstream layer.</p>
+    <div class="chunk-2col">
+      <div class="chunk-block">
+        <div class="chunk-title">Chunking Design Requirements</div>
+        <ul class="rl">
+          <li><span class="rl-dot" style="background:#6366f1"></span>Preserve semantic boundaries</li>
+          <li><span class="rl-dot" style="background:#6366f1"></span>Avoid splitting critical clauses or evidence mid-thought</li>
+          <li><span class="rl-dot" style="background:#6366f1"></span>Keep chunks citation-friendly</li>
+          <li><span class="rl-dot" style="background:#6366f1"></span>Retain document and page provenance</li>
+          <li><span class="rl-dot" style="background:#6366f1"></span>Handle tables and lists carefully</li>
+          <li><span class="rl-dot" style="background:#6366f1"></span>Separate unrelated sections</li>
+          <li><span class="rl-dot" style="background:#6366f1"></span>Allow limited overlap for context continuity</li>
+        </ul>
+      </div>
+      <div class="chunk-block">
+        <div class="chunk-title">Chunking Inputs</div>
+        <div class="flow-chips" style="margin-bottom:.75rem">
+          <span class="flow-chip">Page structure</span><span class="flow-chip">Section boundaries</span>
+          <span class="flow-chip">Document type</span><span class="flow-chip">Table regions</span>
+          <span class="flow-chip">Paragraph flow</span><span class="flow-chip">Token budget constraints</span>
+        </div>
+        <div class="chunk-title" style="margin-top:.25rem">Poor Chunking Leads To</div>
+        <ul class="rl">
+          <li><span class="rl-dot" style="background:#dc2626"></span>Weak retrieval</li>
+          <li><span class="rl-dot" style="background:#dc2626"></span>Low-quality grounding</li>
+          <li><span class="rl-dot" style="background:#dc2626"></span>Broken citations</li>
+          <li><span class="rl-dot" style="background:#dc2626"></span>Fragmented evidence</li>
+          <li><span class="rl-dot" style="background:#dc2626"></span>Lower reviewer trust</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 7. Quality Checks -->
+    <h2 class="numbered"><span class="sec-num">7</span>Quality Checks</h2>
+    <div class="qc-cols">
+      <div class="qc-block sys">
+        <div class="qc-title">System Quality Checks</div>
+        <ul class="qc-list">
+          <li><span class="qc-chk"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#16a34a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span style="color:var(--text-mid)">File integrity and format validation</span></li>
+          <li><span class="qc-chk"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#16a34a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span style="color:var(--text-mid)">OCR confidence threshold</span></li>
+          <li><span class="qc-chk"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#16a34a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span style="color:var(--text-mid)">Text extraction non-emptiness</span></li>
+          <li><span class="qc-chk"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#16a34a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span style="color:var(--text-mid)">Page count consistency</span></li>
+          <li><span class="qc-chk"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#16a34a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span style="color:var(--text-mid)">Duplicate file detection</span></li>
+          <li><span class="qc-chk"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#16a34a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span style="color:var(--text-mid)">Doc type classification confidence</span></li>
+          <li><span class="qc-chk"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#16a34a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span style="color:var(--text-mid)">Schema-level completeness check</span></li>
+          <li><span class="qc-chk"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#16a34a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span style="color:var(--text-mid)">Field extraction sanity checks</span></li>
+          <li><span class="qc-chk"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#16a34a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span style="color:var(--text-mid)">Chunk generation success</span></li>
+          <li><span class="qc-chk"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#16a34a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span style="color:var(--text-mid)">Metadata completeness check</span></li>
+        </ul>
+      </div>
+      <div class="qc-block rev">
+        <div class="qc-title">Reviewer-Facing Quality Warnings</div>
+        <ul class="qc-list">
+          <li><span class="qc-chk"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M6 2v3m0 4h.01" stroke="#b45309" stroke-width="1.5" stroke-linecap="round"/><path d="M1.5 10.5h9L6 1.5l-4.5 9z" stroke="#b45309" stroke-width="1.3" stroke-linejoin="round"/></svg></span><span style="color:var(--text-mid)">Illegible scan</span></li>
+          <li><span class="qc-chk"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M6 2v3m0 4h.01" stroke="#b45309" stroke-width="1.5" stroke-linecap="round"/><path d="M1.5 10.5h9L6 1.5l-4.5 9z" stroke="#b45309" stroke-width="1.3" stroke-linejoin="round"/></svg></span><span style="color:var(--text-mid)">Truncated upload</span></li>
+          <li><span class="qc-chk"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M6 2v3m0 4h.01" stroke="#b45309" stroke-width="1.5" stroke-linecap="round"/><path d="M1.5 10.5h9L6 1.5l-4.5 9z" stroke="#b45309" stroke-width="1.3" stroke-linejoin="round"/></svg></span><span style="color:var(--text-mid)">Unsupported format</span></li>
+          <li><span class="qc-chk"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M6 2v3m0 4h.01" stroke="#b45309" stroke-width="1.5" stroke-linecap="round"/><path d="M1.5 10.5h9L6 1.5l-4.5 9z" stroke="#b45309" stroke-width="1.3" stroke-linejoin="round"/></svg></span><span style="color:var(--text-mid)">Likely wrong document type</span></li>
+          <li><span class="qc-chk"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M6 2v3m0 4h.01" stroke="#b45309" stroke-width="1.5" stroke-linecap="round"/><path d="M1.5 10.5h9L6 1.5l-4.5 9z" stroke="#b45309" stroke-width="1.3" stroke-linejoin="round"/></svg></span><span style="color:var(--text-mid)">Missing expected fields</span></li>
+          <li><span class="qc-chk"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M6 2v3m0 4h.01" stroke="#b45309" stroke-width="1.5" stroke-linecap="round"/><path d="M1.5 10.5h9L6 1.5l-4.5 9z" stroke="#b45309" stroke-width="1.3" stroke-linejoin="round"/></svg></span><span style="color:var(--text-mid)">Conflicting identifiers across documents</span></li>
+        </ul>
+        <div class="mod-why" style="color:#92400e;border-top-color:#fde68a">These make quality visible early — before weak documents cause errors in retrieval, citation, reasoning, or review.</div>
+      </div>
+    </div>
+
+    <!-- 8. Output -->
+    <h2 class="numbered"><span class="sec-num">8</span>What This Layer Produces</h2>
+    <p style="font-size:.82rem;color:var(--text-mid);margin-bottom:.75rem">By the end of Document Intelligence, each case document is enriched with all of the following:</p>
+    <div class="output-grid">
+      <div class="out-item"><span class="out-dot"></span><div><div class="out-label">Extracted Text</div><div class="out-sub">Layout-aware structured output</div></div></div>
+      <div class="out-item"><span class="out-dot"></span><div><div class="out-label">Document Classification</div><div class="out-sub">Type-specific routing applied</div></div></div>
+      <div class="out-item"><span class="out-dot"></span><div><div class="out-label">Key Fields / Entities</div><div class="out-sub">Normalised, structured signals</div></div></div>
+      <div class="out-item"><span class="out-dot"></span><div><div class="out-label">Quality Signals</div><div class="out-sub">Completeness and confidence flags</div></div></div>
+      <div class="out-item"><span class="out-dot"></span><div><div class="out-label">Retrieval-Ready Chunks</div><div class="out-sub">Citation-friendly, boundary-safe</div></div></div>
+      <div class="out-item"><span class="out-dot"></span><div><div class="out-label">Source Provenance</div><div class="out-sub">Preserved for downstream citation &amp; audit</div></div></div>
+    </div>
+    <div class="next-layer">
+      This output is the foundation for the next layer: <strong>Knowledge, Retrieval &amp; Policy Grounding</strong>
+    </div>
+
+    <!-- 9. Design Goals -->
+    <h2 class="numbered"><span class="sec-num">9</span>Design Goals</h2>
+    <div class="goals-grid">
+      <div class="goal-item"><svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M2 6.5l3 3 6-6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Support both digital and scanned KYB documents</div>
+      <div class="goal-item"><svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M2 6.5l3 3 6-6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Preserve structure, not just text</div>
+      <div class="goal-item"><svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M2 6.5l3 3 6-6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Classify documents accurately</div>
+      <div class="goal-item"><svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M2 6.5l3 3 6-6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Extract key fields reliably</div>
+      <div class="goal-item"><svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M2 6.5l3 3 6-6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Prepare chunks for retrieval and citation</div>
+      <div class="goal-item"><svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M2 6.5l3 3 6-6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Detect low-quality outputs early</div>
+      <div class="goal-item"><svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M2 6.5l3 3 6-6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Surface reviewer-visible quality issues</div>
+      <div class="goal-item"><svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M2 6.5l3 3 6-6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Preserve provenance for audit and inspection</div>
+      <div class="goal-item"><svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M2 6.5l3 3 6-6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Prepare case evidence for downstream grounding &amp; reasoning</div>
+    </div>
+
+    <nav class="section-nav">
+      <a href="ingestion-pipeline.html" class="nav-btn"><span class="nav-btn-dir">← Previous</span><span class="nav-btn-title">Input &amp; Intake Layer</span></a>
+      <span class="nav-center">23 of 39</span>
+      <a href="llm-reasoning.html" class="nav-btn next"><span class="nav-btn-dir">Next →</span><span class="nav-btn-title">LLM Reasoning</span></a>
+    </nav>
+  </main>
+</div>
+<footer class="site-footer">Reap AI Platform — KYB Review Copilot &nbsp;·&nbsp; Technical PRD</footer>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script src="../js/main.js"></script>
+</body></html>

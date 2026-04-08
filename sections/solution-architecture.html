@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>4.1 E2E Solution Architecture — Reap KYB PRD</title>
+  <link rel="stylesheet" href="../css/styles.css" />
+</head>
+<body>
+<header class="site-header">
+  <div class="header-inner">
+    <a href="../index.html" class="site-logo"><div class="logo-mark">R</div><span>Reap AI Platform</span></a>
+    <div class="header-divider"></div><span class="header-subtitle">KYB Review Copilot</span>
+    <nav class="header-nav"><a href="../index.html">Overview</a><a href="solution-architecture.html" class="active">Architecture</a><a href="reviewer-workflow.html">Workflow</a></nav>
+  </div>
+</header>
+
+<div class="page-layout">
+  <aside class="sidebar">
+    <a href="../index.html" class="sidebar-back"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M9 11L5 7l4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg> All Sections</a>
+    <div class="sidebar-section-title">Block 4 — Solution Architecture</div>
+    <ul class="sidebar-nav">
+      <li><a href="solution-architecture.html" class="active">4.1 E2E Architecture</a></li>
+      <li><a href="data-model.html">4.2 Data Model</a></li>
+      <li><a href="api-design.html">4.3 API Design</a></li>
+      <li><a href="infrastructure.html">4.4 Infrastructure</a></li>
+      <li><a href="security-design.html">4.5 Security</a></li>
+      <li><a href="workflow-state.html">4.6 Workflow State Model</a></li>
+    </ul>
+  </aside>
+
+  <main class="content">
+    <nav class="breadcrumb">
+      <a href="../index.html">Home</a><span class="breadcrumb-sep">›</span>
+      <span>Block 4 — Solution Architecture</span><span class="breadcrumb-sep">›</span>
+      <span class="breadcrumb-current">4.1 E2E Solution Architecture</span>
+    </nav>
+
+    <div class="section-header">
+      <div class="section-block-tag" style="background:var(--b4)">Block 4 — Solution Architecture</div>
+      <h1>End-to-End Solution Architecture</h1>
+      <p class="section-intro">
+        The platform is organised into five sequential processing layers — intake, document
+        intelligence, knowledge and retrieval, case intelligence, and human review — underpinned
+        by an integration layer and a governance layer that run across all of them. These layers
+        interact through a shared set of core objects: Case, Document, Extracted Field,
+        Evidence Snippet, Policy, Open Item, Recommendation, Decision, and Audit Event.
+      </p>
+    </div>
+
+    <!-- DIAGRAM 1 — Layer Overview -->
+    <div class="img-block">
+      <div class="img-block-label">
+        <h3>Architecture — Layer Overview</h3>
+        <div class="img-controls">
+          <button class="img-btn img-btn-expand"
+            data-img="../assets/img/arch-layer-overview.png"
+            data-caption="Architecture — Layer Overview">
+            <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M8 1h4v4M5 8L12 1M1 5V1h4M5 5L1 1" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Expand
+          </button>
+          <a class="img-btn img-btn-download"
+            href="../assets/img/arch-layer-overview.png"
+            download="reap-kyb-arch-layer-overview.png">
+            <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M6.5 1v8M3.5 6.5l3 3 3-3M1 10.5h11" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Download
+          </a>
+        </div>
+      </div>
+      <div class="img-frame">
+        <img src="../assets/img/arch-layer-overview.png"
+             alt="Architecture — Layer Overview"
+             title="Click to expand" />
+      </div>
+    </div>
+
+    <!-- DIAGRAM 2 — Detailed Component View -->
+    <div class="img-block">
+      <div class="img-block-label">
+        <h3>Architecture — Detailed Component View</h3>
+        <div class="img-controls">
+          <button class="img-btn img-btn-expand"
+            data-img="../assets/img/arch-detailed.png"
+            data-caption="Architecture — Detailed Component View">
+            <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M8 1h4v4M5 8L12 1M1 5V1h4M5 5L1 1" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Expand
+          </button>
+          <a class="img-btn img-btn-download"
+            href="../assets/img/arch-detailed.png"
+            download="reap-kyb-arch-detailed.png">
+            <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M6.5 1v8M3.5 6.5l3 3 3-3M1 10.5h11" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Download
+          </a>
+        </div>
+      </div>
+      <div class="img-frame">
+        <img src="../assets/img/arch-detailed.png"
+             alt="Architecture — Detailed Component View"
+             title="Click to expand" />
+      </div>
+    </div>
+
+    <!-- LAYER DESCRIPTIONS -->
+    <h2>The Five Processing Layers</h2>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>Layer</th><th>Role</th><th>Key capabilities</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Input &amp; Intake</strong></td>
+            <td>Reliable capture and normalisation of raw case data — not reasoning.</td>
+            <td>Application forms, document uploads, email, internal system feeds, external providers</td>
+          </tr>
+          <tr>
+            <td><strong>Document Intelligence</strong></td>
+            <td>Converts raw inputs into structured, reviewable information. Every extracted field remains linkable to its source.</td>
+            <td>OCR &amp; parsing, doc classification, validation &amp; completeness, field extraction, normalization &amp; entity resolution</td>
+          </tr>
+          <tr>
+            <td><strong>Knowledge, Retrieval &amp; Policy Grounding</strong></td>
+            <td>Backbone of grounded AI assistance. Retrieval and grounding are always separate from generation — the system records why a policy or evidence snippet was used.</td>
+            <td>Knowledge &amp; retrieval, policy retrieval, citation &amp; evidence, rules &amp; decisioning, risk signal aggregation</td>
+          </tr>
+          <tr>
+            <td><strong>Case Intelligence &amp; Reviewer Assist</strong></td>
+            <td>Converts processed case data and grounded evidence into reviewer-facing assistance. Outputs are editable, explainable, and subordinate to human judgment.</td>
+            <td>KYB case summary, checklisting, gap detection &amp; open items, drafting, delta analysis, action recommendation, case memory</td>
+          </tr>
+          <tr>
+            <td><strong>Workflow, Review &amp; Decisioning</strong></td>
+            <td>The operational execution layer where people interact with the case. Workflow acceleration without hiding control. Human in the loop.</td>
+            <td>Workflow engine, HITL review workspace, exception handling, escalation support, task &amp; collaboration, notifications, risk scoring &amp; decision support</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>Two Cross-Cutting Layers</h2>
+
+    <h3>Integration &amp; External Verification</h3>
+    <p>
+      Connects the platform to the broader operational ecosystem — sanctions screening, registry
+      lookups, external identity providers, and downstream onboarding systems. Provider-specific
+      logic is abstracted so the core platform remains vendor-agnostic.
+    </p>
+
+    <h3>Governance, Audit &amp; Observability</h3>
+    <p>
+      What makes the platform safe, measurable, and defensible. These controls are not bolted on
+      after launch — they exist from Phase 1. Basic traceability, access control, and measurement
+      are present from day one, with sophistication increasing over time.
+    </p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Capability</th><th>Purpose</th></tr></thead>
+        <tbody>
+          <tr><td>Audit logs</td><td>Immutable record of every action across the case lifecycle</td></tr>
+          <tr><td>Decision logging</td><td>Full decision lineage — AI recommendation + reviewer outcome</td></tr>
+          <tr><td>Governance &amp; access</td><td>RBAC, least-privilege, approval hierarchies</td></tr>
+          <tr><td>Evals</td><td>Continuous quality measurement for AI outputs</td></tr>
+          <tr><td>Observability</td><td>Latency, error rates, queue health, SLA tracking</td></tr>
+          <tr><td>Confidence &amp; fallback</td><td>Uncertainty surfacing and graceful degradation to manual review</td></tr>
+          <tr><td>Model &amp; prompt management</td><td>Versioned prompts and models — every decision is reproducible</td></tr>
+          <tr><td>Analytics</td><td>Override rates, acceptance rates, throughput, reviewer performance</td></tr>
+          <tr><td>Feedback &amp; learning loop</td><td>Reviewer corrections feed back into model and policy quality</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- CASE LIFECYCLE -->
+    <h2>Case Lifecycle Through the Architecture</h2>
+    <p>A KYB application moves through the architecture in eight distinct steps:</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Step</th><th>Name</th><th>What happens</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>1</td>
+            <td><strong>Case intake</strong></td>
+            <td>An application, document upload, or email creates or updates a Case. Raw files are captured and linked to the case object.</td>
+          </tr>
+          <tr>
+            <td>2</td>
+            <td><strong>Document processing</strong></td>
+            <td>Documents are stored, OCR'd, classified by type, parsed for fields, normalised, and checked for obvious gaps or inconsistencies.</td>
+          </tr>
+          <tr>
+            <td>3</td>
+            <td><strong>Retrieval &amp; policy grounding</strong></td>
+            <td>The system retrieves case evidence from processed documents, policy/SOP content relevant to the business type and jurisdiction, and applicable rules and thresholds. These are assembled into a grounded reasoning context.</td>
+          </tr>
+          <tr>
+            <td>4</td>
+            <td><strong>Case preparation</strong></td>
+            <td>The platform generates: KYB Case Summary, open items and gap flags, prefilled checklist elements, suggested follow-up communication drafts, action recommendations, and risk signals. The case is now <strong>review-ready</strong>.</td>
+          </tr>
+          <tr>
+            <td>5</td>
+            <td><strong>Human review</strong></td>
+            <td>The reviewer opens the HITL workspace, inspects evidence, edits AI outputs as needed, confirms or adjusts checklist items, and makes a decision: proceed, request more information, escalate, reject, or approve.</td>
+          </tr>
+          <tr>
+            <td>6</td>
+            <td><strong>Follow-up &amp; re-review</strong></td>
+            <td>If more information is needed, drafting and notification modules handle follow-up. New documents are ingested back into the same case. Case memory and delta analysis mean the reviewer picks up exactly where they left off — not from scratch.</td>
+          </tr>
+          <tr>
+            <td>7</td>
+            <td><strong>Final decisioning</strong></td>
+            <td>A Decision is recorded with rationale, evidence citations, policy version references, reviewer identity, and any override reasons. Immutable. Auditable.</td>
+          </tr>
+          <tr>
+            <td>8</td>
+            <td><strong>Monitoring &amp; feedback</strong></td>
+            <td>Post-decision analytics, audit logs, and learning loops feed back into model quality and policy accuracy for future cases.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ARCHITECTURAL PRINCIPLES -->
+    <h2>Core Architectural Principles</h2>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>#</th><th>Principle</th><th>Design implication</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>1</td>
+            <td><strong>Shared case object as system anchor</strong></td>
+            <td>Documents, extractions, open items, policy references, reviewer actions, and decisions all attach to the Case. No orphaned data.</td>
+          </tr>
+          <tr>
+            <td>2</td>
+            <td><strong>Retrieval before reasoning</strong></td>
+            <td>The system retrieves evidence and policy first, then reasons over grounded context — never generates from generic model memory.</td>
+          </tr>
+          <tr>
+            <td>3</td>
+            <td><strong>Evidence-backed outputs by default</strong></td>
+            <td>Every important output — summaries, checklist states, recommendations — links to a source evidence snippet or policy clause. No floating claims.</td>
+          </tr>
+          <tr>
+            <td>4</td>
+            <td><strong>Human authority over final decisions</strong></td>
+            <td>The system supports decisions; it does not make them silently. In all early phases, every decision requires an explicit human action.</td>
+          </tr>
+          <tr>
+            <td>5</td>
+            <td><strong>Modular services, not monolith prompts</strong></td>
+            <td>OCR, extraction, retrieval, summary generation, drafting, workflow state, and audit logging are distinct services — independently deployable, testable, and replaceable.</td>
+          </tr>
+          <tr>
+            <td>6</td>
+            <td><strong>Graceful degradation</strong></td>
+            <td>When confidence is low, retrieval is weak, or parsing fails: surface uncertainty, create open items, and fall back to manual review. Never produce overconfident, unsupported outputs.</td>
+          </tr>
+          <tr>
+            <td>7</td>
+            <td><strong>Governance by design</strong></td>
+            <td>Auditability, access control, and release gating are first-class architectural concerns — present from Phase 1, not bolted on later.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout callout-info">
+      <div class="callout-icon">&#128279;</div>
+      <div class="callout-body">
+        <strong>Shared objects are the connective tissue.</strong> The five layers interact through the
+        same core objects — Case, Document, Extracted Field, Evidence Snippet, Policy, Open Item,
+        Recommendation, Decision, and Audit Event. See
+        <a href="data-model.html">Section 4.2 — Data Model</a> for the full object definitions and
+        relationship schema.
+      </div>
+    </div>
+
+    <nav class="section-nav">
+      <a href="dependencies.html" class="nav-btn"><span class="nav-btn-dir">← Previous</span><span class="nav-btn-title">Dependencies &amp; Integration Points</span></a>
+      <span class="nav-center">16 of 39</span>
+      <a href="data-model.html" class="nav-btn next"><span class="nav-btn-dir">Next →</span><span class="nav-btn-title">Data Model &amp; Object Relationships</span></a>
+    </nav>
+  </main>
+</div>
+
+<footer class="site-footer">Reap AI Platform — KYB Review Copilot &nbsp;·&nbsp; Technical PRD</footer>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script src="../js/main.js"></script>
+</body>
+</html>

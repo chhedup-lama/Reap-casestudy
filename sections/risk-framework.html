@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>6.4 Risk Framework — Reap KYB PRD</title>
+  <link rel="stylesheet" href="../css/styles.css" />
+</head>
+<body>
+<header class="site-header">
+  <div class="header-inner">
+    <a href="../index.html" class="site-logo"><div class="logo-mark">R</div><span>Reap AI Platform</span></a>
+    <div class="header-divider"></div><span class="header-subtitle">KYB Review Copilot</span>
+    <nav class="header-nav"><a href="../index.html">Overview</a><a href="solution-architecture.html">Architecture</a><a href="reviewer-workflow.html">Workflow</a></nav>
+  </div>
+</header>
+<div class="page-layout">
+  <aside class="sidebar">
+    <a href="../index.html" class="sidebar-back"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M9 11L5 7l4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg> All Sections</a>
+    <div class="sidebar-section-title">Block 6 — Governance</div>
+    <ul class="sidebar-nav">
+      <li><a href="hitl-fallback.html">6.1 HITL &amp; Fallback</a></li>
+      <li><a href="audit-logging.html">6.2 Audit &amp; Logging</a></li>
+      <li><a href="compliance.html">6.3 Compliance</a></li>
+      <li><a href="risk-framework.html" class="active">6.4 Risk Framework</a></li>
+      <li><a href="data-privacy.html">6.5 Data Privacy</a></li>
+    </ul>
+  </aside>
+  <main class="content">
+    <nav class="breadcrumb"><a href="../index.html">Home</a><span class="breadcrumb-sep">›</span><span>Block 6 — Governance</span><span class="breadcrumb-sep">›</span><span class="breadcrumb-current">6.4 Risk Framework</span></nav>
+    <div class="section-header">
+      <div class="section-block-tag" style="background:var(--b6)">Block 6 — Governance</div>
+      <h1>Risk Framework</h1>
+      <p class="section-intro">Technical, operational, and regulatory risk register for the KYB Review Copilot — with likelihood, impact, and mitigation for every identified risk.</p>
+    </div>
+    <div class="stub-banner">&#9998; Content coming soon — this section is a structured stub awaiting full copy.</div>
+
+    <h2>Risk Register</h2>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Risk</th><th>Category</th><th>Likelihood</th><th>Impact</th><th>Mitigation</th><th>Owner</th></tr></thead>
+      <tbody>
+        <tr><td>LLM hallucination in policy reasoning</td><td>AI / Technical</td><td>Medium</td><td>High</td><td>RAG grounding + citation validation + HITL</td><td>Engineering</td></tr>
+        <tr><td>OCR failure on low-quality documents</td><td>Technical</td><td>Medium</td><td>Medium</td><td>Quality threshold + manual fallback queue</td><td>Engineering</td></tr>
+        <tr><td>Policy store staleness</td><td>Compliance</td><td>Medium</td><td>High</td><td>Quarterly review process + version control</td><td>Compliance</td></tr>
+        <tr><td>Model drift reducing accuracy over time</td><td>AI / Operational</td><td>Medium</td><td>High</td><td>Continuous monitoring + retraining triggers</td><td>Product / Eng</td></tr>
+        <tr><td>Analyst over-reliance on AI suggestions</td><td>Operational</td><td>Medium</td><td>High</td><td>Override rate monitoring + training</td><td>Operations</td></tr>
+        <tr><td>Data breach of KYB documents</td><td>Security</td><td>Low</td><td>Critical</td><td>Encryption + IAM + security review</td><td>Security</td></tr>
+        <tr><td>Regulatory rejection of AI-assisted decisions</td><td>Regulatory</td><td>Low</td><td>Critical</td><td>HITL mandate + explainability layer + legal sign-off</td><td>Legal</td></tr>
+      </tbody>
+    </table></div>
+
+    <h2>Risk Appetite Statement</h2>
+    <p>[ Define Reap's explicit risk appetite for AI-assisted KYB decisions. Which risks are acceptable vs. zero-tolerance. ]</p>
+
+    <nav class="section-nav">
+      <a href="compliance.html" class="nav-btn"><span class="nav-btn-dir">← Previous</span><span class="nav-btn-title">Compliance</span></a>
+      <span class="nav-center">29 of 39</span>
+      <a href="data-privacy.html" class="nav-btn next"><span class="nav-btn-dir">Next →</span><span class="nav-btn-title">Data Privacy &amp; Security</span></a>
+    </nav>
+  </main>
+</div>
+<footer class="site-footer">Reap AI Platform — KYB Review Copilot &nbsp;·&nbsp; Technical PRD</footer>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script src="../js/main.js"></script>
+</body></html>

@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>5.2 Input & Intake Layer — Reap KYB PRD</title>
+  <link rel="stylesheet" href="../css/styles.css" />
+  <style>
+    /* ── Design principle bar ── */
+    .dp-flow {
+      background:var(--navy); border-radius:10px; padding:.9rem 1.3rem;
+      display:flex; align-items:center; gap:.6rem; flex-wrap:wrap;
+      margin-bottom:2rem; font-size:.82rem;
+    }
+    .dp-step { color:#c7d2fe; font-weight:500; }
+    .dp-arrow { color:#6366f1; font-weight:700; font-size:1rem; }
+
+    /* ── Section heading accent ── */
+    .sec-num {
+      display:inline-flex; align-items:center; justify-content:center;
+      width:24px; height:24px; border-radius:50%; font-size:.68rem; font-weight:800;
+      background:#dbeafe; color:#1e40af; flex-shrink:0; margin-right:.4rem;
+    }
+    h2.numbered { display:flex; align-items:center; }
+
+    /* ── Intake sources grid ── */
+    .intake-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:.65rem; margin-bottom:1.25rem; }
+    .intake-card {
+      background:var(--surface); border:1px solid var(--border); border-radius:9px;
+      padding:.75rem .9rem; display:flex; align-items:flex-start; gap:.6rem;
+    }
+    .intake-icon {
+      width:32px; height:32px; border-radius:7px; flex-shrink:0;
+      display:flex; align-items:center; justify-content:center;
+    }
+    .intake-name { font-size:.8rem; font-weight:700; color:var(--text); }
+    .intake-sub  { font-size:.71rem; color:var(--text-dim); margin-top:1px; }
+
+    /* Role bullets */
+    .role-list { list-style:none; padding:0; margin:.5rem 0 1.25rem; display:flex; flex-direction:column; gap:.35rem; }
+    .role-list li { display:flex; align-items:flex-start; gap:.5rem; font-size:.8rem; color:var(--text-mid); }
+    .role-dot { width:6px; height:6px; border-radius:50%; background:#6366f1; flex-shrink:0; margin-top:5px; }
+
+    /* ── Two input types ── */
+    .input-types { display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-bottom:1.5rem; }
+    .input-type { border-radius:10px; padding:1rem 1.1rem; border:1px solid var(--border); }
+    .it-a { background:#eff6ff; border-color:#bfdbfe; }
+    .it-b { background:#fdf4ff; border-color:#e9d5ff; }
+    .it-hdr { display:flex; align-items:center; gap:.5rem; margin-bottom:.5rem; }
+    .it-badge { font-size:.65rem; font-weight:700; text-transform:uppercase; letter-spacing:.07em; border-radius:4px; padding:.15rem .45rem; }
+    .it-a .it-badge { background:#dbeafe; color:#1e40af; }
+    .it-b .it-badge { background:#f3e8ff; color:#6b21a8; }
+    .it-chips { display:flex; flex-wrap:wrap; gap:.3rem; }
+    .it-chip { font-size:.69rem; background:rgba(255,255,255,.75); color:var(--text); border:1px solid rgba(0,0,0,.08); border-radius:3px; padding:.12rem .4rem; }
+
+    /* ── Two-corpus callout ── */
+    .corpus-logic {
+      background:#f8fafc; border:1px solid var(--border); border-radius:10px;
+      padding:1rem 1.2rem; margin-bottom:1.75rem;
+    }
+    .cl-row { display:grid; grid-template-columns:1fr auto 1fr auto 1fr; align-items:center; gap:.5rem; }
+    .cl-box { background:#fff; border:1px solid var(--border); border-radius:8px; padding:.65rem .9rem; text-align:center; }
+    .cl-box-label { font-size:.65rem; font-weight:700; text-transform:uppercase; letter-spacing:.07em; color:var(--text-dim); margin-bottom:.25rem; }
+    .cl-box-q { font-size:.78rem; font-weight:700; color:var(--text); }
+    .cl-op { font-size:1.3rem; color:var(--text-dim); font-weight:700; text-align:center; }
+    .cl-answer { background:var(--navy); border-radius:8px; padding:.65rem .9rem; text-align:center; }
+    .cl-answer .cl-box-label { color:#818cf8; }
+    .cl-answer .cl-box-q { color:#fff; font-size:.75rem; }
+
+    /* ── Flow steps ── */
+    .flow-steps { display:flex; flex-direction:column; gap:.5rem; margin-bottom:1.75rem; }
+    .flow-step {
+      display:flex; align-items:flex-start; gap:.85rem; background:var(--surface);
+      border:1px solid var(--border); border-radius:9px; padding:.65rem .9rem;
+    }
+    .flow-num {
+      width:26px; height:26px; border-radius:50%; display:flex; align-items:center;
+      justify-content:center; font-size:.7rem; font-weight:800; flex-shrink:0; margin-top:1px;
+    }
+    .flow-title { font-size:.82rem; font-weight:700; color:var(--text); }
+    .flow-sub   { font-size:.73rem; color:var(--text-dim); margin-top:2px; line-height:1.45; }
+    .flow-chips { display:flex; flex-wrap:wrap; gap:.3rem; margin-top:.4rem; }
+    .flow-chip  { font-size:.67rem; background:#f1f5f9; color:var(--text-dim); border:1px solid var(--border); border-radius:3px; padding:.1rem .38rem; }
+
+    /* ── Module cards ── */
+    .module-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:.75rem; margin-bottom:1.75rem; }
+    .module-card {
+      border-radius:10px; padding:1rem 1.1rem; border:1px solid var(--border);
+    }
+    .module-hdr { display:flex; align-items:center; gap:.55rem; margin-bottom:.65rem; }
+    .module-icon { width:32px; height:32px; border-radius:7px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+    .module-name { font-size:.83rem; font-weight:700; color:var(--text); }
+    .module-does { font-size:.71rem; font-weight:700; text-transform:uppercase; letter-spacing:.07em; color:var(--text-dim); margin-bottom:.35rem; }
+    .module-list { list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:.28rem; }
+    .module-list li { display:flex; align-items:flex-start; gap:.4rem; font-size:.77rem; color:var(--text-mid); line-height:1.4; }
+    .ml-check { color:#16a34a; flex-shrink:0; }
+    .ml-x     { color:#b91c1c; flex-shrink:0; }
+    .module-why { font-size:.73rem; color:var(--text-dim); margin-top:.55rem; padding-top:.55rem; border-top:1px solid var(--border); font-style:italic; }
+
+    /* ── Doc types table ── */
+    .doc-wrap { overflow-x:auto; margin-bottom:1.75rem; }
+    .doc-table { width:100%; border-collapse:collapse; font-size:.79rem; min-width:540px; }
+    .doc-table thead th {
+      background:var(--navy); color:#fff; font-weight:600; font-size:.68rem;
+      text-transform:uppercase; letter-spacing:.05em; padding:.48rem .7rem;
+      border:1px solid rgba(255,255,255,.08); text-align:left;
+    }
+    .doc-table tbody td { padding:.5rem .7rem; border:1px solid var(--border); vertical-align:top; }
+    .doc-table tbody tr:hover { background:#f8faff; }
+    .doc-name { font-weight:600; color:var(--text); }
+
+    /* ── Output contract ── */
+    .contract-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:.6rem; margin-bottom:1.75rem; }
+    .contract-item {
+      background:var(--surface); border:1px solid var(--border); border-radius:8px;
+      padding:.6rem .75rem; display:flex; align-items:flex-start; gap:.45rem; font-size:.77rem;
+    }
+    .c-dot { width:8px; height:8px; border-radius:50%; background:#6366f1; flex-shrink:0; margin-top:4px; }
+    .c-label { font-weight:600; color:var(--text); }
+    .c-sub { font-size:.69rem; color:var(--text-dim); }
+
+    /* ── Design goals ── */
+    .goals-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:.55rem; margin-bottom:2rem; }
+    .goal-item {
+      display:flex; align-items:flex-start; gap:.5rem; background:#f0fdf4;
+      border:1px solid #bbf7d0; border-radius:7px; padding:.5rem .7rem;
+      font-size:.78rem; color:#15803d; line-height:1.4;
+    }
+    .goal-item svg { flex-shrink:0; margin-top:1px; }
+
+    @media(max-width:900px){
+      .intake-grid { grid-template-columns:repeat(2,1fr); }
+      .module-grid { grid-template-columns:1fr 1fr; }
+      .contract-grid { grid-template-columns:repeat(2,1fr); }
+      .goals-grid { grid-template-columns:1fr 1fr; }
+    }
+    @media(max-width:600px){
+      .input-types,.cl-row { grid-template-columns:1fr; }
+      .intake-grid,.module-grid { grid-template-columns:1fr; }
+      .contract-grid,.goals-grid { grid-template-columns:1fr; }
+    }
+  </style>
+</head>
+<body>
+<header class="site-header">
+  <div class="header-inner">
+    <a href="../index.html" class="site-logo"><div class="logo-mark">R</div><span>Reap AI Platform</span></a>
+    <div class="header-divider"></div><span class="header-subtitle">KYB Review Copilot</span>
+    <nav class="header-nav"><a href="../index.html">Overview</a><a href="solution-architecture.html">Architecture</a><a href="reviewer-workflow.html">Workflow</a></nav>
+  </div>
+</header>
+<div class="page-layout">
+  <aside class="sidebar">
+    <a href="../index.html" class="sidebar-back"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M9 11L5 7l4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg> All Sections</a>
+    <div class="sidebar-section-title">Block 5 — End to End Platform Components enabling KYB</div>
+    <ul class="sidebar-nav">
+      <li><a href="rag-overview.html">5.1 RAG Overview</a></li>
+      <li><a href="ingestion-pipeline.html" class="active">5.2 Input &amp; Intake Layer</a></li>
+      <li><a href="retrieval-policy.html">5.3 Document Intelligence</a></li>
+      <li><a href="llm-reasoning.html">5.4 Knowledge, Retrieval &amp; Policy Grounding</a></li>
+      <li><a href="reviewer-assist.html">5.5 Reviewer Assist</a></li>
+      <li><a href="workflow-orchestration.html">5.6 Workflow Orchestration</a></li>
+      <li><a href="confidence-scoring.html">5.7 Confidence Scoring</a></li>
+    </ul>
+  </aside>
+  <main class="content">
+    <nav class="breadcrumb"><a href="../index.html">Home</a><span class="breadcrumb-sep">›</span><span>Block 5 — End to End Platform Components enabling KYB</span><span class="breadcrumb-sep">›</span><span class="breadcrumb-current">5.2 Input &amp; Intake Layer</span></nav>
+    <div class="section-header">
+      <div class="section-block-tag" style="background:var(--b5)">Block 5 — End to End Platform Components enabling KYB</div>
+      <h1>Input &amp; Intake Layer <span style="color:var(--text-dim);font-weight:400">→</span> Ingestion &amp; Storage</h1>
+      <p class="section-intro">How raw KYB inputs enter the platform, are validated, separated by type, and converted into secure, structured, retrievable case assets.</p>
+    </div>
+
+    <!-- Design principle -->
+    <div class="dp-flow">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style="flex-shrink:0"><path d="M8 2l2 4h4l-3 2.5 1 4L8 10l-4 2.5 1-4L2 6h4L8 2z" stroke="#818cf8" stroke-width="1.3" stroke-linejoin="round"/></svg>
+      <span class="dp-step">Capture once</span><span class="dp-arrow">→</span>
+      <span class="dp-step">Validate early</span><span class="dp-arrow">→</span>
+      <span class="dp-step">Store securely</span><span class="dp-arrow">→</span>
+      <span class="dp-step">Structure consistently</span><span class="dp-arrow">→</span>
+      <span class="dp-step">Make retrievable for downstream review &amp; reasoning</span>
+    </div>
+
+    <!-- 1. Input & Intake Layer -->
+    <h2 class="numbered"><span class="sec-num">1</span>Input &amp; Intake Layer</h2>
+    <p style="font-size:.82rem;color:var(--text-mid);margin-bottom:.9rem">The entry point into the KYB platform — consolidates all applicant and internal inputs that may contribute to a case from six source channels.</p>
+
+    <div class="intake-grid">
+      <div class="intake-card">
+        <div class="intake-icon" style="background:#dbeafe"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="3" y="2" width="10" height="12" rx="2" stroke="#1e40af" stroke-width="1.4"/><path d="M5 6h6M5 9h4" stroke="#1e40af" stroke-width="1.3" stroke-linecap="round"/></svg></div>
+        <div><div class="intake-name">Application Forms</div><div class="intake-sub">Structured onboarding data</div></div>
+      </div>
+      <div class="intake-card">
+        <div class="intake-icon" style="background:#dbeafe"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 4h8v8H4z" stroke="#1e40af" stroke-width="1.3" rx="1"/><path d="M7 7l2 2-4 4" stroke="#1e40af" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div><div class="intake-name">Document Uploads</div><div class="intake-sub">PDFs, images, scans</div></div>
+      </div>
+      <div class="intake-card">
+        <div class="intake-icon" style="background:#dbeafe"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M2 4h12v9a1 1 0 01-1 1H3a1 1 0 01-1-1V4z" stroke="#1e40af" stroke-width="1.3"/><path d="M2 4l6 5 6-5" stroke="#1e40af" stroke-width="1.3" stroke-linecap="round"/></svg></div>
+        <div><div class="intake-name">Email Attachments</div><div class="intake-sub">Follow-ups and responses</div></div>
+      </div>
+      <div class="intake-card">
+        <div class="intake-icon" style="background:#ede9fe"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="2" y="3" width="12" height="10" rx="2" stroke="#6d28d9" stroke-width="1.3"/><path d="M5 8h6M5 11h4" stroke="#6d28d9" stroke-width="1.3" stroke-linecap="round"/></svg></div>
+        <div><div class="intake-name">Internal Systems</div><div class="intake-sub">CRM, case systems, APIs</div></div>
+      </div>
+      <div class="intake-card">
+        <div class="intake-icon" style="background:#dcfce7"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 2l1.5 3.5L13 6l-2.5 2.5.5 3.5L8 10.5 5 12l.5-3.5L3 6l3.5-.5L8 2z" stroke="#15803d" stroke-width="1.3" stroke-linejoin="round"/></svg></div>
+        <div><div class="intake-name">Policy Repository</div><div class="intake-sub">KYB rules, SOPs, matrices</div></div>
+      </div>
+      <div class="intake-card">
+        <div class="intake-icon" style="background:#fef3c7"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="#b45309" stroke-width="1.3"/><path d="M8 5v3l2 1.5" stroke="#b45309" stroke-width="1.3" stroke-linecap="round"/></svg></div>
+        <div><div class="intake-name">External Providers</div><div class="intake-sub">Screening APIs, registry feeds</div></div>
+      </div>
+    </div>
+
+    <p style="font-size:.74rem;font-weight:600;color:var(--text-dim);text-transform:uppercase;letter-spacing:.08em;margin:.5rem 0 .4rem">Layer responsibilities</p>
+    <ul class="role-list">
+      <li><span class="role-dot"></span>Receive structured and unstructured inputs across all channels</li>
+      <li><span class="role-dot"></span>Associate inputs to the correct case and tenant</li>
+      <li><span class="role-dot"></span>Validate basic submission integrity before downstream processing</li>
+      <li><span class="role-dot"></span>Create the initial case-linked intake record</li>
+    </ul>
+    <div style="background:#eff6ff;border:1px solid #bfdbfe;border-left:3px solid #1D4ED8;border-radius:0 7px 7px 0;padding:.6rem .9rem;font-size:.78rem;color:#1e40af;margin-bottom:1.75rem;">
+      <strong>Key principle:</strong> All intake channels converge into a common ingestion entry point — downstream processing does not depend on where the input originated.
+    </div>
+
+    <!-- 2. What Enters the System -->
+    <h2 class="numbered"><span class="sec-num">2</span>What Enters the System</h2>
+    <div class="input-types">
+      <div class="input-type it-a">
+        <div class="it-hdr">
+          <svg width="15" height="15" viewBox="0 0 15 15" fill="none"><rect x="2" y="2" width="11" height="11" rx="2" stroke="#1e40af" stroke-width="1.3"/><path d="M5 7.5h5M7.5 5v5" stroke="#1e40af" stroke-width="1.3" stroke-linecap="round"/></svg>
+          <span class="it-badge">A</span>
+          <strong style="font-size:.82rem;color:#1e40af">Case Evidence Inputs</strong>
+        </div>
+        <p style="font-size:.73rem;color:var(--text-dim);margin:.2rem 0 .6rem;font-style:italic">What has the applicant provided?</p>
+        <div class="it-chips">
+          <span class="it-chip">Registration certificates</span><span class="it-chip">Incorporation documents</span>
+          <span class="it-chip">Shareholder registers</span><span class="it-chip">UBO declarations</span>
+          <span class="it-chip">Proof of address</span><span class="it-chip">Director IDs</span>
+          <span class="it-chip">Bank statements</span><span class="it-chip">Website evidence</span>
+          <span class="it-chip">Follow-up responses</span><span class="it-chip">Application form data</span>
+        </div>
+      </div>
+      <div class="input-type it-b">
+        <div class="it-hdr">
+          <svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M7.5 2l1.5 3h3l-2.5 2 1 3L7.5 8.5 5 10l1-3L3.5 5h3L7.5 2z" stroke="#6b21a8" stroke-width="1.3" stroke-linejoin="round"/></svg>
+          <span class="it-badge">B</span>
+          <strong style="font-size:.82rem;color:#6b21a8">Policy &amp; Control Inputs</strong>
+        </div>
+        <p style="font-size:.73rem;color:var(--text-dim);margin:.2rem 0 .6rem;font-style:italic">What must be checked against this case?</p>
+        <div class="it-chips">
+          <span class="it-chip">Internal KYB policies</span><span class="it-chip">Jurisdiction-specific rules</span>
+          <span class="it-chip">Prohibited business guidance</span><span class="it-chip">Doc requirement matrices</span>
+          <span class="it-chip">Escalation rules</span><span class="it-chip">Reviewer SOPs &amp; playbooks</span>
+          <span class="it-chip">Approved policy exceptions</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. Two-Corpus Design -->
+    <h2 class="numbered"><span class="sec-num">3</span>Why the Two-Corpus Design Starts Here</h2>
+    <p style="font-size:.82rem;color:var(--text-mid);margin-bottom:.9rem">At intake, the platform separates incoming content into two logical corpora — the reasoning model that powers everything downstream.</p>
+    <div class="corpus-logic">
+      <div class="cl-row">
+        <div class="cl-box">
+          <div class="cl-box-label" style="color:#1e40af">Corpus 1 — Policy Store</div>
+          <div class="cl-box-q">"What is required?"</div>
+        </div>
+        <div class="cl-op">+</div>
+        <div class="cl-box">
+          <div class="cl-box-label" style="color:#6b21a8">Corpus 2 — Case Document Store</div>
+          <div class="cl-box-q">"What evidence exists?"</div>
+        </div>
+        <div class="cl-op">=</div>
+        <div class="cl-answer">
+          <div class="cl-box-label">Downstream Intelligence</div>
+          <div class="cl-box-q">"What is the grounded recommendation?"</div>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin-top:.9rem;">
+        <div style="font-size:.74rem;color:var(--text-mid);background:#fff;border:1px solid #bfdbfe;border-radius:7px;padding:.55rem .75rem;"><strong style="color:#1e40af">Policy Store</strong> — version-controlled, approved, filterable by jurisdiction, entity type, risk class, effective date</div>
+        <div style="font-size:.74rem;color:var(--text-mid);background:#fff;border:1px solid #e9d5ff;border-radius:7px;padding:.55rem .75rem;"><strong style="color:#6b21a8">Case Document Store</strong> — strict case-level and tenant-level isolation; prevents cross-case contamination</div>
+      </div>
+    </div>
+
+    <!-- 4. Ingestion + Storage Layer -->
+    <h2 class="numbered"><span class="sec-num">4</span>Ingestion &amp; Storage Layer</h2>
+    <p style="font-size:.82rem;color:var(--text-mid);margin-bottom:.9rem">Once intake is complete, all inputs move into this layer — turning raw submissions into secure, processable, and retrieval-ready assets. Phase 1 scope covers two core modules.</p>
+    <div class="module-grid" style="grid-template-columns:1fr 1fr 1fr;">
+      <div class="module-card" style="background:#eff6ff;border-color:#bfdbfe;">
+        <div class="module-hdr">
+          <div class="module-icon" style="background:#dbeafe"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 2l2 4h4l-3.5 2.5 1.5 4.5L8 10.5 4 13l1.5-4.5L2 6h4L8 2z" stroke="#1e40af" stroke-width="1.3" stroke-linejoin="round"/></svg></div>
+          <div class="module-name" style="color:#1e40af">Input &amp; Intake Layer</div>
+        </div>
+        <div class="module-does">Does</div>
+        <ul class="module-list">
+          <li><span class="ml-check"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Accepts multi-channel case inputs</li>
+          <li><span class="ml-check"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Normalises intake across channels</li>
+          <li><span class="ml-check"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Links inputs to case and tenant</li>
+          <li><span class="ml-check"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Separates policy inputs from case evidence</li>
+        </ul>
+        <div class="module-does" style="margin-top:.6rem">Does Not</div>
+        <ul class="module-list">
+          <li><span class="ml-x"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M3 9L9 3M9 9L3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></span>Deep extraction or reasoning</li>
+          <li><span class="ml-x"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M3 9L9 3M9 9L3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></span>Recommendation generation</li>
+        </ul>
+      </div>
+      <div class="module-card" style="background:#f5f3ff;border-color:#ddd6fe;">
+        <div class="module-hdr">
+          <div class="module-icon" style="background:#ede9fe"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 5h10M3 8h7M3 11h5" stroke="#6d28d9" stroke-width="1.4" stroke-linecap="round"/></svg></div>
+          <div class="module-name" style="color:#6d28d9">Data Ingestion Layer</div>
+        </div>
+        <div class="module-does">Does</div>
+        <ul class="module-list">
+          <li><span class="ml-check"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Validates files and payloads</li>
+          <li><span class="ml-check"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Creates canonical ingestion records</li>
+          <li><span class="ml-check"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Source / channel tagging</li>
+          <li><span class="ml-check"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Manages retries and failure routing</li>
+        </ul>
+        <div class="module-why">Control point between raw intake and trusted platform processing.</div>
+      </div>
+      <div class="module-card" style="background:#f0fdf4;border-color:#bbf7d0;">
+        <div class="module-hdr">
+          <div class="module-icon" style="background:#dcfce7"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><ellipse cx="8" cy="5" rx="5" ry="2" stroke="#15803d" stroke-width="1.3"/><path d="M3 5v6c0 1.1 2.2 2 5 2s5-.9 5-2V5" stroke="#15803d" stroke-width="1.3"/><path d="M3 8c0 1.1 2.2 2 5 2s5-.9 5-2" stroke="#15803d" stroke-width="1.3"/></svg></div>
+          <div class="module-name" style="color:#15803d">Document Storage</div>
+        </div>
+        <div class="module-does">Does</div>
+        <ul class="module-list">
+          <li><span class="ml-check"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Stores raw documents securely</li>
+          <li><span class="ml-check"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Assigns document IDs &amp; versions</li>
+          <li><span class="ml-check"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Preserves immutable original artifact</li>
+          <li><span class="ml-check"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Strict case &amp; tenant isolation</li>
+        </ul>
+        <div class="module-why">Source-of-record layer for all uploaded case evidence and linked documents.</div>
+      </div>
+    </div>
+
+    <!-- 5. Flow -->
+    <h2 class="numbered"><span class="sec-num">5</span>Flow: Intake → Ingestion</h2>
+    <div class="flow-steps">
+      <div class="flow-step">
+        <div class="flow-num" style="background:#dbeafe;color:#1e40af">1</div>
+        <div><div class="flow-title">Receive &amp; register</div><div class="flow-sub">Files, form inputs, emails, or system-fed artifacts linked to the correct case, customer, and tenant</div></div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num" style="background:#dbeafe;color:#1e40af">2</div>
+        <div>
+          <div class="flow-title">Validate &amp; accept</div>
+          <div class="flow-sub">Basic checks before any downstream processing</div>
+          <div class="flow-chips">
+            <span class="flow-chip">File type / format</span><span class="flow-chip">Size check</span>
+            <span class="flow-chip">Malware / virus scan</span><span class="flow-chip">Duplicate detection</span>
+            <span class="flow-chip">Channel / source tag</span><span class="flow-chip">Case association check</span>
+          </div>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num" style="background:#ede9fe;color:#6d28d9">3</div>
+        <div><div class="flow-title">Store the original artifact</div><div class="flow-sub">Raw source file stored as immutable original record in secure object storage</div></div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num" style="background:#ede9fe;color:#6d28d9">4</div>
+        <div>
+          <div class="flow-title">Classify &amp; route</div>
+          <div class="flow-sub">System identifies input type and routes to the correct downstream path</div>
+          <div class="flow-chips">
+            <span class="flow-chip" style="background:#e0e7ff;border-color:#c7d2fe;color:#3730a3">Policy content → policy store path</span>
+            <span class="flow-chip" style="background:#f3e8ff;border-color:#e9d5ff;color:#6b21a8">Case evidence → case document path</span>
+            <span class="flow-chip" style="background:#dcfce7;border-color:#bbf7d0;color:#15803d">Form data → case metadata path</span>
+          </div>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num" style="background:#dcfce7;color:#15803d">5</div>
+        <div><div class="flow-title">Create ingestion record</div><div class="flow-sub">Standard ingestion object created so downstream services process consistently regardless of source channel</div></div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num" style="background:#dcfce7;color:#15803d">6</div>
+        <div>
+          <div class="flow-title">Trigger downstream processing</div>
+          <div class="flow-sub">Asset becomes available for all downstream intelligence stages</div>
+          <div class="flow-chips">
+            <span class="flow-chip">OCR / parsing</span><span class="flow-chip">Document classification</span>
+            <span class="flow-chip">Structure extraction</span><span class="flow-chip">Metadata enrichment</span>
+            <span class="flow-chip">Chunking</span><span class="flow-chip">Embedding</span>
+            <span class="flow-chip">Retrieval &amp; reviewer workflows</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 6. Supported Document Types -->
+    <h2 class="numbered"><span class="sec-num">6</span>Supported Document Types</h2>
+    <p style="font-size:.82rem;color:var(--text-mid);margin-bottom:.75rem">Each document type has defined extraction expectations, validation rules, and reviewer-visible missing field flags.</p>
+    <div class="doc-wrap">
+      <table class="doc-table">
+        <thead><tr><th>Document Type</th><th>Expected Fields</th><th>Validation Focus</th></tr></thead>
+        <tbody>
+          <tr><td><span class="doc-name">Certificate of Incorporation</span></td><td>Reg number, date, jurisdiction, company name</td><td>Issuing authority, expiry / validity</td></tr>
+          <tr><td><span class="doc-name">Business Registration Certificate</span></td><td>BRN, business name, address, date</td><td>Match to application data</td></tr>
+          <tr><td><span class="doc-name">Articles / Memorandum of Association</span></td><td>Company objects, signatory, date</td><td>Certified copy, completeness</td></tr>
+          <tr><td><span class="doc-name">UBO Declaration</span></td><td>Name, DOB, nationality, ownership %</td><td>Threshold met, signature, date</td></tr>
+          <tr><td><span class="doc-name">Shareholding / Ownership Register</span></td><td>Shareholder names, % holdings, class</td><td>Totals to 100%, UBO threshold logic</td></tr>
+          <tr><td><span class="doc-name">Director Identification Documents</span></td><td>ID number, name, DOB, expiry</td><td>Match to register, not expired</td></tr>
+          <tr><td><span class="doc-name">Proof of Address</span></td><td>Address, date, issuer</td><td>Recency (typically &lt; 3 months)</td></tr>
+          <tr><td><span class="doc-name">Bank Statements</span></td><td>Account name, IBAN, dates, transactions</td><td>Period coverage, account name match</td></tr>
+          <tr><td><span class="doc-name">Tax Registration / Operating Licence</span></td><td>TIN, licence number, issuer, validity</td><td>Active status, jurisdiction match</td></tr>
+          <tr><td><span class="doc-name">Website / Business Activity Evidence</span></td><td>URL, screenshot date, business description</td><td>Consistency with declared activity</td></tr>
+          <tr><td><span class="doc-name">Signed Declarations &amp; Support Letters</span></td><td>Signatory, date, subject</td><td>Authorised signatory, completeness</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- 7. Ingestion Output Contract -->
+    <h2 class="numbered"><span class="sec-num">7</span>Ingestion Output Contract</h2>
+    <p style="font-size:.82rem;color:var(--text-mid);margin-bottom:.75rem">Every accepted input exits this layer as a standardised canonical object. All downstream modules operate on this same structure.</p>
+    <div class="contract-grid">
+      <div class="contract-item"><span class="c-dot"></span><div><div class="c-label">Document ID</div><div class="c-sub">Unique immutable identifier</div></div></div>
+      <div class="contract-item"><span class="c-dot"></span><div><div class="c-label">Case ID</div><div class="c-sub">Linked applicant case</div></div></div>
+      <div class="contract-item"><span class="c-dot"></span><div><div class="c-label">Tenant ID</div><div class="c-sub">Strict isolation key</div></div></div>
+      <div class="contract-item"><span class="c-dot"></span><div><div class="c-label">Source Channel</div><div class="c-sub">Origin of the input</div></div></div>
+      <div class="contract-item"><span class="c-dot"></span><div><div class="c-label">Original Filename</div><div class="c-sub">Preserved as submitted</div></div></div>
+      <div class="contract-item"><span class="c-dot"></span><div><div class="c-label">Document Type</div><div class="c-sub">Classified at intake</div></div></div>
+      <div class="contract-item"><span class="c-dot"></span><div><div class="c-label">Upload Timestamp</div><div class="c-sub">For audit &amp; SLA tracking</div></div></div>
+      <div class="contract-item"><span class="c-dot"></span><div><div class="c-label">Storage Location</div><div class="c-sub">Secure object reference</div></div></div>
+      <div class="contract-item"><span class="c-dot"></span><div><div class="c-label">Processing Status</div><div class="c-sub">Current state in pipeline</div></div></div>
+      <div class="contract-item"><span class="c-dot"></span><div><div class="c-label">Version</div><div class="c-sub">For reprocessing &amp; lineage</div></div></div>
+      <div class="contract-item"><span class="c-dot"></span><div><div class="c-label">Downstream Metadata</div><div class="c-sub">Required for retrieval</div></div></div>
+      <div class="contract-item"><span class="c-dot" style="background:#ef4444"></span><div><div class="c-label">Failure Reason</div><div class="c-sub">Where applicable</div></div></div>
+    </div>
+
+    <!-- 8. Design Goals -->
+    <h2 class="numbered"><span class="sec-num">8</span>Design Goals</h2>
+    <div class="goals-grid">
+      <div class="goal-item"><svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M2 6.5l3 3 6-6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Accept multi-source KYB inputs reliably</div>
+      <div class="goal-item"><svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M2 6.5l3 3 6-6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Create a common intake path across channels</div>
+      <div class="goal-item"><svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M2 6.5l3 3 6-6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Separate policy content from case evidence early</div>
+      <div class="goal-item"><svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M2 6.5l3 3 6-6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Validate before downstream processing</div>
+      <div class="goal-item"><svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M2 6.5l3 3 6-6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Preserve the original source artifact</div>
+      <div class="goal-item"><svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M2 6.5l3 3 6-6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Maintain case and tenant isolation</div>
+      <div class="goal-item"><svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M2 6.5l3 3 6-6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Create a standard ingestion object for all downstream</div>
+      <div class="goal-item"><svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M2 6.5l3 3 6-6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Support auditability and reprocessing</div>
+      <div class="goal-item"><svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M2 6.5l3 3 6-6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Prepare documents for downstream intelligence &amp; retrieval</div>
+    </div>
+
+    <nav class="section-nav">
+      <a href="rag-overview.html" class="nav-btn"><span class="nav-btn-dir">← Previous</span><span class="nav-btn-title">RAG Overview</span></a>
+      <span class="nav-center">22 of 39</span>
+      <a href="retrieval-policy.html" class="nav-btn next"><span class="nav-btn-dir">Next →</span><span class="nav-btn-title">Policy-Grounded Retrieval</span></a>
+    </nav>
+  </main>
+</div>
+<footer class="site-footer">Reap AI Platform — KYB Review Copilot &nbsp;·&nbsp; Technical PRD</footer>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script src="../js/main.js"></script>
+</body></html>

@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>1.3 Success Criteria &amp; KPIs — Reap KYB PRD</title>
+  <link rel="stylesheet" href="../css/styles.css" />
+  <style>
+    .sidebar-on-page-title { font-size:10.5px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--text-dim); padding:18px 16px 6px; }
+    .sidebar-on-page { list-style:none; margin:0; padding:0 8px; }
+    .sidebar-on-page li a { display:block; padding:5px 8px; font-size:12.5px; color:var(--text-mid); border-radius:4px; text-decoration:none; }
+    .sidebar-on-page li a:hover { background:var(--bg); color:var(--text); }
+
+    /* ── Objective banner ── */
+    .obj-banner { background:var(--navy); color:#fff; border-radius:10px; padding:20px 24px; margin-bottom:32px; display:flex; align-items:flex-start; gap:16px; }
+    .obj-icon { width:36px; height:36px; border-radius:8px; background:rgba(255,255,255,.1); display:flex; align-items:center; justify-content:center; flex-shrink:0; color:#fff; }
+    .obj-tag { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.1em; color:rgba(255,255,255,.5); margin-bottom:5px; }
+    .obj-text { font-size:15px; font-weight:600; color:#fff; line-height:1.5; }
+    .obj-text em { color:rgba(255,255,255,.7); font-style:normal; font-weight:400; }
+
+    /* ── Goals grid ── */
+    .goals-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin:20px 0; }
+    @media(max-width:700px) { .goals-grid { grid-template-columns:1fr; } }
+    .goal-card { border:1px solid var(--border); border-radius:10px; padding:16px 18px; background:var(--surface); border-top:3px solid transparent; }
+    .gc-biz  { border-top-color:#2563EB; }
+    .gc-user { border-top-color:#059669; }
+    .gc-cust { border-top-color:#0891B2; }
+    .gc-comp { border-top-color:#DC2626; }
+    .gc-plat { border-top-color:#D97706; }
+    .gc-ai   { border-top-color:#7C3AED; }
+    .goal-icon { width:30px; height:30px; border-radius:7px; display:flex; align-items:center; justify-content:center; margin-bottom:9px; }
+    .gc-biz  .goal-icon { background:#EFF6FF; color:#2563EB; }
+    .gc-user .goal-icon { background:#ECFDF5; color:#059669; }
+    .gc-cust .goal-icon { background:#ECFEFF; color:#0891B2; }
+    .gc-comp .goal-icon { background:#FEF2F2; color:#DC2626; }
+    .gc-plat .goal-icon { background:#FFFBEB; color:#D97706; }
+    .gc-ai   .goal-icon { background:#F5F3FF; color:#7C3AED; }
+    .goal-num { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.07em; color:var(--text-dim); margin-bottom:3px; }
+    .goal-title { font-size:13px; font-weight:700; color:var(--text); margin-bottom:8px; }
+    .goal-items { list-style:none; padding:0; margin:0; }
+    .goal-items li { font-size:12px; color:var(--text-mid); padding:4px 0; display:flex; gap:7px; line-height:1.4; border-bottom:1px solid var(--border); align-items:flex-start; }
+    .goal-items li:last-child { border-bottom:none; }
+    .goal-items li::before { content:'→'; color:var(--text-dim); flex-shrink:0; font-size:11px; margin-top:2px; }
+
+    /* ── Non-Goals + Design Principles ── */
+    .ngdp-row { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin:20px 0; }
+    @media(max-width:600px) { .ngdp-row { grid-template-columns:1fr; } }
+    .ng-block { background:#FEF2F2; border:1px solid #FECACA; border-radius:10px; padding:16px 18px; }
+    .dp-block { background:#ECFDF5; border:1px solid #A7F3D0; border-radius:10px; padding:16px 18px; }
+    .ngdp-head { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.08em; margin-bottom:12px; }
+    .ng-block .ngdp-head { color:#991B1B; }
+    .dp-block .ngdp-head { color:#065F46; }
+    .ngdp-items { list-style:none; padding:0; margin:0; }
+    .ngdp-items li { font-size:12.5px; padding:6px 0; border-bottom:1px solid rgba(0,0,0,.07); display:flex; gap:9px; align-items:flex-start; line-height:1.4; }
+    .ngdp-items li:last-child { border-bottom:none; }
+    .ng-x { color:#DC2626; font-weight:700; flex-shrink:0; font-size:13px; }
+    .dp-chk { color:#059669; font-weight:700; flex-shrink:0; font-size:13px; }
+
+    /* ── Diagram label ── */
+    .diag-section-label { font-size:10.5px; font-weight:700; text-transform:uppercase; letter-spacing:.09em; color:var(--text-dim); margin:0 0 6px; display:flex; align-items:center; gap:8px; }
+    .diag-section-label::after { content:''; flex:1; height:1px; background:var(--border); }
+    .diag-desc { font-size:13px; color:var(--text-mid); margin-bottom:16px; }
+
+    /* ── KPI Tree ── */
+    .kpi-ns { background:var(--navy); border-radius:10px; padding:18px 24px; text-align:center; }
+    .kpi-ns-tag { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.12em; color:rgba(255,255,255,.45); margin-bottom:5px; }
+    .kpi-ns-title { font-size:18px; font-weight:800; color:#fff; }
+    .kpi-down-arr { text-align:center; height:32px; display:flex; align-items:center; justify-content:center; }
+    .kpi-down-arr::after { content:''; display:block; width:2px; height:32px; background:var(--border-dim); }
+    .kpi-pillars-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:0; }
+    .kpi-pillar { border-radius:10px; overflow:hidden; border:1px solid var(--border); }
+    .kpi-p-head { padding:12px 16px; text-align:center; font-size:13px; font-weight:700; }
+    .kpp-eff .kpi-p-head { background:#EFF6FF; color:#1D4ED8; border-bottom:2px solid #BFDBFE; }
+    .kpp-qual .kpi-p-head { background:#ECFDF5; color:#065F46; border-bottom:2px solid #A7F3D0; }
+    .kpp-exp .kpi-p-head  { background:#FFF7ED; color:#92400E; border-bottom:2px solid #FED7AA; }
+    .kpi-p-drivers { padding:12px 16px; border-bottom:1px solid var(--border); background:var(--surface); }
+    .kpi-p-metrics { padding:12px 16px; background:var(--bg); }
+    .kpi-sec-lbl { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.07em; color:var(--text-dim); margin-bottom:7px; }
+    .kpi-driver { font-size:12px; color:var(--text-mid); padding:3px 0; display:flex; gap:6px; }
+    .kpi-driver::before { content:'·'; color:var(--text-dim); flex-shrink:0; }
+    .kpi-metric { display:flex; align-items:baseline; gap:6px; padding:4px 0; border-bottom:1px solid var(--border); }
+    .kpi-metric:last-child { border-bottom:none; }
+    .km-dir { font-size:14px; font-weight:800; line-height:1; flex-shrink:0; }
+    .km-dn { color:#059669; }
+    .km-up { color:#2563EB; }
+    .km-tg { color:#7C3AED; }
+    .km-val { font-size:12.5px; font-weight:700; color:var(--text); }
+    .km-lbl { font-size:11px; color:var(--text-dim); }
+
+    /* ── Capability Flow ── */
+    .cap-flow { display:flex; align-items:stretch; gap:0; margin:20px 0; }
+    @media(max-width:720px) { .cap-flow { flex-direction:column; } .cf-arr { transform:rotate(90deg); } }
+    .cf-box { flex:1; border-radius:10px; padding:16px 18px; border:1px solid var(--border); }
+    .cf-pain { background:#FEF2F2; border-color:#FECACA; }
+    .cf-core { background:#EFF6FF; border-color:#BFDBFE; }
+    .cf-plat { background:#F5F3FF; border-color:#DDD6FE; }
+    .cf-out  { background:#ECFDF5; border-color:#A7F3D0; }
+    .cf-arr { display:flex; align-items:center; justify-content:center; width:28px; flex-shrink:0; font-size:22px; font-weight:700; color:var(--border-dim); }
+    .cfb-lbl { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.07em; margin-bottom:8px; }
+    .cf-pain .cfb-lbl { color:#991B1B; }
+    .cf-core .cfb-lbl { color:#1D4ED8; }
+    .cf-plat .cfb-lbl { color:#5B21B6; }
+    .cf-out  .cfb-lbl { color:#065F46; }
+    .cfb-items { list-style:none; padding:0; margin:0; }
+    .cfb-items li { font-size:12px; padding:4px 0; border-bottom:1px solid rgba(0,0,0,.07); line-height:1.4; display:flex; gap:7px; }
+    .cfb-items li:last-child { border-bottom:none; }
+    .cfb-items li::before { content:'—'; opacity:.4; flex-shrink:0; }
+    .cf-out .cfb-items li { font-size:13px; font-weight:600; }
+    .out-up  { color:#059669; }
+    .out-reu { color:#5B21B6; }
+
+    /* ── Balanced Scorecard ── */
+    .bsc-wrap { border:1px solid var(--border); border-radius:10px; overflow:hidden; }
+    .bsc-grid { display:grid; grid-template-columns:1fr 1fr; }
+    .bsc-q { padding:20px 22px; border:1px solid rgba(0,0,0,.06); }
+    .bsc-q1 { background:#EFF6FF; }
+    .bsc-q2 { background:#ECFDF5; }
+    .bsc-q3 { background:#FEF2F2; }
+    .bsc-q4 { background:#F5F3FF; }
+    .bsc-qtitle { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.08em; margin-bottom:10px; }
+    .bsc-q1 .bsc-qtitle { color:#1D4ED8; }
+    .bsc-q2 .bsc-qtitle { color:#065F46; }
+    .bsc-q3 .bsc-qtitle { color:#991B1B; }
+    .bsc-q4 .bsc-qtitle { color:#5B21B6; }
+    .bsc-items { list-style:none; padding:0; margin:0; }
+    .bsc-items li { font-size:12.5px; padding:5px 0; border-bottom:1px solid rgba(0,0,0,.07); display:flex; gap:7px; align-items:baseline; }
+    .bsc-items li:last-child { border-bottom:none; }
+    .bsc-dir { font-size:13px; font-weight:800; flex-shrink:0; }
+    .bsc-q1 .bsc-dir, .bsc-q2 .bsc-dir { color:#059669; }
+    .bsc-q3 .bsc-dir { color:#DC2626; }
+    .bsc-q4 .bsc-dir { color:#7C3AED; }
+
+    /* ── Measurement ── */
+    .measure-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin:16px 0; }
+    @media(max-width:720px) { .measure-grid { grid-template-columns:repeat(2,1fr); } }
+    .measure-card { border:1px solid var(--border); border-radius:9px; padding:14px 16px; background:var(--surface); }
+    .mc-num { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.08em; color:var(--text-dim); margin-bottom:5px; }
+    .mc-title { font-size:13px; font-weight:700; color:var(--text); margin-bottom:4px; }
+    .mc-desc { font-size:12px; color:var(--text-mid); line-height:1.5; }
+  </style>
+</head>
+<body>
+<header class="site-header">
+  <div class="header-inner">
+    <a href="../index.html" class="site-logo"><div class="logo-mark">R</div><span>Reap AI Platform</span></a>
+    <div class="header-divider"></div><span class="header-subtitle">KYB Review Copilot</span>
+    <nav class="header-nav"><a href="../index.html">Overview</a><a href="solution-architecture.html">Architecture</a><a href="reviewer-workflow.html">Workflow</a></nav>
+  </div>
+</header>
+<div class="page-layout">
+  <aside class="sidebar">
+    <a href="../index.html" class="sidebar-back"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M9 11L5 7l4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg> All Sections</a>
+    <div class="sidebar-section-title">Block 1 — Executive Framing</div>
+    <ul class="sidebar-nav">
+      <li><a href="problem-context.html">1.1 Problem Statement</a></li>
+      <li><a href="opportunity-sizing.html">1.2 Market Opportunity</a></li>
+      <li><a href="success-criteria.html" class="active">1.3 Success Criteria</a></li>
+      <li><a href="strategic-alignment.html">1.4 Strategic Alignment</a></li>
+      <li><a href="executive-summary.html">1.5 Executive Summary</a></li>
+    </ul>
+    <div class="sidebar-on-page-title">On this page</div>
+    <ul class="sidebar-on-page">
+      <li><a href="#goals">Goals</a></li>
+      <li><a href="#nongoals">Non-Goals &amp; Principles</a></li>
+      <li><a href="#kpi-tree">KPI Tree</a></li>
+      <li><a href="#scorecard">Balanced Scorecard</a></li>
+      <li><a href="#measurement">Measurement</a></li>
+    </ul>
+  </aside>
+  <main class="content">
+    <nav class="breadcrumb"><a href="../index.html">Home</a><span class="breadcrumb-sep">›</span><span>Block 1 — Executive Framing</span><span class="breadcrumb-sep">›</span><span class="breadcrumb-current">1.3 Success Criteria &amp; KPIs</span></nav>
+    <div class="section-header">
+      <div class="section-block-tag" style="background:var(--b1)">Block 1 — Executive Framing</div>
+      <h1>Success Criteria &amp; KPIs</h1>
+      <p class="section-intro">What success looks like across speed, quality, compliance, and platform reuse — and how it's measured.</p>
+    </div>
+
+    <!-- Objective -->
+    <div class="obj-banner">
+      <div class="obj-icon">
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="7" stroke="currentColor" stroke-width="1.5"/><circle cx="9" cy="9" r="3" stroke="currentColor" stroke-width="1.5"/><path d="M9 2v2M9 14v2M2 9h2M14 9h2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </div>
+      <div>
+        <div class="obj-tag">Objective</div>
+        <div class="obj-text">Design an AI-assisted KYB Review Platform that <strong>reduces review time, improves decision quality, and ensures compliance</strong> <em>— while building reusable infrastructure for future workflows.</em></div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════ -->
+    <!-- GOALS                                  -->
+    <!-- ══════════════════════════════════════ -->
+    <h2 id="goals">Goals</h2>
+    <div class="goals-grid">
+
+      <div class="goal-card gc-biz">
+        <div class="goal-icon"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M2 12L6 8l3 3 5-6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="goal-num">01 — Business</div>
+        <div class="goal-title">Business Goals</div>
+        <ul class="goal-items">
+          <li>Reduce KYB turnaround time</li>
+          <li>Improve onboarding conversion and time-to-activation</li>
+          <li>Lower cost per case via automation</li>
+          <li>Scalable, consistent cross-border onboarding</li>
+        </ul>
+      </div>
+
+      <div class="goal-card gc-user">
+        <div class="goal-icon"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="5" r="3" stroke="currentColor" stroke-width="1.5"/><path d="M2 14c0-3 2.7-5 6-5s6 2 6 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+        <div class="goal-num">02 — Reviewer &amp; Ops</div>
+        <div class="goal-title">User Goals</div>
+        <ul class="goal-items">
+          <li>Eliminate manual document reading and reconciliation</li>
+          <li>Unified case view: data, evidence, and history</li>
+          <li>Faster decisions with clear AI-grounded reasoning</li>
+          <li>Fewer follow-up loops, better-quality asks</li>
+        </ul>
+      </div>
+
+      <div class="goal-card gc-cust">
+        <div class="goal-icon"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 3h10a1 1 0 0 1 1 1v6a1 1 0 0 1-1 1H5l-3 2V4a1 1 0 0 1 1-1z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg></div>
+        <div class="goal-num">03 — Customer</div>
+        <div class="goal-title">Customer Goals</div>
+        <ul class="goal-items">
+          <li>Fewer redundant or unclear document requests</li>
+          <li>Transparency into requirements and decisions</li>
+          <li>Minimal onboarding friction and delays</li>
+        </ul>
+      </div>
+
+      <div class="goal-card gc-comp">
+        <div class="goal-icon"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 1.5L13.5 4v3.5c0 4-2.5 6-5.5 7-3-1-5.5-3-5.5-7V4L8 1.5z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M5.5 8l2 2 3.5-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="goal-num">04 — Compliance &amp; Control</div>
+        <div class="goal-title">Compliance Goals</div>
+        <ul class="goal-items">
+          <li>Consistent, policy-aligned, and auditable decisions</li>
+          <li>Early detection of prohibited/restricted use cases</li>
+          <li>Complete evidence traceability and decision rationale</li>
+          <li>Reduce false negatives while managing false positives</li>
+        </ul>
+      </div>
+
+      <div class="goal-card gc-plat">
+        <div class="goal-icon"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 2L14 5.5l-6 3.5-6-3.5L8 2z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M2 9l6 3.5L14 9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M2 12l6 3.5 6-3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" opacity=".4"/></svg></div>
+        <div class="goal-num">05 — Platform</div>
+        <div class="goal-title">Platform Goals</div>
+        <ul class="goal-items">
+          <li>Reusable document intelligence, retrieval, and reasoning</li>
+          <li>Configurable workflows across KYB/KYC/AML</li>
+          <li>API-first, multi-tenant, scalable architecture</li>
+          <li>Feedback loops for continuous model improvement</li>
+        </ul>
+      </div>
+
+      <div class="goal-card gc-ai">
+        <div class="goal-icon"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 2l1.5 3 3.5.5-2.5 2.5.5 3.5L8 10l-3 1.5.5-3.5L3 5.5l3.5-.5L8 2z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg></div>
+        <div class="goal-num">06 — AI / Copilot</div>
+        <div class="goal-title">AI Goals</div>
+        <ul class="goal-items">
+          <li>Augment human reviewers — not replace them</li>
+          <li>Grounded, explainable recommendations with citations</li>
+          <li>Abstain or escalate in low-confidence scenarios</li>
+          <li>Consistent judgment across similar cases</li>
+        </ul>
+      </div>
+
+    </div>
+
+    <!-- ══════════════════════════════════════ -->
+    <!-- NON-GOALS + DESIGN PRINCIPLES          -->
+    <!-- ══════════════════════════════════════ -->
+    <h2 id="nongoals">Non-Goals &amp; Design Principles</h2>
+    <div class="ngdp-row">
+      <div class="ng-block">
+        <div class="ngdp-head">Explicit Non-Goals</div>
+        <ul class="ngdp-items">
+          <li><span class="ng-x">✗</span>Fully autonomous decision-making — humans decide</li>
+          <li><span class="ng-x">✗</span>Black-box, non-explainable AI outputs</li>
+          <li><span class="ng-x">✗</span>Solving upstream sales or lead qualification systems</li>
+          <li><span class="ng-x">✗</span>Eliminating all false positives — not a realistic target</li>
+        </ul>
+      </div>
+      <div class="dp-block">
+        <div class="ngdp-head">Design Principles</div>
+        <ul class="ngdp-items">
+          <li><span class="dp-chk">✓</span>Human-in-the-loop for all final decisions</li>
+          <li><span class="dp-chk">✓</span>Evidence-backed, explainable outputs by default</li>
+          <li><span class="dp-chk">✓</span>Safe fallbacks to manual review</li>
+          <li><span class="dp-chk">✓</span>Policy-driven reasoning as the source of truth</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════ -->
+    <!-- DIAGRAM 1: KPI TREE                    -->
+    <!-- ══════════════════════════════════════ -->
+    <h2 id="kpi-tree" style="margin-top:48px;">KPI Tree</h2>
+    <div class="diag-section-label">Diagram 1</div>
+    <p class="diag-desc">North Star goal → three outcome pillars → measurable KPI targets. Each pillar links directly to the drivers and targets used to track success.</p>
+
+    <!-- North Star -->
+    <div class="kpi-ns">
+      <div class="kpi-ns-tag">North Star</div>
+      <div class="kpi-ns-title">Faster, Higher-Quality, Compliant KYB</div>
+    </div>
+    <div class="kpi-down-arr"></div>
+
+    <!-- 3 Pillars -->
+    <div class="kpi-pillars-grid">
+
+      <div class="kpi-pillar kpp-eff">
+        <div class="kpi-p-head">Efficiency</div>
+        <div class="kpi-p-drivers">
+          <div class="kpi-sec-lbl">Drivers</div>
+          <div class="kpi-driver">Review time per case</div>
+          <div class="kpi-driver">Cost per case</div>
+          <div class="kpi-driver">Back-and-forth cycles</div>
+        </div>
+        <div class="kpi-p-metrics">
+          <div class="kpi-sec-lbl">Targets</div>
+          <div class="kpi-metric"><span class="km-dir km-dn">↓</span><span class="km-val">40–60%</span><span class="km-lbl">review time</span></div>
+          <div class="kpi-metric"><span class="km-dir km-dn">↓</span><span class="km-val">30–50%</span><span class="km-lbl">manual effort</span></div>
+          <div class="kpi-metric"><span class="km-dir km-dn">↓</span><span class="km-val">25–40%</span><span class="km-lbl">follow-up cycles</span></div>
+        </div>
+      </div>
+
+      <div class="kpi-pillar kpp-qual">
+        <div class="kpi-p-head">Quality &amp; Compliance</div>
+        <div class="kpi-p-drivers">
+          <div class="kpi-sec-lbl">Drivers</div>
+          <div class="kpi-driver">Decision consistency</div>
+          <div class="kpi-driver">Risk detection accuracy</div>
+          <div class="kpi-driver">Evidence coverage</div>
+        </div>
+        <div class="kpi-p-metrics">
+          <div class="kpi-sec-lbl">Targets</div>
+          <div class="kpi-metric"><span class="km-dir km-up">↑</span><span class="km-val">Consistency</span><span class="km-lbl">across similar cases</span></div>
+          <div class="kpi-metric"><span class="km-dir km-dn">↓</span><span class="km-val">FN rate</span><span class="km-lbl">missed risks</span></div>
+          <div class="kpi-metric"><span class="km-dir km-tg">~</span><span class="km-val">100%</span><span class="km-lbl">decisions with evidence</span></div>
+        </div>
+      </div>
+
+      <div class="kpi-pillar kpp-exp">
+        <div class="kpi-p-head">Experience</div>
+        <div class="kpi-p-drivers">
+          <div class="kpi-sec-lbl">Drivers</div>
+          <div class="kpi-driver">Reviewer UX &amp; productivity</div>
+          <div class="kpi-driver">Customer onboarding TAT</div>
+          <div class="kpi-driver">Submission completion</div>
+        </div>
+        <div class="kpi-p-metrics">
+          <div class="kpi-sec-lbl">Targets</div>
+          <div class="kpi-metric"><span class="km-dir km-up">↑</span><span class="km-val">Cases/day</span><span class="km-lbl">per reviewer</span></div>
+          <div class="kpi-metric"><span class="km-dir km-dn">↓</span><span class="km-val">Time-to-onboarding</span><span class="km-lbl">for customers</span></div>
+          <div class="kpi-metric"><span class="km-dir km-up">↑</span><span class="km-val">Completion rate</span><span class="km-lbl">doc submissions</span></div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ══════════════════════════════════════ -->
+    <!-- DIAGRAM 2: BALANCED SCORECARD          -->
+    <!-- ══════════════════════════════════════ -->
+    <h2 id="scorecard" style="margin-top:48px;">Balanced Scorecard</h2>
+    <div class="diag-section-label">Diagram 2</div>
+    <p class="diag-desc">Four-quadrant view of success — Business, User/Ops, Compliance, and Platform. Each quadrant maps goals to measurable signals.</p>
+
+    <div class="bsc-wrap">
+      <div class="bsc-grid">
+
+        <div class="bsc-q bsc-q1">
+          <div class="bsc-qtitle">Business Impact</div>
+          <ul class="bsc-items">
+            <li><span class="bsc-dir">↓</span>Cost per case via automation + augmentation</li>
+            <li><span class="bsc-dir">↑</span>Onboarding conversion rate</li>
+            <li><span class="bsc-dir">↑</span>Revenue velocity through faster activation</li>
+          </ul>
+        </div>
+
+        <div class="bsc-q bsc-q2">
+          <div class="bsc-qtitle">User &amp; Ops Impact</div>
+          <ul class="bsc-items">
+            <li><span class="bsc-dir">↓</span>Manual effort per case</li>
+            <li><span class="bsc-dir">↑</span>Reviewer productivity and decision confidence</li>
+            <li><span class="bsc-dir">↑</span>Decision speed with clear reasoning</li>
+          </ul>
+        </div>
+
+        <div class="bsc-q bsc-q3">
+          <div class="bsc-qtitle">Compliance &amp; Control</div>
+          <ul class="bsc-items">
+            <li><span class="bsc-dir">↑</span>Decision auditability and evidence coverage</li>
+            <li><span class="bsc-dir">↓</span>Missed risks and false negatives</li>
+            <li><span class="bsc-dir">↑</span>Consistency across similar cases</li>
+          </ul>
+        </div>
+
+        <div class="bsc-q bsc-q4">
+          <div class="bsc-qtitle">Platform</div>
+          <ul class="bsc-items">
+            <li><span class="bsc-dir">→</span>Reusable components across KYB/KYC/AML</li>
+            <li><span class="bsc-dir">→</span>API-first design enabling partner adoption</li>
+            <li><span class="bsc-dir">→</span>Measurable model precision and recall</li>
+          </ul>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════ -->
+    <!-- MEASUREMENT APPROACH                   -->
+    <!-- ══════════════════════════════════════ -->
+    <h2 id="measurement" style="margin-top:48px;">Measurement Approach</h2>
+    <p style="font-size:14px;color:var(--text-mid);margin-bottom:16px;">Four complementary measurement methods that validate AI performance at each stage of deployment.</p>
+    <div class="measure-grid">
+      <div class="measure-card">
+        <div class="mc-num">Method 01</div>
+        <div class="mc-title">Offline Evals</div>
+        <div class="mc-desc">Golden datasets — extraction accuracy, retrieval quality, decision consistency.</div>
+      </div>
+      <div class="measure-card">
+        <div class="mc-num">Method 02</div>
+        <div class="mc-title">Scenario Testing</div>
+        <div class="mc-desc">Edge-case coverage — low-confidence, conflicting evidence, abstention behavior.</div>
+      </div>
+      <div class="measure-card">
+        <div class="mc-num">Method 03</div>
+        <div class="mc-title">A/B Testing</div>
+        <div class="mc-desc">Assisted vs. unassisted — review time, override rate, decision quality.</div>
+      </div>
+      <div class="measure-card">
+        <div class="mc-num">Method 04</div>
+        <div class="mc-title">Audit Sampling</div>
+        <div class="mc-desc">Reviewer feedback loops feeding corrections back into model evaluation.</div>
+      </div>
+    </div>
+
+    <nav class="section-nav" style="margin-top:40px;">
+      <a href="opportunity-sizing.html" class="nav-btn"><span class="nav-btn-dir">← Previous</span><span class="nav-btn-title">Market Opportunity</span></a>
+      <span class="nav-center">3 of 39</span>
+      <a href="strategic-alignment.html" class="nav-btn next"><span class="nav-btn-dir">Next →</span><span class="nav-btn-title">Strategic Alignment</span></a>
+    </nav>
+  </main>
+</div>
+<footer class="site-footer">Reap AI Platform — KYB Review Copilot &nbsp;·&nbsp; Technical PRD</footer>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script src="../js/main.js"></script>
+</body></html>

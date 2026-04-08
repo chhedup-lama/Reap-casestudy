@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>4.5 Security Architecture — Reap KYB PRD</title>
+  <link rel="stylesheet" href="../css/styles.css" />
+</head>
+<body>
+<header class="site-header">
+  <div class="header-inner">
+    <a href="../index.html" class="site-logo"><div class="logo-mark">R</div><span>Reap AI Platform</span></a>
+    <div class="header-divider"></div><span class="header-subtitle">KYB Review Copilot</span>
+    <nav class="header-nav"><a href="../index.html">Overview</a><a href="solution-architecture.html">Architecture</a><a href="reviewer-workflow.html">Workflow</a></nav>
+  </div>
+</header>
+<div class="page-layout">
+  <aside class="sidebar">
+    <a href="../index.html" class="sidebar-back"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M9 11L5 7l4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg> All Sections</a>
+    <div class="sidebar-section-title">Block 4 — Solution Architecture</div>
+    <ul class="sidebar-nav">
+      <li><a href="solution-architecture.html">4.1 E2E Architecture</a></li>
+      <li><a href="data-model.html">4.2 Data Model</a></li>
+      <li><a href="api-design.html">4.3 API Design</a></li>
+      <li><a href="infrastructure.html">4.4 Infrastructure</a></li>
+      <li><a href="security-design.html" class="active">4.5 Security</a></li>
+      <li><a href="workflow-state.html">4.6 Workflow State Model</a></li>
+    </ul>
+  </aside>
+  <main class="content">
+    <nav class="breadcrumb"><a href="../index.html">Home</a><span class="breadcrumb-sep">›</span><span>Block 4 — Solution Architecture</span><span class="breadcrumb-sep">›</span><span class="breadcrumb-current">4.5 Security Architecture</span></nav>
+    <div class="section-header">
+      <div class="section-block-tag" style="background:var(--b4)">Block 4 — Solution Architecture</div>
+      <h1>Security Architecture</h1>
+      <p class="section-intro">Encryption, identity and access management, secrets handling, and the threat model for the KYB Review Copilot — designed for a financial services compliance environment.</p>
+    </div>
+    <div class="stub-banner">&#9998; Content coming soon — this section is a structured stub awaiting full copy.</div>
+
+    <h2>Encryption</h2>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Data Class</th><th>At Rest</th><th>In Transit</th><th>Key Management</th></tr></thead>
+      <tbody>
+        <tr><td>KYB Documents (PII)</td><td>AES-256</td><td>TLS 1.3</td><td>[ KMS ]</td></tr>
+        <tr><td>Extracted Fields</td><td>AES-256</td><td>TLS 1.3</td><td>[ ]</td></tr>
+        <tr><td>Audit Log</td><td>AES-256 + WORM</td><td>TLS 1.3</td><td>[ ]</td></tr>
+        <tr><td>LLM API Calls</td><td>N/A</td><td>TLS 1.3</td><td>API key rotation</td></tr>
+      </tbody>
+    </table></div>
+
+    <h2>Identity &amp; Access Management</h2>
+    <p>[ Role-based access: Analyst, Senior Reviewer, Compliance Lead, Admin, Read-only. Least privilege principle. MFA enforced. ]</p>
+
+    <h2>Secrets Management</h2>
+    <p>[ No secrets in code. All credentials via secrets manager (AWS Secrets Manager / HashiCorp Vault). Rotation policy. ]</p>
+
+    <h2>Threat Model Summary</h2>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Threat</th><th>Likelihood</th><th>Impact</th><th>Mitigation</th></tr></thead>
+      <tbody>
+        <tr><td>Unauthorised document access</td><td>Medium</td><td>High</td><td>RBAC + field-level encryption</td></tr>
+        <tr><td>Prompt injection via documents</td><td>Medium</td><td>High</td><td>Input sanitisation + LLM guardrails</td></tr>
+        <tr><td>Audit log tampering</td><td>Low</td><td>Critical</td><td>WORM storage + hash chaining</td></tr>
+        <tr><td>AI model data leakage</td><td>Low</td><td>High</td><td>No PII in training; API-only access</td></tr>
+      </tbody>
+    </table></div>
+
+    <nav class="section-nav">
+      <a href="infrastructure.html" class="nav-btn"><span class="nav-btn-dir">← Previous</span><span class="nav-btn-title">Infrastructure</span></a>
+      <span class="nav-center">20 of 39</span>
+      <a href="rag-overview.html" class="nav-btn next"><span class="nav-btn-dir">Next →</span><span class="nav-btn-title">RAG Architecture Overview</span></a>
+    </nav>
+  </main>
+</div>
+<footer class="site-footer">Reap AI Platform — KYB Review Copilot &nbsp;·&nbsp; Technical PRD</footer>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script src="../js/main.js"></script>
+</body></html>
