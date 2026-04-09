@@ -62,8 +62,85 @@
   .bvb-buy-cell::before   { content:'🛒 '; font-size:10px; }
   .bvb-why { font-size:11px; color:var(--text-dim); line-height:1.45; }
 
-  /* Vendor shortlist */
-  .vendor-stub { border:1px dashed var(--border); border-radius:10px; padding:18px 22px; background:var(--bg); color:var(--text-dim); font-size:13px; font-style:italic; margin-top:8px; }
+  /* ── Vendor Shortlist Banner ── */
+  .vsl-banner {
+    display:flex; align-items:center; justify-content:space-between; gap:20px;
+    margin-top:12px; padding:0; border-radius:14px; overflow:hidden;
+    background:linear-gradient(135deg, #0A2540 0%, #0f2e50 50%, #1a1060 100%);
+    border:1px solid rgba(99,91,255,.25);
+    text-decoration:none; cursor:pointer;
+    box-shadow:0 4px 24px rgba(10,37,64,.3);
+    transition:transform .18s ease, box-shadow .18s ease;
+    position:relative;
+  }
+  .vsl-banner::before {
+    content:''; position:absolute; inset:0;
+    background:radial-gradient(ellipse at 80% 50%, rgba(217,119,6,.08) 0%, transparent 60%);
+    pointer-events:none;
+  }
+  .vsl-banner:hover {
+    transform:translateY(-3px);
+    box-shadow:0 12px 40px rgba(10,37,64,.45);
+    text-decoration:none;
+  }
+
+  .vsl-accent-bar {
+    width:5px; align-self:stretch; flex-shrink:0;
+    background:linear-gradient(180deg, #F59E0B 0%, #D97706 100%);
+  }
+
+  .vsl-body { flex:1; padding:22px 20px 22px 24px; min-width:0; }
+
+  .vsl-eyebrow {
+    display:inline-flex; align-items:center; gap:6px;
+    font-size:9.5px; font-weight:800; text-transform:uppercase; letter-spacing:.1em;
+    color:#F59E0B; margin-bottom:8px;
+  }
+  .vsl-eyebrow-dot { width:5px; height:5px; border-radius:50%; background:#F59E0B; flex-shrink:0; }
+
+  .vsl-title {
+    font-size:20px; font-weight:800; color:#fff;
+    letter-spacing:-.3px; margin-bottom:6px; line-height:1.2;
+  }
+
+  .vsl-sub {
+    font-size:13px; color:rgba(255,255,255,.55); line-height:1.55; margin-bottom:16px;
+    max-width:520px;
+  }
+
+  .vsl-cats { display:flex; flex-wrap:wrap; gap:6px; }
+  .vsl-cat {
+    display:inline-flex; align-items:center; gap:5px;
+    padding:3px 10px; border-radius:20px; font-size:11px; font-weight:600;
+    background:rgba(245,158,11,.1); border:1px solid rgba(245,158,11,.25);
+    color:rgba(245,158,11,.85);
+  }
+  .vsl-cat-dot { width:4px; height:4px; border-radius:50%; background:#F59E0B; flex-shrink:0; }
+
+  .vsl-right {
+    flex-shrink:0; padding:22px 28px 22px 0;
+    display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px;
+  }
+  .vsl-cta-btn {
+    display:inline-flex; align-items:center; gap:8px;
+    padding:11px 20px; border-radius:9px;
+    background:linear-gradient(135deg, #F59E0B, #D97706);
+    color:#fff; font-size:13px; font-weight:700;
+    white-space:nowrap; letter-spacing:.01em;
+    box-shadow:0 4px 14px rgba(217,119,6,.4);
+    transition:box-shadow .15s, transform .15s;
+  }
+  .vsl-banner:hover .vsl-cta-btn {
+    box-shadow:0 6px 20px rgba(217,119,6,.55);
+    transform:scale(1.02);
+  }
+  .vsl-cta-note { font-size:10px; color:rgba(255,255,255,.3); text-align:center; }
+
+  @media(max-width:680px){
+    .vsl-banner { flex-direction:column; align-items:flex-start; }
+    .vsl-accent-bar { width:100%; height:4px; align-self:auto; }
+    .vsl-right { padding:0 24px 20px; align-items:flex-start; }
+  }
 </style>
 </head>
 <body>
@@ -344,8 +421,38 @@
     </div>
 
     <!-- Vendor Shortlist -->
-    <h2>Vendor Shortlist</h2>
-    <div class="vendor-stub">[ Evaluated vendors, selection criteria, and chosen approach ]</div>
+    <h2 style="margin-top:2.5rem;">Vendor Shortlist</h2>
+    <p style="font-size:13px;color:var(--text-dim);margin:.4rem 0 1.25rem;line-height:1.6;">Tentative build-vs-buy vendor recommendations across every capability layer — evaluated against cost, integration complexity, compliance posture, and strategic fit.</p>
+
+    <a href="https://feature-scope-explorer.lovable.app/vendor-shortlist" target="_blank" class="vsl-banner">
+      <div class="vsl-accent-bar"></div>
+      <div class="vsl-body">
+        <div class="vsl-eyebrow">
+          <span class="vsl-eyebrow-dot"></span>
+          Tentative Recommendations
+        </div>
+        <div class="vsl-title">Vendor Shortlist</div>
+        <div class="vsl-sub">Build-vs-buy decisions across every platform layer — evaluated, scored, and ranked. Covers document AI, identity, screening, infrastructure, and orchestration vendors.</div>
+        <div class="vsl-cats">
+          <span class="vsl-cat"><span class="vsl-cat-dot"></span>Document AI</span>
+          <span class="vsl-cat"><span class="vsl-cat-dot"></span>Identity Verification</span>
+          <span class="vsl-cat"><span class="vsl-cat-dot"></span>Sanctions Screening</span>
+          <span class="vsl-cat"><span class="vsl-cat-dot"></span>Adverse Media</span>
+          <span class="vsl-cat"><span class="vsl-cat-dot"></span>LLM / RAG Layer</span>
+          <span class="vsl-cat"><span class="vsl-cat-dot"></span>Infrastructure</span>
+          <span class="vsl-cat"><span class="vsl-cat-dot"></span>Orchestration</span>
+        </div>
+      </div>
+      <div class="vsl-right">
+        <div class="vsl-cta-btn">
+          <svg width="15" height="15" viewBox="0 0 15 15" fill="none">
+            <path d="M3 7.5h9M8.5 3l4 4.5-4 4.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          View Shortlist
+        </div>
+        <div class="vsl-cta-note">Opens interactive explorer ↗</div>
+      </div>
+    </a>
 
     <nav class="section-nav" style="margin-top:28px;">
       <a href="out-of-scope.html" class="nav-btn"><span class="nav-btn-dir">← Previous</span><span class="nav-btn-title">Out of Scope</span></a>
