@@ -81,6 +81,67 @@
   .dip-ops     { background:#ECFDF5; color:#047857; border-color:#A7F3D0; }
   .dip-sales   { background:#FFFBEB; color:#B45309; border-color:#FDE68A; }
 
+  /* ── Data Sources Section ── */
+  .ds-intro { font-size:13px; color:var(--text-mid); line-height:1.65; margin-bottom:1.5rem; }
+  .ds-grid { display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-bottom:1.25rem; }
+  @media(max-width:640px){ .ds-grid { grid-template-columns:1fr; } }
+  .ds-card {
+    border:1px solid var(--border); border-radius:12px; overflow:hidden;
+  }
+  .ds-applicant { border-top:3px solid #2563EB; }
+  .ds-public    { border-top:3px solid #059669; }
+  .ds-vendor    { border-top:3px solid #D97706; }
+  .ds-internal  { border-top:3px solid #7C3AED; }
+
+  .ds-card-hdr {
+    padding:.85rem 1.1rem .7rem; display:flex; align-items:center; gap:10px;
+    border-bottom:1px solid var(--border); background:var(--surface);
+  }
+  .ds-icon {
+    width:32px; height:32px; border-radius:8px; display:flex; align-items:center;
+    justify-content:center; flex-shrink:0;
+  }
+  .ds-applicant .ds-icon { background:#EFF6FF; color:#2563EB; }
+  .ds-public    .ds-icon { background:#ECFDF5; color:#059669; }
+  .ds-vendor    .ds-icon { background:#FFFBEB; color:#D97706; }
+  .ds-internal  .ds-icon { background:#F5F3FF; color:#7C3AED; }
+
+  .ds-cat-tag { font-size:9.5px; font-weight:800; text-transform:uppercase; letter-spacing:.08em; margin-bottom:2px; }
+  .ds-applicant .ds-cat-tag { color:#2563EB; }
+  .ds-public    .ds-cat-tag { color:#059669; }
+  .ds-vendor    .ds-cat-tag { color:#D97706; }
+  .ds-internal  .ds-cat-tag { color:#7C3AED; }
+  .ds-cat-name { font-size:13px; font-weight:700; color:var(--text); }
+
+  .ds-card-body { padding:.85rem 1.1rem; background:var(--surface); }
+  .ds-chips { display:flex; flex-wrap:wrap; gap:6px; }
+  .ds-chip {
+    display:flex; align-items:center; gap:5px; padding:4px 10px; border-radius:20px;
+    font-size:11.5px; font-weight:500; border:1px solid; line-height:1;
+  }
+  .ds-chip-dot { width:5px; height:5px; border-radius:50%; flex-shrink:0; }
+  .ds-applicant .ds-chip { background:#EFF6FF; border-color:#BFDBFE; color:#1E40AF; }
+  .ds-applicant .ds-chip-dot { background:#2563EB; }
+  .ds-public    .ds-chip { background:#ECFDF5; border-color:#A7F3D0; color:#065F46; }
+  .ds-public    .ds-chip-dot { background:#059669; }
+  .ds-vendor    .ds-chip { background:#FFFBEB; border-color:#FDE68A; color:#92400E; }
+  .ds-vendor    .ds-chip-dot { background:#D97706; }
+  .ds-internal  .ds-chip { background:#F5F3FF; border-color:#DDD6FE; color:#5B21B6; }
+  .ds-internal  .ds-chip-dot { background:#7C3AED; }
+
+  .ds-insight {
+    display:flex; gap:14px; align-items:flex-start; background:var(--navy); border-radius:11px;
+    padding:1.1rem 1.25rem; margin-top:1rem;
+  }
+  .ds-insight-icon {
+    width:36px; height:36px; border-radius:9px; background:rgba(165,180,252,.15);
+    border:1px solid rgba(165,180,252,.25); display:flex; align-items:center;
+    justify-content:center; color:#a5b4fc; flex-shrink:0;
+  }
+  .ds-insight-label { font-size:9.5px; font-weight:800; text-transform:uppercase; letter-spacing:.08em; color:rgba(255,255,255,.35); margin-bottom:5px; }
+  .ds-insight-text { font-size:13px; color:rgba(255,255,255,.82); line-height:1.65; }
+  .ds-insight-text strong { color:#c7d2fe; }
+
   /* ── Stakeholder Map ── */
   .smap-wrap { border:1px solid var(--border); border-radius:10px; overflow:hidden; margin-top:20px; }
   .smap-table { width:100%; border-collapse:collapse; font-size:13px; }
@@ -125,6 +186,7 @@
       <li><a href="#primary">Primary Users</a></li>
       <li><a href="#secondary">Secondary Users</a></li>
       <li><a href="#design-impl">Design Implication</a></li>
+      <li><a href="#data-sources">Reviewer Data Sources</a></li>
     </ul>
   </aside>
   <main class="content">
@@ -432,10 +494,121 @@
       </table>
     </div>
 
+    <!-- Data Sources -->
+    <div id="data-sources" class="persona-section-label" style="margin-top:2.5rem;">What Data Sources a KYB Reviewer Actually Uses</div>
+
+    <p class="ds-intro">A real reviewer triangulates across four distinct source categories — each carrying different authority, latency, and completeness trade-offs. The Copilot must understand where data came from and how much weight it should carry.</p>
+
+    <div class="ds-grid">
+
+      <!-- Applicant-provided -->
+      <div class="ds-card ds-applicant">
+        <div class="ds-card-hdr">
+          <div class="ds-icon">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="3" y="1" width="10" height="14" rx="2" stroke="currentColor" stroke-width="1.4"/><path d="M6 5h4M6 8h4M6 11h2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+          </div>
+          <div>
+            <div class="ds-cat-tag">Applicant-Provided</div>
+            <div class="ds-cat-name">Submitted by the business</div>
+          </div>
+        </div>
+        <div class="ds-card-body">
+          <div class="ds-chips">
+            <span class="ds-chip"><span class="ds-chip-dot"></span>Application form</span>
+            <span class="ds-chip"><span class="ds-chip-dot"></span>Uploaded documents</span>
+            <span class="ds-chip"><span class="ds-chip-dot"></span>Ownership chart</span>
+            <span class="ds-chip"><span class="ds-chip-dot"></span>Response emails</span>
+            <span class="ds-chip"><span class="ds-chip-dot"></span>Founder explanations</span>
+            <span class="ds-chip"><span class="ds-chip-dot"></span>Sales contact notes</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Public / Official -->
+      <div class="ds-card ds-public">
+        <div class="ds-card-hdr">
+          <div class="ds-icon">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 1L1 5v1h14V5L8 1z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/><rect x="2" y="6" width="3" height="7" stroke="currentColor" stroke-width="1.3"/><rect x="6.5" y="6" width="3" height="7" stroke="currentColor" stroke-width="1.3"/><rect x="11" y="6" width="3" height="7" stroke="currentColor" stroke-width="1.3"/><path d="M1 13h14" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+          </div>
+          <div>
+            <div class="ds-cat-tag">Public / Official</div>
+            <div class="ds-cat-name">Government &amp; registry sources</div>
+          </div>
+        </div>
+        <div class="ds-card-body">
+          <div class="ds-chips">
+            <span class="ds-chip"><span class="ds-chip-dot"></span>Company registries</span>
+            <span class="ds-chip"><span class="ds-chip-dot"></span>Tax databases</span>
+            <span class="ds-chip"><span class="ds-chip-dot"></span>Licensing registers</span>
+            <span class="ds-chip"><span class="ds-chip-dot"></span>Court records</span>
+            <span class="ds-chip"><span class="ds-chip-dot"></span>Regulator registers</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Vendor data -->
+      <div class="ds-card ds-vendor">
+        <div class="ds-card-hdr">
+          <div class="ds-icon">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6.5" stroke="currentColor" stroke-width="1.4"/><path d="M8 1.5C8 1.5 5 4.5 5 8s3 6.5 3 6.5M8 1.5C8 1.5 11 4.5 11 8S8 14.5 8 14.5M1.5 8h13" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+          </div>
+          <div>
+            <div class="ds-cat-tag">Vendor Data</div>
+            <div class="ds-cat-name">Third-party intelligence feeds</div>
+          </div>
+        </div>
+        <div class="ds-card-body">
+          <div class="ds-chips">
+            <span class="ds-chip"><span class="ds-chip-dot"></span>Sanctions screening</span>
+            <span class="ds-chip"><span class="ds-chip-dot"></span>Adverse media</span>
+            <span class="ds-chip"><span class="ds-chip-dot"></span>Identity verification</span>
+            <span class="ds-chip"><span class="ds-chip-dot"></span>Business intelligence</span>
+            <span class="ds-chip"><span class="ds-chip-dot"></span>Address verification</span>
+            <span class="ds-chip"><span class="ds-chip-dot"></span>Corporate hierarchy</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Internal -->
+      <div class="ds-card ds-internal">
+        <div class="ds-card-hdr">
+          <div class="ds-icon">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="2" y="2" width="12" height="12" rx="2" stroke="currentColor" stroke-width="1.4"/><path d="M5 6h6M5 9h4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><circle cx="11.5" cy="10.5" r="2.5" fill="currentColor" opacity=".15" stroke="currentColor" stroke-width="1.2"/></svg>
+          </div>
+          <div>
+            <div class="ds-cat-tag">Internal</div>
+            <div class="ds-cat-name">Institutional knowledge &amp; memory</div>
+          </div>
+        </div>
+        <div class="ds-card-body">
+          <div class="ds-chips">
+            <span class="ds-chip"><span class="ds-chip-dot"></span>Policy docs &amp; SOPs</span>
+            <span class="ds-chip"><span class="ds-chip-dot"></span>Previous similar cases</span>
+            <span class="ds-chip"><span class="ds-chip-dot"></span>Historical decisions</span>
+            <span class="ds-chip"><span class="ds-chip-dot"></span>Internal notes</span>
+            <span class="ds-chip"><span class="ds-chip-dot"></span>Partner constraints</span>
+            <span class="ds-chip"><span class="ds-chip-dot"></span>Fraud blacklists</span>
+            <span class="ds-chip"><span class="ds-chip-dot"></span>Transaction templates</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="ds-insight">
+      <div class="ds-insight-icon">
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="7.5" stroke="currentColor" stroke-width="1.5"/><path d="M9 6v4M9 12.5v.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </div>
+      <div>
+        <div class="ds-insight-label">The Reviewer's Real Role</div>
+        <div class="ds-insight-text">A reviewer's job is partly <strong>detective work</strong> (triangulating across sources with conflicting or missing data), partly <strong>policy reasoning</strong> (applying nuanced rules to messy edge cases), and partly <strong>documentation</strong> (building an audit-defensible evidence chain). The Copilot must support all three — not just speed up one of them.</div>
+      </div>
+    </div>
+
     <nav class="section-nav" style="margin-top:40px;">
       <a href="executive-summary.html" class="nav-btn"><span class="nav-btn-dir">← Previous</span><span class="nav-btn-title">Executive Summary</span></a>
-      <span class="nav-center">6 of 39</span>
-      <a href="current-state.html" class="nav-btn next"><span class="nav-btn-dir">Next →</span><span class="nav-btn-title">Current State Workflow</span></a>
+      <span class="nav-center">6 of 36</span>
+      <a href="reviewer-workflow.html" class="nav-btn next"><span class="nav-btn-dir">Next →</span><span class="nav-btn-title">2.2 Reviewer Workflow</span></a>
     </nav>
   </main>
 </div>
