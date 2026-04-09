@@ -75,7 +75,16 @@
       .replace(/>/g, '&gt;');
   }
 
-  const currentFile = window.location.pathname.split('/').pop() || '';
+  /*
+   * Normalise current file: Vercel's cleanUrls strips .html from the URL
+   * (e.g. /sections/reviewer-workflow → reviewer-workflow).
+   * Always compare as "filename.html" so TOC matching works on both
+   * Vercel and local file:// access.
+   */
+  const rawSlug = window.location.pathname.split('/').pop() || '';
+  const currentFile = rawSlug.endsWith('.html') ? rawSlug
+                    : rawSlug ? rawSlug + '.html'
+                    : '';
 
   /* ── Build sidebar HTML ──────────────────────────────────── */
   function buildSidebarHTML() {
@@ -97,7 +106,6 @@
       parts.push(`
         <div class="snav-group${isActiveBlock ? ' snav-group--open' : ''}">
           <button class="snav-group-hdr" aria-expanded="${isActiveBlock}" data-snav-toggle>
-            <span class="snav-dot" style="background:${block.color}"></span>
             <span class="snav-block-meta">
               <span class="snav-block-num">Block ${block.num}</span>
               <span class="snav-block-name">${esc(block.label)}</span>
@@ -141,7 +149,6 @@
     const seen  = new Set();
     const items = [];
 
-    // Gather h2[id], h3[id], and named section dividers
     content.querySelectorAll(
       'h2[id], h3[id], ' +
       '[id][class*="section-label"], ' +
@@ -153,11 +160,7 @@
       seen.add(el.id);
       const text = el.textContent.replace(/\s+/g, ' ').trim();
       if (text.length < 3 || text.length > 72) return;
-      items.push({
-        id:  el.id,
-        text,
-        sub: el.tagName === 'H3',
-      });
+      items.push({ id: el.id, text, sub: el.tagName === 'H3' });
     });
 
     if (items.length === 0) return;
@@ -169,10 +172,10 @@
         </a></li>`)
       .join('');
 
-    /* Scroll spy via IntersectionObserver */
-    const links     = tocEl.querySelectorAll('.snav-toca');
+    /* Scroll spy */
+    const links      = tocEl.querySelectorAll('.snav-toca');
     const headingEls = items.map(i => document.getElementById(i.id)).filter(Boolean);
-    let activeId    = null;
+    let activeId     = null;
 
     const spy = new IntersectionObserver(entries => {
       entries.forEach(entry => {
@@ -206,7 +209,6 @@
     const sidebar = document.querySelector('aside.sidebar');
     if (!sidebar) return;
 
-    /* Render */
     sidebar.innerHTML = buildSidebarHTML();
 
     /* Expand/collapse toggles */
@@ -218,7 +220,6 @@
       });
     });
 
-    /* In-page TOC */
     buildPageTOC();
 
     /* Scroll active item into sidebar view */

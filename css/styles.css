@@ -483,19 +483,14 @@ a:hover { text-decoration: underline; }
 .snav-group { margin-bottom: 1px; }
 
 .snav-group-hdr {
-  width: 100%; display: flex; align-items: center; gap: 8px;
-  padding: 6px 6px 6px 2px; background: none; border: none;
+  width: 100%; display: flex; align-items: center; gap: 6px;
+  padding: 6px 4px; background: none; border: none;
   cursor: pointer; border-radius: 6px; text-align: left;
+  font-family: 'Open Sans', -apple-system, BlinkMacSystemFont, sans-serif;
   transition: background .12s;
 }
 .snav-group-hdr:hover { background: var(--bg); }
 .snav-group-hdr:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-
-/* Colored dot */
-.snav-dot {
-  width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0;
-  margin-top: 1px; opacity: .85;
-}
 
 .snav-block-meta { flex: 1; min-width: 0; }
 
@@ -506,11 +501,11 @@ a:hover { text-decoration: underline; }
 }
 
 .snav-block-name {
-  display: block; font-size: 11.5px; font-weight: 600;
+  display: block; font-size: 12px; font-weight: 600;
   color: var(--text-mid); line-height: 1.25; white-space: nowrap;
   overflow: hidden; text-overflow: ellipsis;
 }
-.snav-group--open .snav-block-name { color: var(--text); }
+.snav-group--open .snav-block-name { color: var(--text); font-weight: 700; }
 
 /* Chevron rotates when open */
 .snav-chev {
@@ -533,36 +528,47 @@ a:hover { text-decoration: underline; }
 /* Active page: colored left border */
 .snav-li--cur::before {
   content: ''; position: absolute;
-  left: -15px; top: 4px; bottom: 4px;
+  left: -15px; top: 3px; bottom: 3px;
   width: 2px; border-radius: 0 2px 2px 0;
   background: var(--ac, #635BFF);
 }
 
 /* Section link */
 .snav-a {
-  display: flex; align-items: baseline; gap: 6px;
-  padding: 4px 6px 4px 0;
-  font-size: 12px; color: var(--text-mid);
-  text-decoration: none; border-radius: 4px;
+  display: flex; align-items: baseline; gap: 7px;
+  padding: 5px 6px 5px 0;
+  font-size: 12px; font-weight: 400;
+  font-family: 'Open Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  color: var(--text-mid);
+  text-decoration: none; border-radius: 5px;
   transition: color .12s, background .12s;
   line-height: 1.4;
 }
 .snav-a:hover { color: var(--text); background: var(--bg); text-decoration: none; }
 
-/* Active page link */
+/* Active page link — highlighted row */
 .snav-li--cur > .snav-a {
   color: var(--ac, #635BFF);
   font-weight: 700;
+  background: rgba(99,91,255,.07);
+  border-radius: 5px;
+  padding-left: 6px;
 }
+/* Override background tint with per-block color */
+.snav-li--cur > .snav-a {
+  background: color-mix(in srgb, var(--ac, #635BFF) 9%, transparent);
+}
+
 .snav-li--cur > .snav-a .snav-secnum {
-  color: var(--ac, #635BFF); opacity: .75;
+  color: var(--ac, #635BFF); opacity: .8;
 }
 
 /* Section number (1.1, 2.3 etc.) */
 .snav-secnum {
-  font-size: 10px; font-weight: 600; color: var(--text-dim);
-  flex-shrink: 0; min-width: 24px;
+  font-size: 10.5px; font-weight: 600; color: var(--text-dim);
+  flex-shrink: 0; min-width: 26px;
   font-variant-numeric: tabular-nums;
+  font-family: 'Open Sans', -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
 /* Section title */
