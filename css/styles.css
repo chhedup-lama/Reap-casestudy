@@ -437,7 +437,7 @@ a:hover { text-decoration: underline; }
   margin: 0 auto;
   padding: 0 24px;
   display: grid;
-  grid-template-columns: 220px 1fr;
+  grid-template-columns: 250px 1fr;
   gap: 40px;
   align-items: start;
   min-height: calc(100vh - var(--header-h));
@@ -447,8 +447,158 @@ a:hover { text-decoration: underline; }
 .sidebar {
   position: sticky;
   top: calc(var(--header-h) + 24px);
-  padding: 24px 0;
+  padding: 20px 0 40px;
+  max-height: calc(100vh - var(--header-h) - 48px);
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
 }
+.sidebar::-webkit-scrollbar { width: 3px; }
+.sidebar::-webkit-scrollbar-track { background: transparent; }
+.sidebar::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+/* ============================================================
+   SIDEBAR NAV v2 — Full-TOC Stripe-docs style
+   ============================================================ */
+
+/* Back link */
+.snav-home {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 12px; font-weight: 500; color: var(--text-dim);
+  text-decoration: none; padding: 2px 0 14px; margin: 0;
+  transition: color .15s; border-bottom: 1px solid var(--border);
+  margin-bottom: 12px;
+}
+.snav-home:hover { color: var(--text); text-decoration: none; }
+.snav-home svg { flex-shrink: 0; }
+
+/* Document context label */
+.snav-doc-label {
+  font-size: 9.5px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: .09em; color: var(--text-dim);
+  margin-bottom: 14px; padding-left: 2px;
+}
+
+/* ── Block group ── */
+.snav-group { margin-bottom: 1px; }
+
+.snav-group-hdr {
+  width: 100%; display: flex; align-items: center; gap: 8px;
+  padding: 6px 6px 6px 2px; background: none; border: none;
+  cursor: pointer; border-radius: 6px; text-align: left;
+  transition: background .12s;
+}
+.snav-group-hdr:hover { background: var(--bg); }
+.snav-group-hdr:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* Colored dot */
+.snav-dot {
+  width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0;
+  margin-top: 1px; opacity: .85;
+}
+
+.snav-block-meta { flex: 1; min-width: 0; }
+
+.snav-block-num {
+  display: block; font-size: 9px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: .08em;
+  color: var(--text-dim); line-height: 1.3; margin-bottom: 1px;
+}
+
+.snav-block-name {
+  display: block; font-size: 11.5px; font-weight: 600;
+  color: var(--text-mid); line-height: 1.25; white-space: nowrap;
+  overflow: hidden; text-overflow: ellipsis;
+}
+.snav-group--open .snav-block-name { color: var(--text); }
+
+/* Chevron rotates when open */
+.snav-chev {
+  flex-shrink: 0; color: var(--text-dim);
+  transition: transform .18s ease;
+}
+.snav-group--open .snav-chev { transform: rotate(180deg); }
+
+/* ── Collapsible section list ── */
+.snav-list {
+  list-style: none; padding: 2px 0 4px 15px; margin: 0;
+  overflow: hidden; max-height: 0;
+  transition: max-height .22s ease;
+}
+.snav-group--open .snav-list { max-height: 600px; }
+
+/* ── Section item ── */
+.snav-li { position: relative; }
+
+/* Active page: colored left border */
+.snav-li--cur::before {
+  content: ''; position: absolute;
+  left: -15px; top: 4px; bottom: 4px;
+  width: 2px; border-radius: 0 2px 2px 0;
+  background: var(--ac, #635BFF);
+}
+
+/* Section link */
+.snav-a {
+  display: flex; align-items: baseline; gap: 6px;
+  padding: 4px 6px 4px 0;
+  font-size: 12px; color: var(--text-mid);
+  text-decoration: none; border-radius: 4px;
+  transition: color .12s, background .12s;
+  line-height: 1.4;
+}
+.snav-a:hover { color: var(--text); background: var(--bg); text-decoration: none; }
+
+/* Active page link */
+.snav-li--cur > .snav-a {
+  color: var(--ac, #635BFF);
+  font-weight: 700;
+}
+.snav-li--cur > .snav-a .snav-secnum {
+  color: var(--ac, #635BFF); opacity: .75;
+}
+
+/* Section number (1.1, 2.3 etc.) */
+.snav-secnum {
+  font-size: 10px; font-weight: 600; color: var(--text-dim);
+  flex-shrink: 0; min-width: 24px;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Section title */
+.snav-sectitle { flex: 1; min-width: 0; }
+
+/* ── In-page TOC anchors ── */
+.snav-pagetoc {
+  list-style: none; padding: 2px 0 4px 30px; margin: 0;
+}
+
+.snav-toca {
+  display: block; padding: 3px 6px 3px 0;
+  font-size: 11px; color: var(--text-dim);
+  text-decoration: none; border-radius: 4px;
+  line-height: 1.4; transition: color .12s;
+  position: relative;
+}
+.snav-toca::before {
+  content: ''; position: absolute;
+  left: -12px; top: 50%; transform: translateY(-50%);
+  width: 4px; height: 4px; border-radius: 50%;
+  background: var(--border);
+  transition: background .12s;
+}
+.snav-toca:hover { color: var(--text-mid); text-decoration: none; }
+.snav-toca:hover::before { background: var(--text-dim); }
+
+/* Active anchor */
+.snav-toca--on {
+  color: var(--accent) !important;
+  font-weight: 600;
+}
+.snav-toca--on::before { background: var(--accent) !important; }
+
+/* h3-level anchor (indented further) */
+.snav-toca--sub { padding-left: 10px; font-size: 10.5px; }
 
 .sidebar-back {
   display: flex;
